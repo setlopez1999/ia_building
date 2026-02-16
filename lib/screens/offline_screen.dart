@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+
 import '../utils/app_colors.dart';
 
 class OfflineScreen extends StatelessWidget {
@@ -47,25 +49,25 @@ class OfflineScreen extends StatelessWidget {
             ),
             const SizedBox(height: 30),
             _buildOfflineItem(
-              icon: Icons.smartphone_outlined,
+              iconPath: 'assets/smartphone.svg',
               title: 'Estado del dispositivo',
               subtitle: 'WiFi activado, modo avión, Bluetooth',
             ),
             const SizedBox(height: 15),
             _buildOfflineItem(
-              icon: Icons.bar_chart_outlined,
+              iconPath: 'assets/wifi.svg',
               title: 'Escaneo de Redes Wifi',
               subtitle: 'Detectar redes cercanas, intensidad de señal',
             ),
             const SizedBox(height: 15),
             _buildOfflineItem(
-              icon: Icons.router_outlined,
+              iconPath: 'assets/router.svg',
               title: 'Conexión al Router',
               subtitle: 'Ping local, IP asignada, gateway',
             ),
             const SizedBox(height: 15),
             _buildOfflineItem(
-              icon: Icons.devices_other_outlined,
+              iconPath: 'assets/pc.svg',
               title: 'Dispositivos en Red Local',
               subtitle: 'Contar dispositivos conectados al router',
             ),
@@ -79,20 +81,32 @@ class OfflineScreen extends StatelessWidget {
   }
 
   Widget _buildOfflineItem({
-    required IconData icon,
+    required String iconPath,
     required String title,
     required String subtitle,
   }) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF32324A),
-        borderRadius: BorderRadius.circular(20),
+      decoration: const BoxDecoration(
+        color: Color(0xFF32324A),
+        borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
       child: Row(
         children: [
-          Icon(icon, color: AppColors.textBody, size: 35),
-          const SizedBox(width: 20),
+          Container(
+            width: 40,
+            alignment: Alignment.center,
+            child: SvgPicture.asset(
+              iconPath,
+              colorFilter: const ColorFilter.mode(
+                AppColors.textBody,
+                BlendMode.srcIn,
+              ),
+              width: 35,
+              height: 35,
+            ),
+          ),
+          const SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,9 +155,9 @@ class OfflineScreen extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 60,
-        decoration: BoxDecoration(
-          color: const Color(0xFF00D285),
-          borderRadius: BorderRadius.circular(15),
+        decoration: const BoxDecoration(
+          color: Color(0xFF00D285),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,

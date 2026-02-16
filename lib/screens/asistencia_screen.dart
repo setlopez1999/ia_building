@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../utils/app_colors.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 
 class AsistenciaScreen extends StatefulWidget {
   const AsistenciaScreen({super.key});
@@ -79,9 +80,10 @@ class _AsistenciaScreenState extends State<AsistenciaScreen>
                     height: 150,
                     child: CircularProgressIndicator(
                       value: progress,
-                      strokeWidth: 12,
+                      strokeWidth: 20,
+                      strokeCap: StrokeCap.round,
                       backgroundColor: Colors.white12,
-                      color: const Color(0xFF7B61FF).withOpacity(0.8),
+                      color: const Color.fromARGB(255, 173, 170, 203),
                     ),
                   ),
                 ],
@@ -149,16 +151,21 @@ class _AsistenciaScreenState extends State<AsistenciaScreen>
             const SizedBox(
               width: 20,
               height: 20,
-              child: CircularProgressIndicator(
+              child: LoadingIndicator(
+                indicatorType: Indicator.lineSpinFadeLoader,
+                colors: [AppColors.textBody],
                 strokeWidth: 2,
-                color: Colors.white70,
               ),
             )
           else
-            const Icon(
-              Icons.wb_sunny_outlined,
-              color: Colors.white30,
-              size: 24,
+            const SizedBox(
+              width: 20,
+              height: 20,
+              child: LoadingIndicator(
+                indicatorType: Indicator.lineSpinFadeLoader,
+                colors: [AppColors.textBody],
+                strokeWidth: 2,
+              ),
             ),
           const SizedBox(width: 20),
           Text(

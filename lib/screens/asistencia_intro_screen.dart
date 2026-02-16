@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+
 import '../utils/app_colors.dart';
 
 class AsistenciaIntroScreen extends StatelessWidget {
@@ -53,28 +54,28 @@ class AsistenciaIntroScreen extends StatelessWidget {
                 children: [
                   _buildProblemCard(
                     context,
-                    svgAsset: 'assets/wifi-off.svg',
+                    svgAsset: 'assets/wifi_off.svg',
                     title: 'No hay Wifi',
                     subtitle: 'No puedo conectarme a la red WIFI',
                   ),
                   const SizedBox(height: 15),
                   _buildProblemCard(
                     context,
-                    svgAsset: 'assets/clock_speed.svg',
+                    svgAsset: 'assets/internet_slow.svg',
                     title: 'Internet lento',
                     subtitle: 'Conexión muy lenta o inestable',
                   ),
                   const SizedBox(height: 15),
                   _buildProblemCard(
                     context,
-                    svgAsset: 'assets/wifi.svg',
+                    svgAsset: 'assets/bad_sign.svg',
                     title: 'Mala cobertura',
                     subtitle: 'Señal WIFI débil en algunas zonas',
                   ),
                   const SizedBox(height: 15),
                   _buildProblemCard(
                     context,
-                    svgAsset: 'assets/help-circle-svgrepo-.svg',
+                    svgAsset: 'assets/internet.svg',
                     title: 'Sin internet',
                     subtitle: 'WIFI conectado pero no navega',
                   ),
@@ -89,7 +90,8 @@ class AsistenciaIntroScreen extends StatelessWidget {
 
   Widget _buildProblemCard(
     BuildContext context, {
-    required String svgAsset,
+    String? svgAsset,
+    IconData? assetIcon,
     required String title,
     required String subtitle,
   }) {
@@ -98,22 +100,30 @@ class AsistenciaIntroScreen extends StatelessWidget {
       borderRadius: BorderRadius.circular(25),
       child: Container(
         padding: const EdgeInsets.all(25),
-        decoration: BoxDecoration(
-          color: const Color(0xFF32324A),
-          borderRadius: BorderRadius.circular(25),
+        decoration: const BoxDecoration(
+          color: Color(0xFF32324A),
+          borderRadius: BorderRadius.all(Radius.circular(25)),
         ),
         child: Row(
           children: [
-            SvgPicture.asset(
-              svgAsset,
-              colorFilter: const ColorFilter.mode(
-                Colors.white70,
-                BlendMode.srcIn,
-              ),
-              width: 45,
-              height: 45,
+            Container(
+              width: 50,
+              alignment: Alignment.center,
+              child: svgAsset != null
+                  ? SvgPicture.asset(
+                      svgAsset,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white70,
+                        BlendMode.srcIn,
+                      ),
+                      width: 45,
+                      height: 45,
+                    )
+                  : assetIcon != null
+                  ? Icon(assetIcon, color: Colors.white70, size: 45)
+                  : null,
             ),
-            const SizedBox(width: 25),
+            const SizedBox(width: 20),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

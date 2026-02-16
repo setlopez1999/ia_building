@@ -42,24 +42,28 @@ class DevicesScreen extends StatelessWidget {
                     name: 'Samsung S23',
                     status: 'Conectado',
                     isConnected: true,
+                    svgAsset: 'assets/smartphone.svg',
                   ),
                   const SizedBox(height: 15),
                   _buildDeviceItem(
                     name: 'Samsung A40',
                     status: 'Conectado',
                     isConnected: true,
+                    svgAsset: 'assets/smartphone.svg',
                   ),
                   const SizedBox(height: 15),
                   _buildDeviceItem(
                     name: 'Motorola 45-8',
                     status: 'Conectado',
                     isConnected: true,
+                    svgAsset: 'assets/smartphone.svg',
                   ),
                   const SizedBox(height: 15),
                   _buildDeviceItem(
                     name: 'MacBook Pro',
                     status: 'Conectado',
                     isConnected: true,
+                    svgAsset: 'assets/laptop.svg',
                   ),
                 ],
               ),
@@ -110,6 +114,7 @@ class DevicesScreen extends StatelessWidget {
     required String name,
     required String status,
     required bool isConnected,
+    required String svgAsset,
   }) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -120,7 +125,7 @@ class DevicesScreen extends StatelessWidget {
       child: Row(
         children: [
           SvgPicture.asset(
-            'assets/devices-svgrepo-com.svg',
+            svgAsset,
             colorFilter: const ColorFilter.mode(
               Color(0xFF00D285),
               BlendMode.srcIn,

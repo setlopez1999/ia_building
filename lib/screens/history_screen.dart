@@ -105,7 +105,7 @@ class HistoryScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 20),
                   padding: const EdgeInsets.all(15),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF32324A),
+                    color: const Color(0xFF3F3D53),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Column(
@@ -125,7 +125,7 @@ class HistoryScreen extends StatelessWidget {
                           Text(
                             time,
                             style: const TextStyle(
-                              color: Color(0xFF7B61FF),
+                              color: Color(0xFF867DE5),
                               fontSize: 12,
                             ),
                           ),
@@ -145,7 +145,6 @@ class HistoryScreen extends StatelessWidget {
                         style: TextStyle(
                           color: AppColors.textBody,
                           fontSize: 12,
-                          decoration: TextDecoration.underline,
                         ),
                       ),
                     ],

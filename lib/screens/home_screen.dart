@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+
 import '../utils/app_colors.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -48,9 +49,15 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 15),
             _buildLastDiagnosticChip(),
             const SizedBox(height: 25),
-            _buildMetricsGrid(context),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildMetricsGrid(context),
+            ),
             const SizedBox(height: 30),
-            _buildActionButton(context),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildActionButton(context),
+            ),
             const SizedBox(height: 30),
             _buildMenuGrid(context),
             const SizedBox(height: 40),
@@ -66,13 +73,13 @@ class HomeScreen extends StatelessWidget {
       borderRadius: BorderRadius.circular(25),
       child: Container(
         padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
             colors: [Color(0xFF00CC66), Color(0xFF00BEB6)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.all(Radius.circular(25)),
         ),
         child: Row(
           children: [
@@ -141,16 +148,17 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildLastDiagnosticChip() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      decoration: BoxDecoration(
-        color: const Color(0xFF32324A),
-        borderRadius: BorderRadius.circular(15),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      decoration: const BoxDecoration(
+        color: Color(0xFF32324A),
+        borderRadius: BorderRadius.all(Radius.circular(15)),
       ),
       child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.access_time, color: AppColors.textBody, size: 18),
-          SizedBox(width: 10),
+          Icon(Icons.access_time, color: AppColors.textBody, size: 30),
+          SizedBox(width: 15),
           Text(
             'Último diagnóstico: Hace 2 semanas',
             style: TextStyle(color: AppColors.textBody, fontSize: 12),
@@ -203,9 +211,9 @@ class HomeScreen extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 55,
-        decoration: BoxDecoration(
-          color: const Color(0xFF00D285),
-          borderRadius: BorderRadius.circular(15),
+        decoration: const BoxDecoration(
+          color: Color(0xFF00D285),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         child: const Center(
           child: Row(
@@ -291,9 +299,9 @@ class _MetricItem extends StatelessWidget {
       children: [
         Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: const Color(0xFF32324A),
-            borderRadius: BorderRadius.circular(15),
+          decoration: const BoxDecoration(
+            color: Color(0xFF32324A),
+            borderRadius: BorderRadius.all(Radius.circular(15)),
             //border: Border.all(color: color.withOpacity(0.5), width: 1),
           ),
           child: SvgPicture.asset(
@@ -344,9 +352,9 @@ class _MenuCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: const Color(0xFF32324A),
-          borderRadius: BorderRadius.circular(20),
+        decoration: const BoxDecoration(
+          color: Color(0xFF32324A),
+          borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

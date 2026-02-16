@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import '../utils/app_colors.dart';
 
 class DiagnosticoScreen extends StatefulWidget {
@@ -79,9 +80,10 @@ class _DiagnosticoScreenState extends State<DiagnosticoScreen>
                     height: 200,
                     child: CircularProgressIndicator(
                       value: progress,
-                      strokeWidth: 20,
+                      strokeWidth: 30,
+                      strokeCap: StrokeCap.round,
                       backgroundColor: Colors.white12,
-                      color: const Color(0xFF7B61FF).withOpacity(0.8),
+                      color: const Color.fromARGB(255, 173, 170, 203),
                     ),
                   ),
                   Column(
@@ -90,13 +92,13 @@ class _DiagnosticoScreenState extends State<DiagnosticoScreen>
                       Text(
                         '${(progress * 100).toInt()}%',
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: Color.fromARGB(255, 173, 170, 203),
                           fontSize: 40,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const Text(
-                        'Analizando...',
+                        'Analizando velocidad\n de internet',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: AppColors.textBody,
@@ -109,34 +111,35 @@ class _DiagnosticoScreenState extends State<DiagnosticoScreen>
               ),
             ),
             const SizedBox(height: 50),
+            const SizedBox(height: 50),
             _buildStatusItem(
-              Icons.speed,
               'Velocidad de internet',
               progress >= 0.25
                   ? 'Descarga: 248 Mbps / Carga: 95 Mbps'
                   : 'Analizando...',
-              progress >= 0.25,
+              isDone: progress >= 0.25,
+              isLoading: progress < 0.25,
             ),
             const SizedBox(height: 15),
             _buildStatusItem(
-              Icons.wifi,
               'Red Wifi Doméstica',
               progress >= 0.5 ? 'Señal estable' : 'Esperando...',
-              progress >= 0.5,
+              isDone: progress >= 0.5,
+              isLoading: progress >= 0.25 && progress < 0.5,
             ),
             const SizedBox(height: 15),
             _buildStatusItem(
-              Icons.settings_input_component,
               'Fibra óptica',
               progress >= 0.75 ? 'Potencia óptima' : 'Esperando...',
-              progress >= 0.75,
+              isDone: progress >= 0.75,
+              isLoading: progress >= 0.5 && progress < 0.75,
             ),
             const SizedBox(height: 15),
             _buildStatusItem(
-              Icons.timer_outlined,
               'Latencia y estabilidad',
               progress >= 0.95 ? '12ms (Excelente)' : 'Esperando...',
-              progress >= 0.95,
+              isDone: progress >= 0.95,
+              isLoading: progress >= 0.75 && progress < 0.95,
             ),
             const Spacer(),
             _buildCancelButton(context),
@@ -148,23 +151,49 @@ class _DiagnosticoScreenState extends State<DiagnosticoScreen>
   }
 
   Widget _buildStatusItem(
-    IconData icon,
     String title,
-    String subtitle,
-    bool isDone,
-  ) {
+    String subtitle, {
+    required bool isDone,
+    required bool isLoading,
+  }) {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: const Color(0xFF32324A),
         borderRadius: BorderRadius.circular(15),
-        border: isDone
-            ? Border.all(color: const Color(0xFF00D285).withOpacity(0.3))
+        border: isDone || isLoading
+            ? Border.all(
+                color: isDone ? const Color(0xFF00D285) : AppColors.textBody,
+              )
             : null,
       ),
       child: Row(
         children: [
-          Icon(icon, color: isDone ? const Color(0xFF00D285) : Colors.white30),
+          Container(
+            width: 24,
+            height: 24,
+            alignment: Alignment.center,
+            child: isDone
+                ? const Icon(
+                    Icons.check_circle,
+                    color: Color(0xFF00D285),
+                    size: 24,
+                  )
+                : isLoading
+                ? const LoadingIndicator(
+                    indicatorType: Indicator.lineSpinFadeLoader,
+                    colors: [AppColors.textBody],
+                    strokeWidth: 2,
+                  )
+                : Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.textBody,
+                    ),
+                  ),
+          ),
           const SizedBox(width: 15),
           Expanded(
             child: Column(
@@ -183,6 +212,8 @@ class _DiagnosticoScreenState extends State<DiagnosticoScreen>
                   style: TextStyle(
                     color: isDone
                         ? const Color(0xFF00D285)
+                        : isLoading
+                        ? const Color.fromARGB(255, 164, 164, 223)
                         : AppColors.textBody,
                     fontSize: 12,
                   ),

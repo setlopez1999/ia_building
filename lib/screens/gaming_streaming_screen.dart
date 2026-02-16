@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
-import '../utils/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-class GamingStreamingScreen extends StatelessWidget {
+import '../utils/app_colors.dart';
+
+class GamingStreamingScreen extends StatefulWidget {
   const GamingStreamingScreen({super.key});
+
+  @override
+  State<GamingStreamingScreen> createState() => _GamingStreamingScreenState();
+}
+
+class _GamingStreamingScreenState extends State<GamingStreamingScreen> {
+  bool isGamingExpanded = true;
+  bool isStreamingExpanded = true;
 
   @override
   Widget build(BuildContext context) {
@@ -57,20 +67,49 @@ class GamingStreamingScreen extends StatelessWidget {
             _buildCategoryCard(
               'Gaming',
               'Latencia en tiempo real a servidores sudamericanos',
-              Icons.videogame_asset_outlined,
-              [
-                _GameItem('Riot Games', '25', 'Excelente'),
-                _GameItem('Vale', '39', 'Excelente'),
-                _GameItem('Epic Games', '36', 'Excelente'),
-                _GameItem('Actvision', '22', 'Excelente'),
-                _GameItem('EA Sports', '46', 'Excelente'),
+              'assets/gaming_pad.svg',
+              isGamingExpanded,
+              () => setState(() => isGamingExpanded = !isGamingExpanded),
+              const [
+                _GameItem(
+                  'Riot Games',
+                  '25',
+                  'Excelente',
+                  'assets/logos/logo_riot.png',
+                ),
+                _GameItem(
+                  'Valve',
+                  '39',
+                  'Excelente',
+                  'assets/logos/logo_valve.png',
+                ),
+                _GameItem(
+                  'Epic Games',
+                  '36',
+                  'Excelente',
+                  'assets/logos/logo_epic_games.png',
+                ),
+                _GameItem(
+                  'Activision',
+                  '22',
+                  'Excelente',
+                  'assets/logos/logo_activision.png',
+                ),
+                _GameItem(
+                  'EA Sports',
+                  '46',
+                  'Excelente',
+                  'assets/logos/logo_ea.png',
+                ),
               ],
             ),
             const SizedBox(height: 15),
             _buildSimpleCategoryCard(
               'Streaming',
               'Rendimiento para transmisión en vivo',
-              Icons.wifi_tethering,
+              'assets/streaming.svg',
+              isStreamingExpanded,
+              () => setState(() => isStreamingExpanded = !isStreamingExpanded),
             ),
             const SizedBox(height: 40),
           ],
@@ -146,10 +185,13 @@ class GamingStreamingScreen extends StatelessWidget {
   Widget _buildCategoryCard(
     String title,
     String subtitle,
-    IconData icon,
+    String iconPath,
+    bool isExpanded,
+    VoidCallback onToggle,
     List<_GameItem> items,
   ) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: const Color(0xFF32324A),
@@ -157,37 +199,55 @@ class GamingStreamingScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              Icon(icon, color: AppColors.textBody, size: 40),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: AppColors.textBody,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
+          InkWell(
+            onTap: onToggle,
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  iconPath,
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.textBody,
+                    BlendMode.srcIn,
+                  ),
+                  width: 40,
+                  height: 40,
                 ),
-              ),
-              const Icon(Icons.keyboard_arrow_up, color: AppColors.textBody),
-            ],
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        subtitle,
+                        style: const TextStyle(
+                          color: AppColors.textBody,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: AppColors.textBody,
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 20),
-          ...items.map((item) => _buildGameRow(item)),
+          if (isExpanded) ...[
+            const SizedBox(height: 20),
+            ...items.map((item) => _buildGameRow(item)),
+          ],
         ],
       ),
     );
@@ -205,10 +265,14 @@ class GamingStreamingScreen extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(
-              Icons.image_outlined,
-              color: Colors.grey,
-            ), // Placeholder for logos
+            padding: const EdgeInsets.all(6),
+            alignment: Alignment.center,
+            child: Image.asset(
+              item.logoPath,
+              width: 45,
+              height: 45,
+              fit: BoxFit.contain,
+            ),
           ),
           const SizedBox(width: 15),
           Expanded(
@@ -259,41 +323,64 @@ class GamingStreamingScreen extends StatelessWidget {
   Widget _buildSimpleCategoryCard(
     String title,
     String subtitle,
-    IconData icon,
+    String iconPath,
+    bool isExpanded,
+    VoidCallback onToggle,
   ) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: const Color(0xFF32324A),
         borderRadius: BorderRadius.circular(25),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Icon(icon, color: AppColors.textBody, size: 40),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          InkWell(
+            onTap: onToggle,
+            child: Row(
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                SvgPicture.asset(
+                  iconPath,
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.textBody,
+                    BlendMode.srcIn,
+                  ),
+                  width: 40,
+                  height: 40,
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        subtitle,
+                        style: const TextStyle(
+                          color: AppColors.textBody,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    color: AppColors.textBody,
-                    fontSize: 11,
-                  ),
+                Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: AppColors.textBody,
                 ),
               ],
             ),
           ),
-          const Icon(Icons.keyboard_arrow_down, color: AppColors.textBody),
         ],
       ),
     );
@@ -304,5 +391,7 @@ class _GameItem {
   final String name;
   final String ping;
   final String status;
-  _GameItem(this.name, this.ping, this.status);
+  final String logoPath;
+
+  const _GameItem(this.name, this.ping, this.status, this.logoPath);
 }
