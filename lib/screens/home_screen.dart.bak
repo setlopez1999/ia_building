@@ -270,16 +270,10 @@ class HomeScreen extends StatelessWidget {
           onTap: () => context.push('/historial'),
         ),
         _MenuCard(
-          svgAsset: 'assets/gaming_pad.svg',
-          title: 'Gaming',
+          svgAsset: 'assets/doc-text-svgrepo-com.svg',
+          title: 'Gaming & Streaming',
           subtitle: 'Latencia y servidores',
           onTap: () => context.push('/gaming'),
-        ),
-        _MenuCard(
-          svgAsset: 'assets/streaming.svg',
-          title: 'Streaming',
-          subtitle: 'Plataformas de video',
-          onTap: () => context.push('/streaming'),
         ),
       ],
     );
