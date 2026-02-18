@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'config/router/app_router.dart';
 import 'utils/app_colors.dart';
 
 void main() {
-  runApp(const HealthCheckApp());
+  runApp(const ProviderScope(child: HealthCheckApp()));
 }
 
 class HealthCheckApp extends StatelessWidget {

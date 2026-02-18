@@ -170,35 +170,47 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildMetricsGrid(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const _MetricItem(
-          svgAsset: 'assets/check-square-svgrepo.svg',
-          label: 'Activo',
-          subLabel: 'Estado',
-          color: Color(0xFF00D285),
-        ),
-        InkWell(
-          onTap: () => context.push('/dispositivos'),
-          borderRadius: BorderRadius.circular(15),
-          child: const _MetricItem(
-            svgAsset: 'assets/devices-svgrepo-com.svg',
-            label: '8',
-            subLabel: 'Dispositivos',
+        const Expanded(
+          child: _MetricItem(
+            svgAsset: 'assets/check-square-svgrepo.svg',
+            label: 'Activo',
+            subLabel: 'Estado',
             color: Color(0xFF00D285),
           ),
         ),
-        const _MetricItem(
-          svgAsset: 'assets/loading-16-svgrepo-c.svg',
-          label: '12 ms',
-          subLabel: 'Latencia',
-          color: Color(0xFF00D285),
+        Expanded(
+          child: _MetricItem(
+            svgAsset: 'assets/devices-svgrepo-com.svg',
+            label: '8',
+            subLabel: 'Equipos',
+            color: const Color(0xFF00D285),
+            onTap: () => context.push('/dispositivos'),
+          ),
         ),
-        const _MetricItem(
-          svgAsset: 'assets/clock_speed.svg',
-          label: '248 Mbps',
-          subLabel: 'Velocidad',
-          color: Color(0xFF00D285),
+        const Expanded(
+          child: _MetricItem(
+            svgAsset: 'assets/loading-16-svgrepo-c.svg',
+            label: '12 ms',
+            subLabel: 'Lat. Google',
+            color: Color(0xFF00D285),
+          ),
+        ),
+        const Expanded(
+          child: _MetricItem(
+            svgAsset: 'assets/wifi.svg',
+            label: '5 ms',
+            subLabel: 'Lat. ISP',
+            color: Color(0xFF00D285),
+          ),
+        ),
+        const Expanded(
+          child: _MetricItem(
+            svgAsset: 'assets/clock_speed.svg',
+            label: '248 Mbps',
+            subLabel: 'Velocidad',
+            color: Color(0xFF00D285),
+          ),
         ),
       ],
     );
@@ -291,49 +303,58 @@ class _MetricItem extends StatelessWidget {
   final String label;
   final String subLabel;
   final Color color;
+  final VoidCallback? onTap;
 
   const _MetricItem({
     required this.svgAsset,
     required this.label,
     required this.subLabel,
     required this.color,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: const BoxDecoration(
-            color: Color(0xFF32324A),
-            borderRadius: BorderRadius.all(Radius.circular(15)),
-            //border: Border.all(color: color.withOpacity(0.5), width: 1),
-          ),
-          child: SvgPicture.asset(
-            svgAsset,
-            colorFilter: ColorFilter.mode(
-              color == const Color(0xFF2C2C3E) ? Colors.white : color,
-              BlendMode.srcIn,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(15),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: const BoxDecoration(
+              color: Color(0xFF32324A),
+              borderRadius: BorderRadius.all(Radius.circular(15)),
             ),
-            width: 24,
-            height: 24,
+            child: SvgPicture.asset(
+              svgAsset,
+              colorFilter: ColorFilter.mode(
+                color == const Color(0xFF2C2C3E) ? Colors.white : color,
+                BlendMode.srcIn,
+              ),
+              width: 24,
+              height: 24,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
+          const SizedBox(height: 8),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
           ),
-        ),
-        Text(
-          subLabel,
-          style: const TextStyle(color: AppColors.textBody, fontSize: 11),
-        ),
-      ],
+          Text(
+            subLabel,
+            textAlign: TextAlign.center,
+            softWrap: false,
+            overflow: TextOverflow.visible,
+            style: const TextStyle(color: AppColors.textBody, fontSize: 9),
+          ),
+        ],
+      ),
     );
   }
 }

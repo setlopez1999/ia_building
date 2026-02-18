@@ -15,6 +15,8 @@ import '../../screens/asistencia_problem_screen.dart';
 import '../../screens/asistencia_success_screen.dart';
 import '../../screens/gaming_screen.dart';
 import '../../screens/streaming_screen.dart';
+import '../../screens/gaming_detail_screen.dart';
+import '../../screens/streaming_detail_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -33,10 +35,27 @@ final appRouter = GoRouter(
       path: '/historial',
       builder: (context, state) => const HistoryScreen(),
     ),
-    GoRoute(path: '/gaming', builder: (context, state) => const GamingScreen()),
+    GoRoute(
+      path: '/gaming',
+      builder: (context, state) => const GamingScreen(),
+      routes: [
+        GoRoute(
+          path: ':id',
+          builder: (context, state) =>
+              GamingDetailScreen(gameId: state.pathParameters['id']!),
+        ),
+      ],
+    ),
     GoRoute(
       path: '/streaming',
       builder: (context, state) => const StreamingScreen(),
+      routes: [
+        GoRoute(
+          path: ':id',
+          builder: (context, state) =>
+              StreamingDetailScreen(platformId: state.pathParameters['id']!),
+        ),
+      ],
     ),
     GoRoute(
       path: '/offline',

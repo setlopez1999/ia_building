@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../utils/app_colors.dart';
+import '../features/streaming/models/streaming_platform.dart';
+import '../features/streaming/providers/streaming_provider.dart';
+import 'streaming_detail_screen.dart';
 
-class StreamingScreen extends StatefulWidget {
+class StreamingScreen extends ConsumerWidget {
   const StreamingScreen({super.key});
 
   @override
-  State<StreamingScreen> createState() => _StreamingScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final platformsAsync = ref.watch(streamingPlatformsProvider);
 
-class _StreamingScreenState extends State<StreamingScreen> {
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -62,7 +63,16 @@ class _StreamingScreenState extends State<StreamingScreen> {
               style: TextStyle(color: AppColors.textBody, fontSize: 13),
             ),
             const SizedBox(height: 20),
-            _buildPlatformsList(),
+            platformsAsync.when(
+              data: (platforms) => _buildPlatformsList(context, platforms),
+              loading: () => const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(40.0),
+                  child: CircularProgressIndicator(color: Color(0xFF00D285)),
+                ),
+              ),
+              error: (err, __) => Center(child: Text('Error: $err')),
+            ),
             const SizedBox(height: 40),
           ],
         ),
@@ -70,40 +80,10 @@ class _StreamingScreenState extends State<StreamingScreen> {
     );
   }
 
-  Widget _buildPlatformsList() {
-    final platforms = [
-      {
-        'name': 'Netflix',
-        'quality': '4K UHD',
-        'status': 'Excelente',
-        'icon': Icons.movie,
-      },
-      {
-        'name': 'Disney+',
-        'quality': '4K UHD',
-        'status': 'Excelente',
-        'icon': Icons.animation,
-      },
-      {
-        'name': 'YouTube',
-        'quality': '8K Ready',
-        'status': 'Excelente',
-        'icon': Icons.play_arrow,
-      },
-      {
-        'name': 'Twitch',
-        'quality': '1080p 60fps',
-        'status': 'Excelente',
-        'icon': Icons.live_tv,
-      },
-      {
-        'name': 'Prime Video',
-        'quality': '4K UHD',
-        'status': 'Excelente',
-        'icon': Icons.video_library,
-      },
-    ];
-
+  Widget _buildPlatformsList(
+    BuildContext context,
+    List<StreamingPlatform> platforms,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -111,63 +91,73 @@ class _StreamingScreenState extends State<StreamingScreen> {
         borderRadius: BorderRadius.circular(25),
       ),
       child: Column(
-        children: platforms.map((p) => _buildPlatformRow(p)).toList(),
+        children: platforms.map((p) => _buildPlatformRow(context, p)).toList(),
       ),
     );
   }
 
-  Widget _buildPlatformRow(Map<String, dynamic> platform) {
+  Widget _buildPlatformRow(BuildContext context, StreamingPlatform platform) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
-      child: Row(
-        children: [
-          Container(
-            width: 45,
-            height: 45,
-            decoration: BoxDecoration(
-              color: const Color(0xFF1F1F30),
-              borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  StreamingDetailScreen(platformId: platform.id),
             ),
-            padding: const EdgeInsets.all(6),
-            alignment: Alignment.center,
-            child: Icon(
-              platform['icon'] as IconData,
-              color: Colors.white,
-              size: 24,
+          );
+        },
+        borderRadius: BorderRadius.circular(10),
+        child: Row(
+          children: [
+            Container(
+              width: 45,
+              height: 45,
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 255, 255, 255),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.all(6),
+              alignment: Alignment.center,
+              child: Image.asset(
+                platform.logoAsset,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.play_arrow, color: Colors.grey),
+              ),
             ),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  platform['name'] as String,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    platform.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(
-                  platform['status'] as String,
-                  style: const TextStyle(
-                    color: AppColors.textBody,
-                    fontSize: 11,
+                  const Text(
+                    'Excelente', // Could be dynamic if added to model
+                    style: TextStyle(color: AppColors.textBody, fontSize: 11),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Text(
-            platform['quality'] as String,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+            Text(
+              platform.downloadSpeed,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

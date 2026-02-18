@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../utils/app_colors.dart';
 
+//deprecated
+
 class GamingStreamingScreen extends StatefulWidget {
   const GamingStreamingScreen({super.key});
 
@@ -75,31 +77,31 @@ class _GamingStreamingScreenState extends State<GamingStreamingScreen> {
                   'Riot Games',
                   '25',
                   'Excelente',
-                  'assets/logos/logo_riot.png',
+                  'assets/logos/logo_cs2.png',
                 ),
                 _GameItem(
                   'Valve',
                   '39',
                   'Excelente',
-                  'assets/logos/logo_valve.png',
+                  'assets/logos/logo_cs2.png',
                 ),
                 _GameItem(
                   'Epic Games',
                   '36',
                   'Excelente',
-                  'assets/logos/logo_epic_games.png',
+                  'assets/logos/logo_cs2.png',
                 ),
                 _GameItem(
                   'Activision',
                   '22',
                   'Excelente',
-                  'assets/logos/logo_activision.png',
+                  'assets/logos/logo_cs2.png',
                 ),
                 _GameItem(
                   'EA Sports',
                   '46',
                   'Excelente',
-                  'assets/logos/logo_ea.png',
+                  'assets/logos/logo_cs2.png',
                 ),
               ],
             ),
