@@ -22,7 +22,7 @@ class GamingMonitor extends _$GamingMonitor {
   Timer? _timer;
   final _analyzer = NetworkAnalyzerService();
 
-  // Mapeo de juegos a sus listas de servidores con metadata real del script de Python
+  // Mapeo de juegos a sus listas de servidores con metadata real
   final Map<String, List<GameServer>> _gameTargets = {
     'cs2': [
       const GameServer(
@@ -147,71 +147,62 @@ class GamingMonitor extends _$GamingMonitor {
   };
 
   @override
-  void build() {
-    _startMonitoring();
+  void build(String gameId) {
+    // Iniciamos el monitoreo periódico al construir este provider de familia
+    _startPeriodicMonitoring(gameId);
+
+    // Al destruir este provider (porque nadie lo usa), cancelamos el timer
     ref.onDispose(() => _timer?.cancel());
   }
 
-  void _startMonitoring() {
+  void _startPeriodicMonitoring(String gameId) {
     _timer?.cancel();
-    _performAnalysis();
     _timer = Timer.periodic(
-      const Duration(seconds: 5),
-      (_) => _performAnalysis(),
+      const Duration(seconds: 4),
+      (_) => _performAnalysis(gameId),
     );
   }
 
-  Future<void> _performAnalysis() async {
-    final repository = ref.read(gamingRepositoryProvider);
+  /// Realiza un sondeo único (útil para la pantalla de carga)
+  Future<bool> probeOnce(String gameId) async {
+    return _performAnalysis(gameId);
+  }
 
-    final futures = _gameTargets.entries.map((entry) async {
-      final gameId = entry.key;
-      final servers = entry.value;
+  Future<bool> _performAnalysis(String gameId) async {
+    final servers = _gameTargets[gameId];
+    if (servers == null) return false;
 
-      // PASO 1: Quick Probe (1 ping rápido a TODOS los servidores en paralelo)
-      final probeResults = await Future.wait(
-        servers.map((s) => _analyzer.analyze(s.target, count: 1)),
+    // PASO 1: Quick Probe
+    final probeResults = await Future.wait(
+      servers.map((s) => _analyzer.analyze(s.target, count: 1)),
+    );
+
+    GameServer? bestServer;
+    double minPing = 99999;
+    for (int i = 0; i < servers.length; i++) {
+      final result = probeResults[i];
+      if (result.success && result.avgPing < minPing) {
+        minPing = result.avgPing;
+        bestServer = servers[i];
+      }
+    }
+    bestServer ??= servers.first;
+
+    // PASO 2: Análisis Profundo
+    final deepResult = await _analyzer.analyze(bestServer.target, count: 3);
+
+    if (deepResult.success) {
+      final repository = ref.read(gamingRepositoryProvider);
+      repository.updateGameMetrics(
+        id: gameId,
+        ping: deepResult.avgPing,
+        loss: deepResult.lossPercent,
+        jitter: deepResult.jitter,
+        serverName: bestServer.name,
+        serverLocation: bestServer.location,
       );
-
-      // PASO 2: Encontrar el mejor servidor basado en latencia
-      GameServer? bestServer;
-      double minPing = 99999;
-
-      for (int i = 0; i < servers.length; i++) {
-        final result = probeResults[i];
-        if (result.success && result.avgPing < minPing) {
-          minPing = result.avgPing;
-          bestServer = servers[i];
-        }
-      }
-
-      // Si no encontramos ninguno exitoso, usamos el primero por defecto para el reintento profundo
-      bestServer ??= servers.first;
-
-      // PASO 3: Análisis Profundo (4 pings) al mejor servidor encontrado
-      final deepResult = await _analyzer.analyze(bestServer.target, count: 4);
-
-      if (deepResult.success) {
-        repository.updateGameMetrics(
-          id: gameId,
-          ping: deepResult.avgPing,
-          loss: deepResult.lossPercent,
-          jitter: deepResult.jitter,
-          serverName: bestServer.name,
-          serverLocation: bestServer.location,
-        );
-      } else {
-        repository.updateGameMetrics(
-          id: gameId,
-          ping: 0,
-          loss: 100,
-          jitter: 0,
-          serverName: bestServer.name,
-          serverLocation: bestServer.location,
-        );
-      }
-    });
-
-    await Future.wait(futures);
+      return true;
+    }
+    return false;
   }
 }

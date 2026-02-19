@@ -5,32 +5,22 @@ import 'package:go_router/go_router.dart';
 import '../utils/app_colors.dart';
 import '../features/gaming/models/game.dart';
 import '../features/gaming/providers/gaming_provider.dart';
-import '../features/gaming/services/gaming_monitor_service.dart';
-import 'gaming_detail_screen.dart';
 
 class GamingScreen extends ConsumerWidget {
   const GamingScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Activamos el monitor de juegos mientras estemos en esta pantalla
-    ref.watch(gamingMonitorProvider);
-
     final gamesAsync = ref.watch(gamesProvider);
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/');
-            }
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
           'Gaming',
@@ -72,7 +62,9 @@ class GamingScreen extends ConsumerWidget {
               loading: () => const Center(
                 child: Padding(
                   padding: EdgeInsets.all(40.0),
-                  child: CircularProgressIndicator(color: Color(0xFF00D285)),
+                  child: CircularProgressIndicator(
+                    color: Color.fromARGB(255, 210, 7, 0),
+                  ),
                 ),
               ),
               error: (err, stack) => Center(
@@ -118,14 +110,7 @@ class GamingScreen extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => GamingDetailScreen(gameId: game.id),
-            ),
-          );
-        },
+        onTap: () => context.push('/gaming/${game.id}'),
         borderRadius: BorderRadius.circular(10),
         child: Row(
           children: [
@@ -161,10 +146,11 @@ class GamingScreen extends ConsumerWidget {
                     ),
                   ),
                   Text(
-                    game.status,
-                    style: const TextStyle(
-                      color: AppColors.textBody,
-                      fontSize: 11,
+                    'Ver Latencia',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],

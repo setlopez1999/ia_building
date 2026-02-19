@@ -39,6 +39,9 @@ flutter:
     - assets/loading-16-svgrepo-c.svg
     - assets/robot.svg
     - assets/wifi_off.svg
+    - assets/gaming_pad.svg
+    - assets/streaming.svg
     - assets/logos/
+    - assets/hub/
 
     

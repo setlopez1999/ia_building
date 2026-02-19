@@ -12,8 +12,8 @@ class StreamingDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Activamos el monitor de streaming mientras estemos en esta pantalla
-    ref.watch(streamingMonitorProvider);
+    // Monitoreo automático solo para esta plataforma
+    ref.watch(streamingMonitorProvider(platformId));
 
     final platformAsync = ref.watch(
       streamingPlatformDetailProvider(platformId),

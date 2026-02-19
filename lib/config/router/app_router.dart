@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import '../../screens/home_screen.dart';
+import '../../screens/hub_screen.dart';
 import '../../screens/chat_screen.dart';
 import '../../screens/history_screen.dart';
 import '../../screens/diagnostico_screen.dart';
@@ -17,11 +18,23 @@ import '../../screens/gaming_screen.dart';
 import '../../screens/streaming_screen.dart';
 import '../../screens/gaming_detail_screen.dart';
 import '../../screens/streaming_detail_screen.dart';
+import '../../screens/service_loading_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
-    GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
+    GoRoute(path: '/', builder: (context, state) => const HubScreen()),
+    GoRoute(
+      path: '/check_health',
+      builder: (context, state) => const HomeScreen(),
+    ),
+    GoRoute(
+      path: '/loading',
+      builder: (context, state) {
+        final to = state.uri.queryParameters['to'] ?? '/';
+        return ServiceLoadingScreen(targetPath: to);
+      },
+    ),
     GoRoute(
       path: '/diagnostico',
       builder: (context, state) => const DiagnosticoScreen(),

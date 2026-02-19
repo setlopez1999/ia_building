@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import '../utils/app_colors.dart';
 import '../features/gaming/models/game.dart';
 import '../features/gaming/providers/gaming_provider.dart';
@@ -28,6 +30,14 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
       vsync: this,
       duration: const Duration(seconds: 3),
     )..repeat();
+    _initProbe();
+  }
+
+  Future<void> _initProbe() async {
+    // Realizamos el sondeo inicial (esto toma unos 2-3 segundos)
+    await ref
+        .read(gamingMonitorProvider(widget.gameId).notifier)
+        .probeOnce(widget.gameId);
   }
 
   @override
@@ -38,11 +48,11 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Activamos el monitor de juegos mientras estemos en esta pantalla
-    ref.watch(gamingMonitorProvider);
+    // Al hacer watch del provider con el ID del juego, Riverpod mantiene el monitoreo
+    // activo solo mientras esta pantalla exista.
+    ref.watch(gamingMonitorProvider(widget.gameId));
 
     final gameAsync = ref.watch(gameDetailProvider(widget.gameId));
-
     return Scaffold(
       backgroundColor: const Color(0xFF1A1C32),
       appBar: AppBar(
@@ -60,26 +70,85 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
               fontWeight: FontWeight.bold,
             ),
           ),
-          loading: () => const Text('Cargando...'),
+          loading: () => const Text('Sondeando...'),
           error: (_, __) => const Text('Error'),
         ),
       ),
       body: gameAsync.when(
         data: (game) {
-          if (game == null) {
-            return const Center(child: Text('Juego no encontrado'));
+          if (game == null || game.status == 'Esperando...') {
+            return _buildProbeView();
           }
           return _buildContent(game);
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF00D285)),
-        ),
+        loading: () => _buildProbeView(),
         error: (err, __) => Center(child: Text('Error: $err')),
       ),
     );
   }
 
+  Widget _buildProbeView() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Icono de Gaming
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFF2E2E42),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF00D285).withOpacity(0.2),
+                  blurRadius: 30,
+                  spreadRadius: 5,
+                ),
+              ],
+            ),
+            child: SvgPicture.asset(
+              'assets/gaming_pad.svg',
+              width: 60,
+              height: 60,
+              colorFilter: const ColorFilter.mode(
+                Color(0xFF00D285),
+                BlendMode.srcIn,
+              ),
+            ),
+          ),
+          const SizedBox(height: 50),
+          // Indicador de carga pro
+          const SizedBox(
+            width: 60,
+            height: 60,
+            child: LoadingIndicator(
+              indicatorType: Indicator.ballScaleMultiple,
+              colors: [Color(0xFF00D285), Colors.white],
+              strokeWidth: 2,
+            ),
+          ),
+          const SizedBox(height: 40),
+          const Text(
+            'Sondeando mejores servidores...',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Calculando latencia optimizada para tu región',
+            style: TextStyle(color: AppColors.textBody, fontSize: 13),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildContent(Game game) {
+    final statusColor = _getStatusColor(game.status);
+
     return Column(
       children: [
         Expanded(
@@ -96,9 +165,14 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
                     AnimatedBuilder(
                       animation: _controller,
                       builder: (context, child) {
-                        return CustomPaint(
-                          painter: _RadarPainter(_controller.value),
-                          size: const Size(280, 280),
+                        return RepaintBoundary(
+                          child: CustomPaint(
+                            painter: _RadarPainter(
+                              _controller.value,
+                              statusColor,
+                            ),
+                            size: const Size(280, 280),
+                          ),
                         );
                       },
                     ),
@@ -118,10 +192,10 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
                               ),
                             ),
                             const SizedBox(width: 8),
-                            const Text(
+                            Text(
                               'ms',
                               style: TextStyle(
-                                color: Color(0xFF00D285),
+                                color: statusColor,
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -146,12 +220,22 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildMetricColumn('Pérdida', game.loss, isDivider: true),
-                    _buildMetricColumn('Jitter', game.jitter, isDivider: true),
+                    _buildMetricColumn(
+                      'Pérdida',
+                      game.loss,
+                      isDivider: true,
+                      dividerColor: statusColor,
+                    ),
+                    _buildMetricColumn(
+                      'Jitter',
+                      game.jitter,
+                      isDivider: true,
+                      dividerColor: statusColor,
+                    ),
                     _buildMetricColumn(
                       'Estado',
                       game.status,
-                      valueColor: const Color(0xFF00D285),
+                      valueColor: statusColor,
                     ),
                   ],
                 ),
@@ -169,11 +253,7 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
                     children: [
                       Row(
                         children: [
-                          const Icon(
-                            Icons.dns,
-                            color: Color(0xFF00D285),
-                            size: 20,
-                          ),
+                          Icon(Icons.dns, color: statusColor, size: 20),
                           const SizedBox(width: 10),
                           Text(
                             'SERVIDOR',
@@ -214,11 +294,32 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
     );
   }
 
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Excelente':
+        return const Color(0xFF00D285);
+      case 'Muy Bueno':
+        return const Color.fromARGB(255, 128, 255, 89);
+      case 'Bueno':
+        return Colors.amber;
+      case 'Regular':
+        return Colors.orange;
+      case 'Malo':
+      case 'Sin Conexión':
+        return Colors.redAccent;
+      case 'Esperando...':
+        return Colors.grey;
+      default:
+        return Colors.white;
+    }
+  }
+
   Widget _buildMetricColumn(
     String label,
     String value, {
     bool isDivider = false,
     Color valueColor = Colors.white,
+    Color? dividerColor,
   }) {
     return Expanded(
       child: Row(
@@ -250,11 +351,12 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
               width: 1.5,
               height: 35,
               decoration: BoxDecoration(
-                color: const Color(0xFF00D285),
-                boxShadow: showGlows
+                color: dividerColor ?? const Color(0xFF00D285),
+                boxShadow: (showGlows && dividerColor != Colors.grey)
                     ? [
                         BoxShadow(
-                          color: const Color(0xFF00D285).withOpacity(0.8),
+                          color: (dividerColor ?? const Color(0xFF00D285))
+                              .withOpacity(0.8),
                           blurRadius: 12,
                           spreadRadius: 1,
                         ),
@@ -270,14 +372,15 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
 
 class _RadarPainter extends CustomPainter {
   final double animationValue;
+  final Color color;
 
-  _RadarPainter(this.animationValue);
+  _RadarPainter(this.animationValue, this.color);
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final paint = Paint()
-      ..color = const Color(0xFF00D285).withOpacity(1.0 - animationValue)
+      ..color = color.withOpacity(1.0 - animationValue)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -285,12 +388,13 @@ class _RadarPainter extends CustomPainter {
     for (int i = 0; i < 3; i++) {
       final value = (animationValue + i / 3) % 1.0;
       final radius = (size.width / 2) * value;
-      paint.color = const Color(0xFF00D285).withOpacity(1.0 - value);
+      paint.color = color.withOpacity(1.0 - value);
       canvas.drawCircle(center, radius, paint);
     }
   }
 
   @override
   bool shouldRepaint(covariant _RadarPainter oldDelegate) =>
-      oldDelegate.animationValue != animationValue;
+      oldDelegate.animationValue != animationValue ||
+      oldDelegate.color != color;
 }

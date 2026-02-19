@@ -13,7 +13,7 @@ class StreamingMonitor extends _$StreamingMonitor {
   final _random = Random();
 
   final Map<String, String> _platformTargets = {
-    'netflix': 'custom.netflix.com', // AWS/Netflix
+    'netflix': 'custom.netflix.com',
     'youtube': 'google.com',
     'disney': 'cloudfront.net',
     'hbomax': 'azure.microsoft.com',
@@ -21,46 +21,36 @@ class StreamingMonitor extends _$StreamingMonitor {
   };
 
   @override
-  void build() {
-    _startMonitoring();
+  void build(String platformId) {
+    _startPeriodicMonitoring(platformId);
     ref.onDispose(() => _timer?.cancel());
   }
 
-  void _startMonitoring() {
+  void _startPeriodicMonitoring(String platformId) {
     _timer?.cancel();
-    _performAnalysis();
     _timer = Timer.periodic(
       const Duration(seconds: 8),
-      (_) => _performAnalysis(),
+      (_) => _performAnalysis(platformId),
     );
   }
 
-  Future<void> _performAnalysis() async {
-    final repository = ref.read(streamingRepositoryProvider);
+  Future<void> _performAnalysis(String platformId) async {
+    final target = _platformTargets[platformId];
+    if (target == null) return;
 
-    final futures = _platformTargets.entries.map((entry) async {
-      final id = entry.key;
-      final target = entry.value;
+    final result = await _analyzer.analyze(target, count: 2);
 
-      final result = await _analyzer.analyze(target, count: 2);
+    double baseSpeed = 40.0 + _random.nextDouble() * 20.0;
+    if (result.success) {
+      if (result.avgPing < 50) baseSpeed += 20;
+      if (result.avgPing > 150) baseSpeed -= 15;
 
-      // Simulamos una velocidad basada en el ping para que parezca real
-      // A menor ping, mayor velocidad (dentro de un rango)
-      double baseSpeed = 40.0 + _random.nextDouble() * 20.0;
-      if (result.success) {
-        if (result.avgPing < 50) baseSpeed += 20;
-        if (result.avgPing > 150) baseSpeed -= 15;
-
-        repository.updatePlatformMetrics(
-          id: id,
-          speed: baseSpeed,
-          upload: baseSpeed / 4,
-        );
-      } else {
-        repository.updatePlatformMetrics(id: id, speed: 0, upload: 0);
-      }
-    });
-
-    await Future.wait(futures);
+      final repository = ref.read(streamingRepositoryProvider);
+      repository.updatePlatformMetrics(
+        id: platformId,
+        speed: baseSpeed,
+        upload: baseSpeed / 4,
+      );
+    }
   }
 }

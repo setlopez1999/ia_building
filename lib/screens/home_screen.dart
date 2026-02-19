@@ -14,7 +14,10 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        leading: const Icon(Icons.arrow_back, color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => context.go('/'),
+        ),
         title: const Text(
           'Check Health',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -258,7 +261,7 @@ class HomeScreen extends StatelessWidget {
       childAspectRatio: 1.1,
       children: [
         _MenuCard(
-          svgAsset: 'assets/wifi-off.svg',
+          svgAsset: 'assets/wifi_off.svg',
           title: 'Modo Offline',
           subtitle: 'Diagnóstico sin internet',
           onTap: () => context.push('/offline'),

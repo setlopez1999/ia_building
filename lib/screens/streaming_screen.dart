@@ -5,17 +5,12 @@ import 'package:go_router/go_router.dart';
 import '../utils/app_colors.dart';
 import '../features/streaming/models/streaming_platform.dart';
 import '../features/streaming/providers/streaming_provider.dart';
-import '../features/streaming/services/streaming_monitor_service.dart';
-import 'streaming_detail_screen.dart';
 
 class StreamingScreen extends ConsumerWidget {
   const StreamingScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Activamos el monitor de streaming mientras estemos en esta pantalla
-    ref.watch(streamingMonitorProvider);
-
     final platformsAsync = ref.watch(streamingPlatformsProvider);
 
     return Scaffold(
@@ -104,15 +99,7 @@ class StreamingScreen extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  StreamingDetailScreen(platformId: platform.id),
-            ),
-          );
-        },
+        onTap: () => context.push('/streaming/${platform.id}'),
         borderRadius: BorderRadius.circular(10),
         child: Row(
           children: [
