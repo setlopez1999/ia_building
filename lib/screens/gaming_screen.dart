@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../utils/app_colors.dart';
 import '../features/gaming/models/game.dart';
 import '../features/gaming/providers/gaming_provider.dart';
+import '../features/gaming/services/gaming_monitor_service.dart';
 import 'gaming_detail_screen.dart';
 
 class GamingScreen extends ConsumerWidget {
@@ -12,6 +13,9 @@ class GamingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Activamos el monitor de juegos mientras estemos en esta pantalla
+    ref.watch(gamingMonitorProvider);
+
     final gamesAsync = ref.watch(gamesProvider);
 
     return Scaffold(

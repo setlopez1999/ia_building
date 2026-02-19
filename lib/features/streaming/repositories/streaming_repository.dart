@@ -1,15 +1,17 @@
 import 'dart:async';
-import 'dart:math';
 import '../models/streaming_platform.dart';
 
 class StreamingRepository {
+  final _platformsController =
+      StreamController<List<StreamingPlatform>>.broadcast();
+
   List<StreamingPlatform> _platforms = [
     const StreamingPlatform(
       id: 'netflix',
       name: 'Netflix',
       logoAsset: 'assets/logos/logo_netflix.png',
-      downloadSpeed: '45.2 Mbps',
-      uploadSpeed: '12.5 Mbps',
+      downloadSpeed: '-- Mbps',
+      uploadSpeed: '-- Mbps',
       serverName: 'AWS Virginia',
       serverLocation: 'USA',
     ),
@@ -17,8 +19,8 @@ class StreamingRepository {
       id: 'youtube',
       name: 'YouTube',
       logoAsset: 'assets/logos/logo_youtube.png',
-      downloadSpeed: '62.8 Mbps',
-      uploadSpeed: '18.2 Mbps',
+      downloadSpeed: '-- Mbps',
+      uploadSpeed: '-- Mbps',
       serverName: 'Google Santiago',
       serverLocation: 'Chile',
     ),
@@ -26,8 +28,8 @@ class StreamingRepository {
       id: 'disney',
       name: 'Disney+',
       logoAsset: 'assets/logos/logo_disneyplus.png',
-      downloadSpeed: '40.0 Mbps',
-      uploadSpeed: '11.0 Mbps',
+      downloadSpeed: '-- Mbps',
+      uploadSpeed: '-- Mbps',
       serverName: 'Cloudfront East',
       serverLocation: 'USA',
     ),
@@ -35,8 +37,8 @@ class StreamingRepository {
       id: 'hbomax',
       name: 'HBO Max',
       logoAsset: 'assets/logos/logo_hbomax.png',
-      downloadSpeed: '35.1 Mbps',
-      uploadSpeed: '8.4 Mbps',
+      downloadSpeed: '-- Mbps',
+      uploadSpeed: '-- Mbps',
       serverName: 'Azure Central',
       serverLocation: 'USA',
     ),
@@ -44,36 +46,41 @@ class StreamingRepository {
       id: 'prime',
       name: 'Prime Video',
       logoAsset: 'assets/logos/logo_primevideo.png',
-      downloadSpeed: '38.0 Mbps',
-      uploadSpeed: '9.0 Mbps',
+      downloadSpeed: '-- Mbps',
+      uploadSpeed: '-- Mbps',
       serverName: 'AWS Seattle',
       serverLocation: 'USA',
     ),
   ];
 
-  Stream<List<StreamingPlatform>> watchPlatforms() async* {
-    while (true) {
-      final random = Random();
-      _platforms = _platforms.map((p) {
-        final currentSpeed = double.parse(p.downloadSpeed.split(' ')[0]);
-        // Volatility for clearly visible changes
-        final volatility = (random.nextDouble() * 5) - 2.5; // -2.5 to +2.5
-        final newSpeed = (currentSpeed + volatility).clamp(10.0, 150.0);
+  StreamingRepository() {
+    scheduleMicrotask(() => _platformsController.add(_platforms));
+  }
 
-        return p.copyWith(downloadSpeed: '${newSpeed.toStringAsFixed(1)} Mbps');
-      }).toList();
-
-      yield _platforms;
-      await Future.delayed(const Duration(milliseconds: 1500));
+  void updatePlatformMetrics({
+    required String id,
+    required double speed,
+    required double upload,
+  }) {
+    final index = _platforms.indexWhere((p) => p.id == id);
+    if (index != -1) {
+      _platforms[index] = _platforms[index].copyWith(
+        downloadSpeed: '${speed.toStringAsFixed(1)} Mbps',
+        uploadSpeed: '${upload.toStringAsFixed(1)} Mbps',
+      );
+      _platformsController.add(List.from(_platforms));
     }
   }
 
-  Stream<StreamingPlatform?> watchPlatform(String id) async* {
-    await for (final platforms in watchPlatforms()) {
-      yield platforms.firstWhere(
+  Stream<List<StreamingPlatform>> watchPlatforms() =>
+      _platformsController.stream;
+
+  Stream<StreamingPlatform?> watchPlatform(String id) {
+    return watchPlatforms().map(
+      (platforms) => platforms.firstWhere(
         (p) => p.id == id,
         orElse: () => _platforms.firstWhere((p) => p.id == id),
-      );
-    }
+      ),
+    );
   }
 }

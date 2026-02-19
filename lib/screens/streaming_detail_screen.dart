@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../utils/app_colors.dart';
 import '../features/streaming/models/streaming_platform.dart';
 import '../features/streaming/providers/streaming_provider.dart';
+import '../features/streaming/services/streaming_monitor_service.dart';
 
 class StreamingDetailScreen extends ConsumerWidget {
   final String platformId;
@@ -11,6 +12,9 @@ class StreamingDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Activamos el monitor de streaming mientras estemos en esta pantalla
+    ref.watch(streamingMonitorProvider);
+
     final platformAsync = ref.watch(
       streamingPlatformDetailProvider(platformId),
     );

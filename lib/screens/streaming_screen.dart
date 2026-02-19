@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../utils/app_colors.dart';
 import '../features/streaming/models/streaming_platform.dart';
 import '../features/streaming/providers/streaming_provider.dart';
+import '../features/streaming/services/streaming_monitor_service.dart';
 import 'streaming_detail_screen.dart';
 
 class StreamingScreen extends ConsumerWidget {
@@ -12,6 +13,9 @@ class StreamingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Activamos el monitor de streaming mientras estemos en esta pantalla
+    ref.watch(streamingMonitorProvider);
+
     final platformsAsync = ref.watch(streamingPlatformsProvider);
 
     return Scaffold(

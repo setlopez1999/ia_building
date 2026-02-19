@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../utils/app_colors.dart';
 import '../features/gaming/models/game.dart';
 import '../features/gaming/providers/gaming_provider.dart';
+import '../features/gaming/services/gaming_monitor_service.dart';
 
 class GamingDetailScreen extends ConsumerStatefulWidget {
   final String gameId;
@@ -37,6 +38,9 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    // Activamos el monitor de juegos mientras estemos en esta pantalla
+    ref.watch(gamingMonitorProvider);
+
     final gameAsync = ref.watch(gameDetailProvider(widget.gameId));
 
     return Scaffold(
