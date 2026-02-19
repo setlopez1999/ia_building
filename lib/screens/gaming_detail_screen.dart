@@ -54,7 +54,7 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
 
     final gameAsync = ref.watch(gameDetailProvider(widget.gameId));
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1C32),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -96,7 +96,7 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFF2E2E42),
+              color: AppColors.background,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(

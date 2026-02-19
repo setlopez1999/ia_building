@@ -186,13 +186,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ),
         child: Row(
           children: [
-            IconButton(
-              icon: const Icon(
-                Icons.sentiment_satisfied_alt_outlined,
-                color: Color(0xFF7B61FF),
-              ),
-              onPressed: () {},
-            ),
             Expanded(
               child: TextField(
                 controller: _controller,

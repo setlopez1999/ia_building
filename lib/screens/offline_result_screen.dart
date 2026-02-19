@@ -95,7 +95,7 @@ class OfflineResultScreen extends StatelessWidget {
 
   Widget _buildAcceptButton(BuildContext context) {
     return InkWell(
-      onTap: () => context.go('/'),
+      onTap: () => context.go('/check_health'),
       borderRadius: BorderRadius.circular(15),
       child: Container(
         width: double.infinity,

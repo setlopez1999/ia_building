@@ -290,12 +290,12 @@ class HomeScreen extends StatelessWidget {
           subtitle: 'Latencia y servidores',
           onTap: () => context.push('/gaming'),
         ),
-        _MenuCard(
-          svgAsset: 'assets/streaming.svg',
-          title: 'Streaming',
-          subtitle: 'Plataformas de video',
-          onTap: () => context.push('/streaming'),
-        ),
+        // _MenuCard(
+        //   svgAsset: 'assets/streaming.svg',
+        //   title: 'Streaming',
+        //   subtitle: 'Plataformas de video',
+        //   onTap: () => context.push('/streaming'),
+        // ),
       ],
     );
   }

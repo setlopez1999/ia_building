@@ -41,6 +41,13 @@ flutter:
     - assets/wifi_off.svg
     - assets/gaming_pad.svg
     - assets/streaming.svg
+    - assets/bad_sign.svg
+    - assets/internet.svg
+    - assets/internet_slow.svg
+    - assets/laptop.svg
+    - assets/pc.svg
+    - assets/router.svg
+    - assets/smartphone.svg
     - assets/logos/
     - assets/hub/
 
