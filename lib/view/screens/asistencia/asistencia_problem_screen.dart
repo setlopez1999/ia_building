@@ -141,7 +141,7 @@ class AsistenciaProblemScreen extends StatelessWidget {
 
   Widget _buildApplyButton(BuildContext context) {
     return InkWell(
-      onTap: () => context.push('/asistencia_success'),
+      onTap: () => context.push('/check_health/asistencia/success'),
       borderRadius: BorderRadius.circular(15),
       child: Container(
         width: double.infinity,

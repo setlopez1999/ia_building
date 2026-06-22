@@ -72,7 +72,7 @@ class CheckHealthScreen extends StatelessWidget {
 
   Widget _buildWifiStatusCard(BuildContext context) {
     return InkWell(
-      onTap: () => context.push('/change_password'),
+      onTap: () => context.push('/check_health/change_password'),
       borderRadius: BorderRadius.circular(25),
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -188,7 +188,7 @@ class CheckHealthScreen extends StatelessWidget {
             label: '8',
             subLabel: 'Equipos',
             color: const Color(0xFF00D285),
-            onTap: () => context.push('/dispositivos'),
+            onTap: () => context.push('/check_health/dispositivos'),
           ),
         ),
         const Expanded(
@@ -221,7 +221,7 @@ class CheckHealthScreen extends StatelessWidget {
 
   Widget _buildActionButton(BuildContext context) {
     return InkWell(
-      onTap: () => context.push('/diagnostico'),
+      onTap: () => context.push('/check_health/diagnostico'),
       borderRadius: BorderRadius.circular(15),
       child: Container(
         width: double.infinity,
@@ -264,37 +264,37 @@ class CheckHealthScreen extends StatelessWidget {
           svgAsset: 'assets/wifi_off.svg',
           title: 'Modo Offline',
           subtitle: 'Diagnóstico sin internet',
-          onTap: () => context.push('/offline'),
+          onTap: () => context.push('/check_health/offline'),
         ),
         _MenuCard(
           svgAsset: 'assets/robot.svg',
           title: 'Chat',
           subtitle: 'Conversemos;',
-          onTap: () => context.push('/chat'),
+          onTap: () => context.push('/check_health/chat'),
         ),
         _MenuCard(
           svgAsset: 'assets/help-circle-svgrepo-.svg',
           title: 'Asistencia',
           subtitle: 'Solución guiada',
-          onTap: () => context.push('/asistencia'),
+          onTap: () => context.push('/check_health/asistencia'),
         ),
         _MenuCard(
           svgAsset: 'assets/doc-text-svgrepo-com.svg',
           title: 'Historial',
           subtitle: 'Ver diagnósticos',
-          onTap: () => context.push('/historial'),
+          onTap: () => context.go('/historial'),
         ),
         _MenuCard(
           svgAsset: 'assets/gaming_pad.svg',
           title: 'Gaming',
           subtitle: 'Latencia y servidores',
-          onTap: () => context.push('/gaming'),
+          onTap: () => context.push('/check_health/gaming'),
         ),
         // _MenuCard(
         //   svgAsset: 'assets/streaming.svg',
         //   title: 'Streaming',
         //   subtitle: 'Plataformas de video',
-        //   onTap: () => context.push('/streaming'),
+        //   onTap: () => context.push('/check_health/streaming'),
         // ),
       ],
     );

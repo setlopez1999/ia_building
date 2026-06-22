@@ -96,7 +96,7 @@ class AsistenciaIntroScreen extends StatelessWidget {
     required String subtitle,
   }) {
     return InkWell(
-      onTap: () => context.push('/asistencia_diagnostic'),
+      onTap: () => context.push('/check_health/asistencia/diagnostic'),
       borderRadius: BorderRadius.circular(25),
       child: Container(
         padding: const EdgeInsets.all(25),

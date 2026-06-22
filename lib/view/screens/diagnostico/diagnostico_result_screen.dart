@@ -246,7 +246,7 @@ class DiagnosticoResultScreen extends StatelessWidget {
 
   Widget _buildNewDiagnosticButton(BuildContext context) {
     return InkWell(
-      onTap: () => context.pushReplacement('/diagnostico'),
+      onTap: () => context.pushReplacement('/check_health/diagnostico'),
       borderRadius: BorderRadius.circular(15),
       child: Container(
         width: double.infinity,

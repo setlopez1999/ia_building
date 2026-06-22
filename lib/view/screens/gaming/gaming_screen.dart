@@ -110,7 +110,7 @@ class GamingScreen extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: InkWell(
-        onTap: () => context.push('/gaming/${game.id}'),
+        onTap: () => context.push('/check_health/gaming/${game.id}'),
         borderRadius: BorderRadius.circular(10),
         child: Row(
           children: [

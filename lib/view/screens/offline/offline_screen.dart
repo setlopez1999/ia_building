@@ -150,7 +150,7 @@ class OfflineScreen extends StatelessWidget {
 
   Widget _buildExecuteButton(BuildContext context) {
     return InkWell(
-      onTap: () => context.push('/offline_result'),
+      onTap: () => context.push('/check_health/offline/result'),
       borderRadius: BorderRadius.circular(15),
       child: Container(
         width: double.infinity,

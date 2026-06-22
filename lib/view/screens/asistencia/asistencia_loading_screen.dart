@@ -29,7 +29,7 @@ class _AsistenciaLoadingScreenState extends State<AsistenciaLoadingScreen>
       })
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          context.pushReplacement('/asistencia_problem');
+          context.pushReplacement('/check_health/asistencia/problem');
         }
       });
 

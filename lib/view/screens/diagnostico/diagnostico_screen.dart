@@ -29,7 +29,7 @@ class _DiagnosticoScreenState extends State<DiagnosticoScreen>
       })
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          context.pushReplacement('/diagnostico_result');
+          context.pushReplacement('/check_health/diagnostico_result');
         }
       });
 

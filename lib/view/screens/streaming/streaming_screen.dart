@@ -99,7 +99,7 @@ class StreamingScreen extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: InkWell(
-        onTap: () => context.push('/streaming/${platform.id}'),
+        onTap: () => context.push('/check_health/streaming/${platform.id}'),
         borderRadius: BorderRadius.circular(10),
         child: Row(
           children: [

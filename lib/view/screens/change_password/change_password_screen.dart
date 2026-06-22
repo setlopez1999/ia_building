@@ -104,7 +104,7 @@ class ChangePasswordScreen extends StatelessWidget {
 
   Widget _buildSubmitButton(BuildContext context) {
     return InkWell(
-      onTap: () => context.push('/change_password_success'),
+      onTap: () => context.push('/check_health/change_password/success'),
       borderRadius: BorderRadius.circular(15),
       child: Container(
         width: double.infinity,
