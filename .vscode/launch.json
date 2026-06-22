@@ -1,11 +1,36 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Flutter (FVM)",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart"
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter (FVM) — Dev",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=BASE_URL=https://api.tu-isp.com",
+        "--dart-define=APP_DEBUG=true"
+      ]
+    },
+    {
+      "name": "Flutter (FVM) — Staging",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=BASE_URL=https://staging.tu-isp.com",
+        "--dart-define=APP_DEBUG=false"
+      ]
+    },
+    {
+      "name": "Flutter (FVM) — Producción",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=BASE_URL=https://api.tu-isp.com",
+        "--dart-define=APP_DEBUG=false"
+      ]
+    }
+  ]
 }
