@@ -1,32 +1,35 @@
 import 'package:go_router/go_router.dart';
-import '../../screens/home_screen.dart';
-import '../../screens/hub_screen.dart';
-import '../../screens/chat_screen.dart';
-import '../../screens/history_screen.dart';
-import '../../screens/diagnostico_screen.dart';
-import '../../screens/diagnostico_result_screen.dart';
-import '../../screens/offline_screen.dart';
-import '../../screens/offline_result_screen.dart';
-import '../../screens/change_password_screen.dart';
-import '../../screens/change_password_success_screen.dart';
-import '../../screens/devices_screen.dart';
-import '../../screens/asistencia_intro_screen.dart';
-import '../../screens/asistencia_screen.dart';
-import '../../screens/asistencia_problem_screen.dart';
-import '../../screens/asistencia_success_screen.dart';
-import '../../screens/gaming_screen.dart';
-import '../../screens/streaming_screen.dart';
-import '../../screens/gaming_detail_screen.dart';
-import '../../screens/streaming_detail_screen.dart';
-import '../../screens/service_loading_screen.dart';
+
+// ── Vistas (nueva estructura view/screens/) ───────────────────────────────────
+import '../../view/screens/home/home_screen.dart';
+import '../../view/screens/home/service_loading_screen.dart';
+import '../../view/screens/check_health/check_health_screen.dart';
+import '../../view/screens/diagnostico/diagnostico_screen.dart';
+import '../../view/screens/diagnostico/diagnostico_result_screen.dart';
+import '../../view/screens/historial/historial_screen.dart';
+import '../../view/screens/gaming/gaming_screen.dart';
+import '../../view/screens/gaming/gaming_detail_screen.dart';
+import '../../view/screens/gaming/gaming_streaming_screen.dart';
+import '../../view/screens/streaming/streaming_screen.dart';
+import '../../view/screens/streaming/streaming_detail_screen.dart';
+import '../../view/screens/chat/chat_screen.dart';
+import '../../view/screens/asistencia/asistencia_intro_screen.dart';
+import '../../view/screens/asistencia/asistencia_loading_screen.dart';
+import '../../view/screens/asistencia/asistencia_problem_screen.dart';
+import '../../view/screens/asistencia/asistencia_success_screen.dart';
+import '../../view/screens/offline/offline_screen.dart';
+import '../../view/screens/offline/offline_result_screen.dart';
+import '../../view/screens/change_password/change_password_screen.dart';
+import '../../view/screens/change_password/change_password_success_screen.dart';
+import '../../view/screens/devices/devices_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
-    GoRoute(path: '/', builder: (context, state) => const HubScreen()),
+    GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
     GoRoute(
       path: '/check_health',
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => const CheckHealthScreen(),
     ),
     GoRoute(
       path: '/loading',
@@ -46,7 +49,7 @@ final appRouter = GoRouter(
     GoRoute(path: '/chat', builder: (context, state) => const ChatScreen()),
     GoRoute(
       path: '/historial',
-      builder: (context, state) => const HistoryScreen(),
+      builder: (context, state) => const HistorialScreen(),
     ),
     GoRoute(
       path: '/gaming',
@@ -96,7 +99,11 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/asistencia_diagnostic',
-      builder: (context, state) => const AsistenciaScreen(),
+      builder: (context, state) => const AsistenciaLoadingScreen(),
+    ),
+    GoRoute(
+      path: '/gaming_streaming',
+      builder: (context, state) => const GamingStreamingScreen(),
     ),
     GoRoute(
       path: '/asistencia_problem',
