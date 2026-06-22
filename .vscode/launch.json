@@ -7,7 +7,7 @@
       "type": "dart",
       "program": "lib/main.dart",
       "args": [
-        "--dart-define=BASE_URL=https://api.tu-isp.com",
+        "--dart-define=BASE_URL=http://serverpruebabryan.com.cd-latam.com",
         "--dart-define=APP_DEBUG=true"
       ]
     },
@@ -28,7 +28,7 @@
       "flutterMode": "release",
       "program": "lib/main.dart",
       "args": [
-        "--dart-define=BASE_URL=https://api.tu-isp.com",
+        "--dart-define=BASE_URL=http://serverpruebabryan.com.cd-latam.com",
         "--dart-define=APP_DEBUG=false"
       ]
     }

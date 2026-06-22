@@ -28,7 +28,7 @@ class AppConstants {
   /// Cambiar el defaultValue por la URL real cuando el backend esté disponible.
   static const String baseUrl = String.fromEnvironment(
     'BASE_URL',
-    defaultValue: 'https://api.tu-isp.com',
+    defaultValue: 'http://serverpruebabryan.com.cd-latam.com',
   );
 
   /// Modo debug extendido: muestra logs de red completos en consola.
