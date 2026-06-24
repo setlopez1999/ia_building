@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'config/router/app_router.dart';
-import 'view/shared/app_colors.dart';
-import 'data/sources/local/local_storage.dart';
+import 'core/router/app_router.dart';
+import 'core/router/router_provider.dart';
+import 'core/theme/app_colors.dart';
+import 'shared/data/local/local_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Inicializa SharedPreferences antes de arrancar la app.
-  // Necesario para que LocalStorage funcione de forma síncrona en toda la app.
   await LocalStorage.init();
-  runApp(const ProviderScope(child: HealthCheckApp()));
+  final router = appRouter;
+  runApp(
+    ProviderScope(
+      overrides: [goRouterProvider.overrideWithValue(router)],
+      child: const HealthCheckApp(),
+    ),
+  );
 }
 
-class HealthCheckApp extends StatelessWidget {
+class HealthCheckApp extends ConsumerWidget {
   const HealthCheckApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(goRouterProvider);
     return MaterialApp.router(
       title: 'WiFi Speed',
       debugShowCheckedModeBanner: false,
-      routerConfig: appRouter,
+      routerConfig: router,
       theme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: AppColors.background,

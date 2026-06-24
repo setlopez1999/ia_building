@@ -6,20 +6,14 @@
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "args": [
-        "--dart-define=BASE_URL=http://serverpruebabryan.com.cd-latam.com",
-        "--dart-define=APP_DEBUG=true"
-      ]
+      "args": ["--dart-define-from-file=.env"]
     },
     {
       "name": "Flutter (FVM) — Staging",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "args": [
-        "--dart-define=BASE_URL=https://staging.tu-isp.com",
-        "--dart-define=APP_DEBUG=false"
-      ]
+      "args": ["--dart-define-from-file=.env"]
     },
     {
       "name": "Flutter (FVM) — Producción",
@@ -27,10 +21,7 @@
       "type": "dart",
       "flutterMode": "release",
       "program": "lib/main.dart",
-      "args": [
-        "--dart-define=BASE_URL=http://serverpruebabryan.com.cd-latam.com",
-        "--dart-define=APP_DEBUG=false"
-      ]
+      "args": ["--dart-define-from-file=.env"]
     }
   ]
 }

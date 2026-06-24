@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-import '../../data/models/wifi_info.dart';
-import '../../data/models/dispositivo.dart';
+import '../../shared/data/models/wifi_info.dart';
+import '../../shared/data/models/dispositivo.dart';
 
 class LocalDeviceService {
   final _networkInfo = NetworkInfo();

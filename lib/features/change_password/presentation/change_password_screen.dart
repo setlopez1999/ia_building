@@ -1,0 +1,122 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/theme/app_colors.dart';
+
+class ChangePasswordScreen extends StatelessWidget {
+  const ChangePasswordScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => context.canPop() ? context.pop() : context.go('/'),
+        ),
+        title: const Text('Cambiar clave de red',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            const _WifiCard(),
+            const SizedBox(height: 30),
+            const _PasswordField(label: 'Nueva contraseña'),
+            const SizedBox(height: 15),
+            const _PasswordField(label: 'Repetir nueva contraseña'),
+            const Spacer(),
+            _SubmitButton(onTap: () => context.push('/check_health/change_password/success')),
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _WifiCard extends StatelessWidget {
+  const _WifiCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF00FF9D), Color(0xFF00BFA5)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: const Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 24,
+            child: Icon(Icons.wifi, color: Color(0xFF00D285), size: 28),
+          ),
+          SizedBox(width: 15),
+          Text(
+            'CasaGonzalez3456',
+            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PasswordField extends StatelessWidget {
+  final String label;
+  const _PasswordField({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      obscureText: true,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: AppColors.textBody),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(color: Colors.white24),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(color: Color(0xFF7B61FF)),
+        ),
+        filled: true,
+        fillColor: const Color(0xFF1E1E1E),
+      ),
+    );
+  }
+}
+
+class _SubmitButton extends StatelessWidget {
+  final VoidCallback onTap;
+  const _SubmitButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(15),
+      child: Container(
+        width: double.infinity,
+        height: 55,
+        decoration: BoxDecoration(color: const Color(0xFF00D285), borderRadius: BorderRadius.circular(15)),
+        child: const Center(
+          child: Text('Cambiar clave',
+              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+        ),
+      ),
+    );
+  }
+}

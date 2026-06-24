@@ -6,7 +6,7 @@ part of 'chat_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$chatRepositoryHash() => r'7956fc1edca9bb8f22bf4cb09bc189b02b36af89';
+String _$chatRepositoryHash() => r'350e657a0514d104829e0f70476279b45b59cdc0';
 
 /// See also [chatRepository].
 @ProviderFor(chatRepository)
@@ -23,7 +23,7 @@ final chatRepositoryProvider = AutoDisposeProvider<ChatRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ChatRepositoryRef = AutoDisposeProviderRef<ChatRepository>;
-String _$chatHash() => r'820ccbccb3478dd99b3f7c7a18e2cca12aecab82';
+String _$chatHash() => r'056cd0776067f3cb78fd23ec6467f4f86f658d7e';
 
 /// See also [Chat].
 @ProviderFor(Chat)

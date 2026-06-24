@@ -38,6 +38,20 @@ class AppConstants {
     defaultValue: false,
   );
 
+  // ── Branding (desde .env vía --dart-define-from-file) ─────────────────────────
+  static const String colorGradient1 = String.fromEnvironment(
+    'COLOR_GRADIENT_1',
+    defaultValue: '#00CC66',
+  );
+  static const String colorGradient2 = String.fromEnvironment(
+    'COLOR_GRADIENT_2',
+    defaultValue: '#00BEB6',
+  );
+  static const String logoAsset = String.fromEnvironment(
+    'LOGO_ASSET',
+    defaultValue: 'assets/hub/logo_oneplay',
+  );
+
   // ── Rutas de navegación (GoRouter) ───────────────────────────────────────────
   static const String routeLogin          = '/login';
   static const String routeHome           = '/';

@@ -1,4 +1,4 @@
-import '../../../data/sources/remote/api_client.dart';
+import '../../../shared/data/remote/api_client.dart';
 
 class ChatRepository {
   final ApiClient _api;
