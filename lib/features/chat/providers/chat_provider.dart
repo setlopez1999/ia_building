@@ -1,4 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../data/sources/remote/api_client.dart';
+import '../../../core/providers/providers.dart';
+import '../../../data/sources/local/local_storage.dart';
 import '../models/chat_message.dart';
 import '../repositories/chat_repository.dart';
 
@@ -6,11 +9,13 @@ part 'chat_provider.g.dart';
 
 @riverpod
 ChatRepository chatRepository(ChatRepositoryRef ref) {
-  return ChatRepository();
+  return ChatRepository(apiClient: ref.read(apiClientProvider));
 }
 
 @riverpod
 class Chat extends _$Chat {
+  String? _sessionId;
+
   @override
   List<ChatMessage> build() {
     return [
@@ -23,7 +28,6 @@ class Chat extends _$Chat {
   }
 
   Future<void> sendMessage(String text) async {
-    // 1. Add user message
     final userMessage = ChatMessage(
       text: text,
       isUser: true,
@@ -31,7 +35,6 @@ class Chat extends _$Chat {
     );
     state = [...state, userMessage];
 
-    // 2. Add temporary bot message "typing"
     final botTyping = ChatMessage(
       text: '...',
       isUser: false,
@@ -39,20 +42,30 @@ class Chat extends _$Chat {
     );
     state = [...state, botTyping];
 
-    // 3. Get actual response
-    final response = await ref.read(chatRepositoryProvider).sendMessage(text);
+    final response = await ref.read(chatRepositoryProvider).sendMessage(
+      text,
+      sessionId: _sessionId,
+    );
 
-    // 4. Update state with real response
+    _sessionId = response['session_id'] as String?;
+    if (_sessionId != null) {
+      await LocalStorage.setChatSessionId(_sessionId!);
+    }
+
+    final reply = response['reply'] as String? ?? 'Sin respuesta';
+
     state = [
       for (final msg in state)
         if (msg == botTyping)
-          msg.copyWith(text: response, timestamp: DateTime.now())
+          msg.copyWith(text: reply, timestamp: DateTime.now())
         else
           msg,
     ];
   }
 
   void clearChat() {
+    _sessionId = null;
+    LocalStorage.removeChatSessionId();
     state = [
       ChatMessage(
         text: 'Chat reiniciado. ¿En qué puedo ayudarte hoy?',

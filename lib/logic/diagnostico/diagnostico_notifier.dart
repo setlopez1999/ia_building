@@ -1,16 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/constants/app_constants.dart';
 import '../../core/providers/providers.dart';
 import '../../core/services/network_analyzer_service.dart';
+import '../../core/services/local_device_service.dart';
 import '../../data/models/diagnostico.dart';
 import '../../data/sources/local/local_storage.dart';
 
-/// Estado del flujo de diagnóstico paso a paso.
-/// Ver §14 del plan técnico para el flujo completo.
 enum DiagnosticoStep {
   idle,
   pingGoogle,
   pingIsp,
   speedtest,
+  wifiInfo,
   fibra,
   guardando,
   completado,
@@ -25,6 +26,10 @@ class DiagnosticoState {
   final double? velocidadSubidaMbps;
   final String? fibraPotenciaDbm;
   final String? fibraEstado;
+  final String? wifiSsid;
+  final int? wifiSenialDbm;
+  final String? wifiBanda;
+  final String? wifiGateway;
   final String? resultadoFinal;
   final String? errorMsg;
 
@@ -36,6 +41,10 @@ class DiagnosticoState {
     this.velocidadSubidaMbps,
     this.fibraPotenciaDbm,
     this.fibraEstado,
+    this.wifiSsid,
+    this.wifiSenialDbm,
+    this.wifiBanda,
+    this.wifiGateway,
     this.resultadoFinal,
     this.errorMsg,
   });
@@ -48,6 +57,10 @@ class DiagnosticoState {
     double? velocidadSubidaMbps,
     String? fibraPotenciaDbm,
     String? fibraEstado,
+    String? wifiSsid,
+    int? wifiSenialDbm,
+    String? wifiBanda,
+    String? wifiGateway,
     String? resultadoFinal,
     String? errorMsg,
   }) =>
@@ -59,64 +72,67 @@ class DiagnosticoState {
         velocidadSubidaMbps: velocidadSubidaMbps ?? this.velocidadSubidaMbps,
         fibraPotenciaDbm: fibraPotenciaDbm ?? this.fibraPotenciaDbm,
         fibraEstado: fibraEstado ?? this.fibraEstado,
+        wifiSsid: wifiSsid ?? this.wifiSsid,
+        wifiSenialDbm: wifiSenialDbm ?? this.wifiSenialDbm,
+        wifiBanda: wifiBanda ?? this.wifiBanda,
+        wifiGateway: wifiGateway ?? this.wifiGateway,
         resultadoFinal: resultadoFinal ?? this.resultadoFinal,
         errorMsg: errorMsg ?? this.errorMsg,
       );
 }
 
-/// Notifier que orquesta el flujo completo de diagnóstico (§14 del plan).
-///
-/// Flujo:
-///   [1] Leer IPs de ping de SharedPreferences (sin llamada API)
-///   [2] Ping nativo → google_ping_target  → latencia_google_ms
-///   [3] Ping nativo → isp_ping_target     → latencia_isp_ms
-///   [4] Speedtest librería local          → bajada + subida Mbps
-///   [5] GET /v1/fibra                     → potencia + estado
-///   [6] POST /v1/diagnosticos             → guarda resultado
-///   [7] Muestra resultado final
 class DiagnosticoNotifier extends StateNotifier<DiagnosticoState> {
   final Ref _ref;
 
   DiagnosticoNotifier(this._ref) : super(const DiagnosticoState());
 
-  /// Inicia el diagnóstico completo paso a paso.
   Future<void> iniciarDiagnostico() async {
     try {
-      // [1] Leer IPs de ping de SharedPreferences (CU - sin llamada API)
       final googleTarget =
           LocalStorage.getGooglePingTarget() ?? '8.8.8.8';
       final ispTarget =
           LocalStorage.getIspPingTarget() ?? '1.1.1.1';
 
       final networkService = _ref.read(networkAnalyzerServiceProvider);
+      final localDevice = _ref.read(localDeviceServiceProvider);
 
-      // [2] Ping Google
       state = state.copyWith(step: DiagnosticoStep.pingGoogle);
       final pingGoogle = await networkService.ping(googleTarget);
 
-      // [3] Ping ISP
       state = state.copyWith(
         step: DiagnosticoStep.pingIsp,
         latenciaGoogleMs: pingGoogle.avgMs.round(),
       );
       final pingIsp = await networkService.ping(ispTarget);
 
-      // [4] Speedtest
       state = state.copyWith(
         step: DiagnosticoStep.speedtest,
         latenciaIspMs: pingIsp.avgMs.round(),
       );
-      final speed = await networkService.runSpeedTest();
+      final speed = await networkService.runSpeedTest(
+        serverBaseUrl: AppConstants.baseUrl,
+      );
 
-      // [5] GET /v1/fibra
       state = state.copyWith(
-        step: DiagnosticoStep.fibra,
+        step: DiagnosticoStep.wifiInfo,
         velocidadBajadaMbps: speed.downloadMbps,
         velocidadSubidaMbps: speed.uploadMbps,
       );
+      final wifiInfo = await localDevice.getWifiInfo();
+      final wifiSsid = wifiInfo.ssid;
+      final wifiSenial = wifiInfo.signalStrengthDbm;
+      final wifiBanda = wifiInfo.band;
+      final wifiGateway = wifiInfo.gatewayAddress;
+
+      state = state.copyWith(
+        step: DiagnosticoStep.fibra,
+        wifiSsid: wifiSsid,
+        wifiSenialDbm: wifiSenial,
+        wifiBanda: wifiBanda,
+        wifiGateway: wifiGateway,
+      );
       final fibra = await _ref.read(fibraRepositoryProvider).getFibra();
 
-      // [6] POST /v1/diagnosticos
       state = state.copyWith(
         step: DiagnosticoStep.guardando,
         fibraPotenciaDbm: fibra.potenciaDbm,
@@ -138,13 +154,11 @@ class DiagnosticoNotifier extends StateNotifier<DiagnosticoState> {
             ),
           );
 
-      // [7] Resultado final
       state = state.copyWith(
         step: DiagnosticoStep.completado,
         resultadoFinal: result.resultado,
       );
 
-      // Invalida el historial para que se recargue
       _ref.invalidate(historialDiagnosticoProvider);
     } catch (e) {
       state = state.copyWith(
@@ -154,11 +168,9 @@ class DiagnosticoNotifier extends StateNotifier<DiagnosticoState> {
     }
   }
 
-  /// Reinicia el estado para permitir un nuevo diagnóstico.
   void reset() => state = const DiagnosticoState();
 }
 
-/// Provider global del DiagnosticoNotifier.
 final diagnosticoNotifierProvider =
     StateNotifierProvider<DiagnosticoNotifier, DiagnosticoState>(
   (ref) => DiagnosticoNotifier(ref),

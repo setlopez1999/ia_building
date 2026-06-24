@@ -1,12 +1,51 @@
 import 'package:flutter/material.dart';
-import '../../shared/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../shared/app_colors.dart';
+import '../../../logic/diagnostico/diagnostico_notifier.dart';
 
-class DiagnosticoResultScreen extends StatelessWidget {
+class DiagnosticoResultScreen extends ConsumerWidget {
   const DiagnosticoResultScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(diagnosticoNotifierProvider);
+
+    final isExito = state.resultadoFinal?.startsWith('EXCELENTE') ?? false;
+    final isBueno = state.resultadoFinal?.startsWith('BUENO') ?? false;
+    final isRegular = state.resultadoFinal?.startsWith('REGULAR') ?? false;
+    final isMalo = state.resultadoFinal?.startsWith('MALO') ?? false;
+
+    Color statusColor;
+    String statusText;
+    String statusDesc;
+
+    if (isExito) {
+      statusColor = const Color(0xFF00D285);
+      statusText = 'Excelente';
+      statusDesc = 'Tu conexión está funcionando perfectamente';
+    } else if (isBueno) {
+      statusColor = const Color(0xFF2196F3);
+      statusText = 'Bueno';
+      statusDesc = 'Tu conexión funciona bien';
+    } else if (isRegular) {
+      statusColor = const Color(0xFFFF9800);
+      statusText = 'Regular';
+      statusDesc = 'Tu conexión presenta algunas variaciones';
+    } else if (isMalo) {
+      statusColor = const Color(0xFFF44336);
+      statusText = 'Malo';
+      statusDesc = 'Tu conexión necesita atención';
+    } else {
+      statusColor = const Color(0xFF00D285);
+      statusText = state.resultadoFinal ?? 'Completado';
+      statusDesc = 'Diagnóstico finalizado';
+    }
+
+    final wifiDesc = state.wifiBanda != null
+        ? '${state.wifiSsid ?? 'WiFi'} - ${state.wifiSenialDbm != null ? '${state.wifiSenialDbm} dBm' : '--'}'
+        : 'No disponible';
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -32,42 +71,52 @@ class DiagnosticoResultScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            _buildSuccessCard(),
+            _buildSuccessCard(statusColor, statusText, statusDesc),
             const SizedBox(height: 20),
             _buildResultDetailCard(
               'Velocidad de internet',
               'Descarga',
-              '248 Mbps',
-              'Carga',
-              '95 Mbps',
-              '9.5/10',
+              (state.velocidadBajadaMbps != null && state.velocidadBajadaMbps! > 0)
+                  ? '${state.velocidadBajadaMbps!.toStringAsFixed(1)} Mbps'
+                  : (state.velocidadBajadaMbps == 0 ? '0.0 Mbps' : '--'),
+              'Subida',
+              (state.velocidadSubidaMbps != null && state.velocidadSubidaMbps! > 0)
+                  ? '${state.velocidadSubidaMbps!.toStringAsFixed(1)} Mbps'
+                  : (state.velocidadSubidaMbps == 0 ? '0.0 Mbps' : '--'),
+              _calcScore(state.velocidadBajadaMbps),
             ),
             const SizedBox(height: 15),
             _buildResultDetailCard(
-              'Red Wifi',
+              'Latencia',
+              'Google',
+              state.latenciaGoogleMs != null
+                  ? '${state.latenciaGoogleMs} ms'
+                  : '--',
+              'ISP',
+              state.latenciaIspMs != null
+                  ? '${state.latenciaIspMs} ms'
+                  : '--',
+              _calcLatencyScore(state.latenciaIspMs ?? state.latenciaGoogleMs),
+            ),
+            const SizedBox(height: 15),
+            _buildResultDetailCard(
+              'WiFi',
               'Señal',
-              '-45 dBm',
-              'Canal',
-              '5 GHz',
-              '9.5/10',
+              state.wifiSenialDbm != null
+                  ? '${state.wifiSenialDbm} dBm'
+                  : '--',
+              'Banda',
+              state.wifiBanda ?? '--',
+              _calcWifiScore(state.wifiSenialDbm),
             ),
             const SizedBox(height: 15),
             _buildResultDetailCard(
               'Fibra óptica',
               'Potencia',
-              '-18 dBm',
+              state.fibraPotenciaDbm ?? '--',
               'Estado',
-              'Optimo',
-              '9.5/10',
-            ),
-            const SizedBox(height: 15),
-            _buildResultDetailCard(
-              'Latencia',
-              'Potencia',
-              '-18 dBm',
-              'Estado',
-              'Optimo',
-              '9.5/10',
+              state.fibraEstado ?? '--',
+              state.fibraEstado == 'OK' ? '10/10' : '5/10',
             ),
             const SizedBox(height: 25),
             _buildRecommendationsCard(),
@@ -80,7 +129,37 @@ class DiagnosticoResultScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSuccessCard() {
+  String _calcScore(double? velocidad) {
+    if (velocidad == null) return '--';
+    if (velocidad > 200) return '10/10';
+    if (velocidad > 100) return '8/10';
+    if (velocidad > 50) return '6/10';
+    if (velocidad > 20) return '4/10';
+    return '2/10';
+  }
+
+  String _calcLatencyScore(int? latencia) {
+    if (latencia == null) return '--';
+    if (latencia < 20) return '10/10';
+    if (latencia < 50) return '8/10';
+    if (latencia < 80) return '6/10';
+    if (latencia < 150) return '4/10';
+    return '2/10';
+  }
+
+  String _calcWifiScore(int? dbm) {
+    if (dbm == null) return '--';
+    if (dbm >= -50) return '10/10';
+    if (dbm >= -60) return '8/10';
+    if (dbm >= -70) return '6/10';
+    return '4/10';
+  }
+
+  Widget _buildSuccessCard(
+    Color color,
+    String statusText,
+    String statusDesc,
+  ) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 30),
@@ -90,23 +169,23 @@ class DiagnosticoResultScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 30,
-            backgroundColor: Color(0xFF00D285),
+            backgroundColor: color,
             child: Icon(Icons.check, color: Colors.white, size: 40),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'Excelente',
+          Text(
+            statusText,
             style: TextStyle(
-              color: Colors.white,
+              color: color,
               fontSize: 32,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const Text(
-            'Tu conexión está funcionando perfectamente',
-            style: TextStyle(color: AppColors.textBody, fontSize: 13),
+          Text(
+            statusDesc,
+            style: const TextStyle(color: AppColors.textBody, fontSize: 13),
           ),
         ],
       ),
@@ -223,7 +302,7 @@ class DiagnosticoResultScreen extends StatelessWidget {
             ),
           ),
           Text(
-            'Tienes 8 dispositivos conectados. Considera desconectar los que no uses.',
+            'Revisa la cantidad de dispositivos conectados. Considera desconectar los que no uses.',
             style: TextStyle(color: AppColors.textBody, fontSize: 12),
           ),
           SizedBox(height: 20),

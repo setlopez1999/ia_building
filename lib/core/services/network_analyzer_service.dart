@@ -1,18 +1,17 @@
 import 'dart:io';
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 
-// ── Resultados ────────────────────────────────────────────────────────────────
-
-/// Resultado de un ping nativo al dispositivo.
 class PingResult {
   final double avgPing;
   final double lossPercent;
   final double jitter;
   final bool success;
 
-  /// Alias para compatibilidad con DiagnosticoNotifier.
   double get avgMs => avgPing;
 
   PingResult({
@@ -26,7 +25,6 @@ class PingResult {
       PingResult(avgPing: 0, lossPercent: 100, jitter: 0, success: false);
 }
 
-/// Resultado del speedtest local.
 class SpeedTestResult {
   final double downloadMbps;
   final double uploadMbps;
@@ -37,19 +35,17 @@ class SpeedTestResult {
   });
 }
 
-// ── Servicio ──────────────────────────────────────────────────────────────────
-
-/// Servicio de análisis de red: ping nativo y speedtest local.
-/// Las IPs de ping se leen de SharedPreferences (nunca hardcodeadas).
-/// No hace llamadas al backend; es 100% local (CU en el plan).
 class NetworkAnalyzerService {
-  /// Realiza un análisis de red para un host específico.
-  /// Ejecuta el comando ping del sistema operativo.
+  final Dio _dio = Dio(
+    BaseOptions(
+      validateStatus: (_) => true,
+    ),
+  );
+
   Future<PingResult> analyze(String host, {int count = 4}) async {
     return ping(host, count: count);
   }
 
-  /// Ejecuta ping nativo al [host] con [count] paquetes.
   Future<PingResult> ping(String host, {int count = 4}) async {
     try {
       final isWindows = Platform.isWindows;
@@ -131,16 +127,124 @@ class NetworkAnalyzerService {
     }
   }
 
-  /// Ejecuta un speedtest simplificado.
-  /// TODO: integrar librería de speedtest real (speed_test_dart o similar).
-  /// Por ahora devuelve valores simulados para que la UI funcione.
-  Future<SpeedTestResult> runSpeedTest() async {
-    await Future.delayed(const Duration(seconds: 3));
-    return const SpeedTestResult(downloadMbps: 0, uploadMbps: 0);
+  Future<SpeedTestResult> runSpeedTest({String? serverBaseUrl}) async {
+    final baseUrl =
+        (serverBaseUrl ?? 'https://serverpruebabryan.com.cd-latam.com')
+            .replaceAll(RegExp(r'/+$'), '');
+
+    double downloadMbps = 0;
+    bool usedCloudflare = false;
+    try {
+      downloadMbps = await _measureDownloadSpeed(baseUrl);
+      usedCloudflare = downloadMbps > 0;
+      if (!usedCloudflare) {
+        downloadMbps = await _measureDownloadBackend(baseUrl);
+      }
+    } catch (e) {
+      debugPrint('[Speedtest] Download error: $e');
+      try { downloadMbps = await _measureDownloadBackend(baseUrl); } catch (_) {}
+    }
+
+    double uploadMbps = 0;
+    try {
+      uploadMbps = await _measureUploadSpeed(baseUrl);
+    } catch (e) {
+      debugPrint('[Speedtest] Upload error: $e');
+    }
+
+    debugPrint('[Speedtest] Result: ${downloadMbps.toStringAsFixed(1)}/${uploadMbps.toStringAsFixed(1)} Mbps (${usedCloudflare ? "Cloudflare" : "Backend"})');
+    return SpeedTestResult(
+      downloadMbps: downloadMbps,
+      uploadMbps: uploadMbps,
+    );
+  }
+
+  Future<double> _measureDownloadSpeed(String _) async {
+    const cfSizes = [25, 10, 5];
+    for (final mb in cfSizes) {
+      try {
+        final uri = Uri.parse('https://speed.cloudflare.com/__down?bytes=${mb * 1_000_000}');
+        final stopwatch = Stopwatch()..start();
+        final resp = await http.get(uri).timeout(const Duration(seconds: 20));
+        stopwatch.stop();
+        final durationSec = stopwatch.elapsedMilliseconds / 1000.0;
+        if (durationSec <= 0) continue;
+        final bytes = resp.bodyBytes.length;
+        final mbps = (bytes * 8) / (durationSec * 1_000_000);
+        debugPrint('[Speedtest] CF ${mb}MB: ${mbps.toStringAsFixed(2)} Mbps');
+        if (mbps > 0) return mbps;
+      } catch (e) {
+        debugPrint('[Speedtest] CF ${mb}MB failed: $e');
+      }
+    }
+    return 0;
+  }
+
+  Future<double> _measureDownloadBackend(String baseUrl) async {
+    const sizes = [5, 2, 1];
+    for (final mb in sizes) {
+      try {
+        final uri = Uri.parse('$baseUrl/v1/speedtest/download?mb=$mb');
+        final stopwatch = Stopwatch()..start();
+        final resp = await http.get(uri).timeout(const Duration(seconds: 20));
+        stopwatch.stop();
+        final durationSec = stopwatch.elapsedMilliseconds / 1000.0;
+        if (durationSec <= 0) continue;
+        final bytes = resp.bodyBytes.length;
+        final mbps = (bytes * 8) / (durationSec * 1_000_000);
+        debugPrint('[Speedtest] Backend ${mb}MB: ${mbps.toStringAsFixed(2)} Mbps');
+        if (mbps > 0) return mbps;
+      } catch (e) {
+        debugPrint('[Speedtest] Backend ${mb}MB failed: $e');
+      }
+    }
+    return 0;
+  }
+
+  Future<double> _measureUploadSpeed(String baseUrl) async {
+    // Try Cloudflare upload first
+    const uploadSize = 10 * 1024 * 1024;
+    final data = List<int>.generate(uploadSize, (_) => Random().nextInt(256));
+    try {
+      final uri = Uri.parse('https://speed.cloudflare.com/__up');
+      final stopwatch = Stopwatch()..start();
+      final resp = await http
+          .post(uri, body: data, headers: {'Content-Type': 'application/octet-stream'})
+          .timeout(const Duration(seconds: 20));
+      stopwatch.stop();
+      final durationSec = stopwatch.elapsedMilliseconds / 1000.0;
+      if (durationSec > 0) {
+        final mbps = (uploadSize * 8) / (durationSec * 1_000_000);
+        debugPrint('[Speedtest] CF upload: ${mbps.toStringAsFixed(2)} Mbps');
+        return mbps;
+      }
+    } catch (e) {
+      debugPrint('[Speedtest] CF upload failed: $e');
+    }
+
+    // Fallback to backend upload
+    try {
+      const smallUpload = 512 * 1024;
+      final smallData = List<int>.generate(smallUpload, (_) => Random().nextInt(256));
+      final uri = Uri.parse('$baseUrl/v1/speedtest/upload');
+      final stopwatch = Stopwatch()..start();
+      await http
+          .post(uri, body: smallData, headers: {'Content-Type': 'application/octet-stream'})
+          .timeout(const Duration(seconds: 20));
+      stopwatch.stop();
+      final durationSec = stopwatch.elapsedMilliseconds / 1000.0;
+      if (durationSec > 0) {
+        final mbps = (smallUpload * 8) / (durationSec * 1_000_000);
+        debugPrint('[Speedtest] Backend upload: ${mbps.toStringAsFixed(2)} Mbps');
+        return mbps;
+      }
+    } catch (e) {
+      debugPrint('[Speedtest] Backend upload failed: $e');
+    }
+    return 0;
   }
 }
 
-/// Provider global del NetworkAnalyzerService.
 final networkAnalyzerServiceProvider = Provider<NetworkAnalyzerService>(
   (_) => NetworkAnalyzerService(),
 );

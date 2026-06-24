@@ -1,12 +1,36 @@
 import 'package:flutter/material.dart';
-import '../../shared/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../shared/app_colors.dart';
+import '../../../core/providers/providers.dart';
 
-class HistorialScreen extends StatelessWidget {
+class HistorialScreen extends ConsumerWidget {
   const HistorialScreen({super.key});
 
+  Color _colorForResultado(String resultado) {
+    if (resultado.startsWith('EXCELENTE')) return const Color(0xFF00D285);
+    if (resultado.startsWith('BUENO')) return const Color(0xFF2196F3);
+    if (resultado.startsWith('REGULAR')) return const Color(0xFFFF9800);
+    if (resultado.startsWith('MALO')) return const Color(0xFFF44336);
+    return Colors.grey;
+  }
+
+  String _formatDate(DateTime dt) {
+    final now = DateTime.now();
+    final diff = now.difference(dt);
+    if (diff.inDays == 0) {
+      return 'Hoy, ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    } else if (diff.inDays == 1) {
+      return 'Ayer, ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    } else {
+      return '${dt.day}/${dt.month}/${dt.year}';
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final historialAsync = ref.watch(historialDiagnosticoProvider);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -28,47 +52,61 @@ class HistorialScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Historial de diagnósticos',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+        child: historialAsync.when(
+          data: (historial) {
+            if (historial.isEmpty) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 60),
+                  child: Text(
+                    'No hay diagnósticos registrados',
+                    style: TextStyle(color: AppColors.textBody, fontSize: 16),
+                  ),
+                ),
+              );
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Historial de diagnósticos',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 30),
+                ...List.generate(historial.length, (index) {
+                  final d = historial[index];
+                  final isLast = index == historial.length - 1;
+                  return _buildTimelineItem(
+                    status: d.resultado,
+                    color: _colorForResultado(d.resultado),
+                    time: _formatDate(d.fecha),
+                    metrics:
+                        'Velocidad: ${d.velocidadBajadaMbps.toStringAsFixed(0)} Mbps - Latencia: ${d.latenciaIspMs} ms',
+                    isLast: isLast,
+                  );
+                }),
+              ],
+            );
+          },
+          loading: () => const Center(
+            child: Padding(
+              padding: EdgeInsets.only(top: 60),
+              child: CircularProgressIndicator(color: Color(0xFF00D285)),
+            ),
+          ),
+          error: (err, _) => Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 60),
+              child: Text(
+                'Error al cargar historial',
+                style: const TextStyle(color: Colors.red),
               ),
             ),
-            const SizedBox(height: 30),
-            _buildTimelineItem(
-              status: 'Excelente',
-              color: const Color(0xFF00D285),
-              time: 'Hoy, 14:28',
-              metrics: 'Velocidad: 248 Mbps - Latencia: 12 ms',
-              isLast: false,
-            ),
-            _buildTimelineItem(
-              status: 'Bueno',
-              color: const Color(0xFF2196F3),
-              time: 'Hoy, 14:28',
-              metrics: 'Velocidad: 248 Mbps - Latencia: 12 ms',
-              isLast: false,
-            ),
-            _buildTimelineItem(
-              status: 'Regular',
-              color: const Color(0xFFFF9800),
-              time: 'Hoy, 14:28',
-              metrics: 'Velocidad: 248 Mbps - Latencia: 12 ms',
-              isLast: false,
-            ),
-            _buildTimelineItem(
-              status: 'Malo',
-              color: const Color(0xFFF44336),
-              time: 'Hoy, 14:28',
-              metrics: 'Velocidad: 248 Mbps - Latencia: 12 ms',
-              isLast: true,
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -1,14 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../shared/app_colors.dart';
+import '../../../core/services/local_device_service.dart';
+import '../../../data/models/wifi_info.dart';
 
-class OfflineScreen extends StatelessWidget {
+final _offlineScanProvider = FutureProvider.autoDispose((ref) async {
+  final service = ref.read(localDeviceServiceProvider);
+  final wifiInfo = await service.getWifiInfo();
+  final deviceInfo = await service.getDeviceInfo();
+  final devices = await service.scanLocalDevices();
+  final online = devices.any((d) => d.conectado);
+  return {
+    'wifi': wifiInfo,
+    'device': deviceInfo,
+    'devices': devices,
+    'online': online,
+  };
+});
+
+class OfflineScreen extends ConsumerWidget {
   const OfflineScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scanAsync = ref.watch(_offlineScanProvider);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -31,50 +50,78 @@ class OfflineScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            const Text(
-              'Modo Diagnóstico Offline',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+        child: scanAsync.when(
+          data: (data) {
+            final wifi = data['wifi'] as WifiInfo;
+            final device = data['device'] as Map<String, dynamic>;
+            final devices = data['devices'] as List<dynamic>;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                const Text(
+                  'Modo Diagnóstico Offline',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Text(
+                  'Verificaciones locales sin conexión al servidor',
+                  style: TextStyle(color: AppColors.textBody, fontSize: 13),
+                ),
+                const SizedBox(height: 30),
+                _buildOfflineItem(
+                  iconPath: 'assets/smartphone.svg',
+                  title: 'Estado del dispositivo',
+                  subtitle:
+                      '${device['model'] ?? '--'} · ${device['osVersion'] ?? '--'}',
+                ),
+                const SizedBox(height: 15),
+                _buildOfflineItem(
+                  iconPath: 'assets/wifi.svg',
+                  title: 'Red WiFi',
+                  subtitle: wifi.ssid != null
+                      ? '${wifi.ssid} · ${wifi.signalStrengthDbm ?? '--'} dBm (${wifi.band})'
+                      : 'No disponible',
+                ),
+                const SizedBox(height: 15),
+                _buildOfflineItem(
+                  iconPath: 'assets/router.svg',
+                  title: 'Conexión al Router',
+                  subtitle: wifi.gatewayAddress != null
+                      ? 'IP: ${wifi.ipAddress ?? '--'} · Gateway: ${wifi.gatewayAddress}'
+                      : 'No disponible',
+                ),
+                const SizedBox(height: 15),
+                _buildOfflineItem(
+                  iconPath: 'assets/pc.svg',
+                  title: 'Dispositivos en Red Local',
+                  subtitle:
+                      '${devices.length} dispositivo${devices.length == 1 ? '' : 's'} conectado${devices.length == 1 ? '' : 's'}',
+                ),
+                const SizedBox(height: 40),
+                _buildExecuteButton(context, data),
+                const SizedBox(height: 40),
+              ],
+            );
+          },
+          loading: () => const Padding(
+            padding: EdgeInsets.only(top: 80),
+            child: Center(
+              child: CircularProgressIndicator(color: Color(0xFF00D285)),
+            ),
+          ),
+          error: (err, _) => Padding(
+            padding: const EdgeInsets.only(top: 80),
+            child: Center(
+              child: Text(
+                'Error: $err',
+                style: const TextStyle(color: Colors.red),
               ),
             ),
-            const Text(
-              'Estas verificaciones no requieren conexión a internet',
-              style: TextStyle(color: AppColors.textBody, fontSize: 13),
-            ),
-            const SizedBox(height: 30),
-            _buildOfflineItem(
-              iconPath: 'assets/smartphone.svg',
-              title: 'Estado del dispositivo',
-              subtitle: 'WiFi activado, modo avión, Bluetooth',
-            ),
-            const SizedBox(height: 15),
-            _buildOfflineItem(
-              iconPath: 'assets/wifi.svg',
-              title: 'Escaneo de Redes Wifi',
-              subtitle: 'Detectar redes cercanas, intensidad de señal',
-            ),
-            const SizedBox(height: 15),
-            _buildOfflineItem(
-              iconPath: 'assets/router.svg',
-              title: 'Conexión al Router',
-              subtitle: 'Ping local, IP asignada, gateway',
-            ),
-            const SizedBox(height: 15),
-            _buildOfflineItem(
-              iconPath: 'assets/pc.svg',
-              title: 'Dispositivos en Red Local',
-              subtitle: 'Contar dispositivos conectados al router',
-            ),
-            const SizedBox(height: 40),
-            _buildExecuteButton(context),
-            const SizedBox(height: 40),
-          ],
+          ),
         ),
       ),
     );
@@ -124,7 +171,8 @@ class OfflineScreen extends StatelessWidget {
                     ),
                     const Text(
                       'Disponible',
-                      style: TextStyle(color: Color(0xFF00D285), fontSize: 11),
+                      style:
+                          TextStyle(color: Color(0xFF00D285), fontSize: 11),
                     ),
                   ],
                 ),
@@ -135,11 +183,6 @@ class OfflineScreen extends StatelessWidget {
                     fontSize: 11,
                   ),
                 ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Ejecutar ahora →',
-                  style: TextStyle(color: Color(0xFF7B61FF), fontSize: 12),
-                ),
               ],
             ),
           ),
@@ -148,9 +191,12 @@ class OfflineScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildExecuteButton(BuildContext context) {
+  Widget _buildExecuteButton(BuildContext context, Map<String, dynamic> data) {
     return InkWell(
-      onTap: () => context.push('/check_health/offline/result'),
+      onTap: () => context.push(
+        '/check_health/offline/result',
+        extra: data,
+      ),
       borderRadius: BorderRadius.circular(15),
       child: Container(
         width: double.infinity,

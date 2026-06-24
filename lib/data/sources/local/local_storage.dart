@@ -18,6 +18,7 @@ class LocalStorage {
   static const _kAssetsVersion = 'assets_version';
   static const _kGooglePingTarget = 'google_ping_target';
   static const _kIspPingTarget = 'isp_ping_target';
+  static const _kChatSessionId = 'chat_session_id';
 
   // ── Inicialización ──────────────────────────────────────────────────────────
   static Future<void> init() async {
@@ -55,6 +56,12 @@ class LocalStorage {
     await _p.setString(_kGooglePingTarget, googlePingTarget);
     await _p.setString(_kIspPingTarget, ispPingTarget);
   }
+
+  // ── Chat session ────────────────────────────────────────────────────────────
+  static String? getChatSessionId() => _p.getString(_kChatSessionId);
+  static Future<void> setChatSessionId(String id) =>
+      _p.setString(_kChatSessionId, id);
+  static Future<void> removeChatSessionId() => _p.remove(_kChatSessionId);
 
   // ── Logout (limpia sesión) ──────────────────────────────────────────────────
   static Future<void> clearSession() async {

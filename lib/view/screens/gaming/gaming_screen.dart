@@ -1,17 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../shared/app_colors.dart';
-import '../../../features/gaming/models/game.dart';
-import '../../../features/gaming/providers/gaming_provider.dart';
+import '../../../core/providers/providers.dart';
+import '../../../data/models/servidor_juego.dart';
 
 class GamingScreen extends ConsumerWidget {
   const GamingScreen({super.key});
 
+  String _gameNameToId(String name) {
+    final lower = name.toLowerCase();
+    if (lower.contains('counter strike') || lower.contains('cs')) return 'cs2';
+    if (lower.contains('dota')) return 'dota2';
+    if (lower.contains('fortnite')) return 'fortnite';
+    if (lower.contains('valorant')) return 'valorant';
+    if (lower.contains('pubg')) return 'pubg';
+    return name;
+  }
+
+  String _logoForJuego(String juego) {
+    final lower = juego.toLowerCase();
+    if (lower.contains('counter strike') || lower.contains('cs'))
+      return 'assets/logos/logo_cs2.png';
+    if (lower.contains('dota')) return 'assets/logos/logo_dota2.png';
+    if (lower.contains('fortnite')) return 'assets/logos/logo_fortnite.png';
+    if (lower.contains('valorant')) return 'assets/logos/logo_valorant.png';
+    if (lower.contains('pubg')) return 'assets/logos/logo_pubg.png';
+    return 'assets/logos/logo_valorant.png';
+  }
+
+  Color _colorForEstado(String estado) {
+    switch (estado) {
+      case 'EXCELENTE':
+        return const Color(0xFF00D285);
+      case 'BUENO':
+        return Colors.amber;
+      case 'MALO':
+        return Colors.orange;
+      case 'SIN_CONEXIÓN':
+        return Colors.redAccent;
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final gamesAsync = ref.watch(gamesProvider);
+    final servidoresAsync = ref.watch(servidoresJuegoProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -57,8 +92,8 @@ class GamingScreen extends ConsumerWidget {
               style: TextStyle(color: AppColors.textBody, fontSize: 13),
             ),
             const SizedBox(height: 20),
-            gamesAsync.when(
-              data: (games) => _buildGamesList(context, games),
+            servidoresAsync.when(
+              data: (servidores) => _buildGamesList(context, servidores),
               loading: () => const Center(
                 child: Padding(
                   padding: EdgeInsets.all(40.0),
@@ -81,7 +116,13 @@ class GamingScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildGamesList(BuildContext context, List<Game> games) {
+  Widget _buildGamesList(BuildContext context, List<ServidorJuego> servidores) {
+    if (servidores.isEmpty) {
+      return const Text(
+        'No hay servidores disponibles',
+        style: TextStyle(color: AppColors.textBody),
+      );
+    }
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -89,28 +130,18 @@ class GamingScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(25),
       ),
       child: Column(
-        children: games.map((game) => _buildGameRow(context, game)).toList(),
+        children: servidores.map((sv) => _buildGameRow(context, sv)).toList(),
       ),
     );
   }
 
-  Widget _buildGameRow(BuildContext context, Game game) {
-    // Map existing assets if possible, or use placeholder.
-    // Since names changed, I'll use a generic icon or try to match.
-    String logoAsset = 'assets/logos/logo_valorant.png';
-    if (game.name.contains('Counter Strike 2'))
-      logoAsset = 'assets/logos/logo_cs2.png';
-    if (game.name.contains('Dota')) logoAsset = 'assets/logos/logo_dota2.png';
-    if (game.name.contains('Fortnite'))
-      logoAsset = 'assets/logos/logo_fortnite.png';
-    if (game.name.contains('Valorant'))
-      logoAsset = 'assets/logos/logo_valorant.png';
-    if (game.name.contains('PUBG')) logoAsset = 'assets/logos/logo_pubg.png';
+  Widget _buildGameRow(BuildContext context, ServidorJuego sv) {
+    final statusColor = _colorForEstado(sv.estado);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: InkWell(
-        onTap: () => context.push('/check_health/gaming/${game.id}'),
+        onTap: () => context.push('/check_health/gaming/${_gameNameToId(sv.juego)}'),
         borderRadius: BorderRadius.circular(10),
         child: Row(
           children: [
@@ -124,7 +155,7 @@ class GamingScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(6),
               alignment: Alignment.center,
               child: Image.asset(
-                logoAsset,
+                _logoForJuego(sv.juego),
                 width: 45,
                 height: 45,
                 fit: BoxFit.contain,
@@ -138,7 +169,7 @@ class GamingScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    game.name,
+                    sv.juego,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -157,9 +188,9 @@ class GamingScreen extends ConsumerWidget {
               ),
             ),
             Text(
-              game.ping,
-              style: const TextStyle(
-                color: Colors.white,
+              '${sv.pingMs} ms',
+              style: TextStyle(
+                color: statusColor,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),

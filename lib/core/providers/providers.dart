@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/services/local_device_service.dart';
 import '../../data/sources/remote/api_client.dart';
 import '../../data/sources/local/local_storage.dart';
 
@@ -153,9 +154,14 @@ final fibraProvider = FutureProvider<Fibra>((ref) async {
 
 // ── Dispositivos ──────────────────────────────────────────────────────────────
 
-/// Dispositivos conectados a la red del cliente.
-/// Fuente: GET /v1/dispositivos  (DISP-1)
+/// Dispositivos conectados a la red local, escaneados desde el teléfono vía ARP.
+/// Fallback al backend mock si el escaneo local falla.
 final dispositivosProvider = FutureProvider<List<Dispositivo>>((ref) async {
+  try {
+    final localDevices =
+        await ref.read(localDeviceServiceProvider).scanLocalDevices();
+    if (localDevices.isNotEmpty) return localDevices;
+  } catch (_) {}
   return ref.read(dispositivoRepositoryProvider).getDispositivos();
 });
 

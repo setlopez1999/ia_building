@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../data/models/wifi_info.dart';
 
 class OfflineResultScreen extends StatelessWidget {
   const OfflineResultScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final data =
+        GoRouterState.of(context).extra as Map<String, dynamic>?;
+    final wifi = data?['wifi'] as WifiInfo?;
+    final device = data?['device'] as Map<String, dynamic>?;
+    final devices = data?['devices'] as List<dynamic>?;
+    final online = data?['online'] as bool? ?? true;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -22,28 +30,30 @@ class OfflineResultScreen extends StatelessWidget {
           },
         ),
         title: const Text(
-          'Modo Offline',
+          'Resultado Offline',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            const SizedBox(height: 30),
-            _buildResultCard(),
-            const SizedBox(height: 15),
-            _buildStatusListCard(),
-            const Spacer(),
-            _buildAcceptButton(context),
-            const SizedBox(height: 40),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 30),
+              _buildResultCard(online),
+              const SizedBox(height: 15),
+              _buildStatusListCard(wifi, device, devices),
+              const SizedBox(height: 30),
+              _buildAcceptButton(context),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildResultCard() {
+  Widget _buildResultCard(bool online) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 40),
@@ -51,17 +61,22 @@ class OfflineResultScreen extends StatelessWidget {
         color: const Color(0xFF32324A),
         borderRadius: BorderRadius.circular(25),
       ),
-      child: const Column(
+      child: Column(
         children: [
           CircleAvatar(
             radius: 35,
-            backgroundColor: Color(0xFF00D285),
-            child: Icon(Icons.check, color: Colors.white, size: 45),
+            backgroundColor:
+                online ? const Color(0xFF00D285) : Colors.orange,
+            child: Icon(
+              online ? Icons.check : Icons.warning,
+              color: Colors.white,
+              size: 45,
+            ),
           ),
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
           Text(
-            'Dispositivo OK',
-            style: TextStyle(
+            online ? 'Dispositivo OK' : 'Atención requerida',
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -72,22 +87,46 @@ class OfflineResultScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusListCard() {
+  Widget _buildStatusListCard(
+    WifiInfo? wifi,
+    Map<String, dynamic>? device,
+    List<dynamic>? devices,
+  ) {
+    final modelName = device?['model'] ?? '--';
+    final osVersion = device?['osVersion'] ?? '--';
+    final ssid = wifi?.ssid ?? 'No disponible';
+    final signalStr =
+        wifi?.signalStrengthDbm != null
+            ? '${wifi!.signalStrengthDbm} dBm'
+            : '--';
+    final band = wifi?.band ?? '--';
+    final ip = wifi?.ipAddress ?? '--';
+    final gateway = wifi?.gatewayAddress ?? '--';
+    final deviceCount = devices?.length ?? 0;
+
     return Container(
       padding: const EdgeInsets.all(25),
       decoration: BoxDecoration(
         color: const Color(0xFF32324A),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          _StatusRow(label: 'Wifi: Activado', isChecked: true),
-          SizedBox(height: 15),
-          _StatusRow(label: 'Modo avión: Desactivado', isChecked: true),
-          SizedBox(height: 15),
-          _StatusRow(label: 'Bluetooth: Activado', isChecked: true),
-          SizedBox(height: 15),
-          _StatusRow(label: 'Batería: 85%', isChecked: true),
+          _StatusRow(label: 'WiFi: Activado ($ssid)', isChecked: true),
+          const SizedBox(height: 15),
+          _StatusRow(label: 'Señal WiFi: $signalStr ($band)', isChecked: true),
+          const SizedBox(height: 15),
+          _StatusRow(label: 'IP: $ip · Gateway: $gateway', isChecked: true),
+          const SizedBox(height: 15),
+          _StatusRow(
+            label: 'Dispositivos en red: $deviceCount',
+            isChecked: deviceCount > 0,
+          ),
+          const SizedBox(height: 15),
+          _StatusRow(
+            label: 'Dispositivo: $modelName · $osVersion',
+            isChecked: true,
+          ),
         ],
       ),
     );
@@ -142,12 +181,14 @@ class _StatusRow extends StatelessWidget {
           size: 22,
         ),
         const SizedBox(width: 15),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],

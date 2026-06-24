@@ -1,14 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../shared/app_colors.dart';
+import '../../../core/providers/providers.dart';
+import '../../../core/services/local_device_service.dart';
+import '../../../data/models/diagnostico.dart';
 
-class CheckHealthScreen extends StatelessWidget {
+final _lastWifiInfoProvider = FutureProvider.autoDispose((ref) async {
+  final service = ref.read(localDeviceServiceProvider);
+  return service.getWifiInfo();
+});
+
+class CheckHealthScreen extends ConsumerWidget {
   const CheckHealthScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dispositivosAsync = ref.watch(dispositivosProvider);
+    final historialAsync = ref.watch(historialDiagnosticoProvider);
+    final fibraAsync = ref.watch(fibraProvider);
+    final wifiAsync = ref.watch(_lastWifiInfoProvider);
+
+    final deviceCount = dispositivosAsync.maybeWhen(
+      data: (d) => d.length,
+      orElse: () => 0,
+    );
+    final ultimoDiagnostico = historialAsync.maybeWhen(
+      data: (h) => h.isNotEmpty ? h.first : null,
+      orElse: () => null,
+    );
+    final fibraEstado = fibraAsync.maybeWhen(
+      data: (f) => f.estado,
+      orElse: () => null,
+    );
+    final wifiInfo = wifiAsync.maybeWhen(
+      data: (w) => w,
+      orElse: () => null,
+    );
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -35,7 +65,7 @@ class CheckHealthScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
-            _buildWifiStatusCard(context),
+            _buildWifiStatusCard(context, fibraEstado, wifiInfo),
             const SizedBox(height: 30),
             const Text(
               'Diagnóstico de red',
@@ -50,11 +80,16 @@ class CheckHealthScreen extends StatelessWidget {
               style: TextStyle(color: AppColors.textBody, fontSize: 14),
             ),
             const SizedBox(height: 15),
-            _buildLastDiagnosticChip(),
+            _buildLastDiagnosticChip(ultimoDiagnostico),
             const SizedBox(height: 25),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: _buildMetricsGrid(context),
+              child: _buildMetricsGrid(
+                context,
+                ultimoDiagnostico,
+                deviceCount,
+                wifiInfo,
+              ),
             ),
             const SizedBox(height: 30),
             Padding(
@@ -70,19 +105,26 @@ class CheckHealthScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWifiStatusCard(BuildContext context) {
+  Widget _buildWifiStatusCard(
+    BuildContext context,
+    String? fibraEstado,
+    dynamic wifiInfo,
+  ) {
+    final conectado = fibraEstado == 'OK';
     return InkWell(
       onTap: () => context.push('/check_health/change_password'),
       borderRadius: BorderRadius.circular(25),
       child: Container(
         padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF00CC66), Color(0xFF00BEB6)],
+            colors: conectado
+                ? [const Color(0xFF00CC66), const Color(0xFF00BEB6)]
+                : [Colors.grey.shade700, Colors.grey.shade600],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.all(Radius.circular(25)),
+          borderRadius: const BorderRadius.all(Radius.circular(25)),
         ),
         child: Row(
           children: [
@@ -110,12 +152,14 @@ class CheckHealthScreen extends StatelessWidget {
                   top: 0,
                   child: Container(
                     padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF7B61FF),
+                    decoration: BoxDecoration(
+                      color: conectado
+                          ? const Color(0xFF7B61FF)
+                          : Colors.redAccent,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.check,
+                    child: Icon(
+                      conectado ? Icons.check : Icons.close,
                       color: Colors.white,
                       size: 12,
                     ),
@@ -124,21 +168,29 @@ class CheckHealthScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(width: 20),
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Conectado a Wifi',
-                    style: TextStyle(
+                    wifiInfo?.ssid != null
+                        ? '${wifiInfo.ssid}'
+                        : conectado
+                            ? 'Conectado a WiFi'
+                            : 'Desconectado',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    'CasaGonzalez3456',
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                    wifiInfo != null
+                        ? '${wifiInfo.signalQuality} (${wifiInfo.signalStrengthDbm ?? '--'} dBm) · ${wifiInfo.band}'
+                        : conectado
+                            ? 'Fibra óptica: OK'
+                            : 'Fibra: $fibraEstado',
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                 ],
               ),
@@ -149,7 +201,10 @@ class CheckHealthScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLastDiagnosticChip() {
+  Widget _buildLastDiagnosticChip(Diagnostico? ultimo) {
+    final text = ultimo != null
+        ? 'Último diagnóstico: ${_tiempoRelativo(ultimo.fecha)}'
+        : 'Sin diagnósticos previos';
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
@@ -157,62 +212,102 @@ class CheckHealthScreen extends StatelessWidget {
         color: Color(0xFF32324A),
         borderRadius: BorderRadius.all(Radius.circular(15)),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.access_time, color: AppColors.textBody, size: 30),
-          SizedBox(width: 15),
+          const Icon(Icons.access_time, color: AppColors.textBody, size: 30),
+          const SizedBox(width: 15),
           Text(
-            'Último diagnóstico: Hace 2 semanas',
-            style: TextStyle(color: AppColors.textBody, fontSize: 12),
+            text,
+            style: const TextStyle(color: AppColors.textBody, fontSize: 12),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMetricsGrid(BuildContext context) {
+  String _tiempoRelativo(DateTime fecha) {
+    final diff = DateTime.now().difference(fecha);
+    if (diff.inMinutes < 1) return 'Ahora';
+    if (diff.inMinutes < 60) return 'Hace ${diff.inMinutes} min';
+    if (diff.inHours < 24) return 'Hace ${diff.inHours} h';
+    if (diff.inDays == 1) return 'Ayer';
+    return 'Hace ${diff.inDays} días';
+  }
+
+  Widget _buildMetricsGrid(
+    BuildContext context,
+    Diagnostico? ultimo,
+    int deviceCount,
+    dynamic wifiInfo,
+  ) {
+    final velocidad = ultimo?.velocidadBajadaMbps;
+    final latenciaIsp = ultimo?.latenciaIspMs;
+    final resultado = ultimo?.resultado ?? '';
+    final isExito = resultado.startsWith('EXCELENTE');
+
+    final senialDbm = wifiInfo?.signalStrengthDbm;
+    final latenciaGoogle = ultimo?.latenciaIspMs;
+    final senialStr = senialDbm != null ? '${senialDbm} dBm' : '--';
+
     return Row(
       children: [
-        const Expanded(
+        Expanded(
           child: _MetricItem(
             svgAsset: 'assets/check-square-svgrepo.svg',
-            label: 'Activo',
+            label: isExito
+                ? 'Excelente'
+                : resultado.isNotEmpty
+                    ? resultado
+                    : 'Activo',
             subLabel: 'Estado',
-            color: Color(0xFF00D285),
+            color: isExito
+                ? const Color(0xFF00D285)
+                : const Color(0xFF2C2C3E),
           ),
         ),
         Expanded(
           child: _MetricItem(
             svgAsset: 'assets/devices-svgrepo-com.svg',
-            label: '8',
+            label: deviceCount.toString(),
             subLabel: 'Equipos',
-            color: const Color(0xFF00D285),
+            color: deviceCount > 0
+                ? const Color(0xFF00D285)
+                : const Color(0xFF2C2C3E),
             onTap: () => context.push('/check_health/dispositivos'),
           ),
         ),
-        const Expanded(
+        Expanded(
           child: _MetricItem(
             svgAsset: 'assets/loading-16-svgrepo-c.svg',
-            label: '12 ms',
-            subLabel: 'Lat. Google',
-            color: Color(0xFF00D285),
+            label: latenciaIsp != null ? '$latenciaIsp ms' : '--',
+            subLabel: 'Lat. ISP',
+            color: latenciaIsp != null
+                ? const Color(0xFF00D285)
+                : const Color(0xFF2C2C3E),
           ),
         ),
-        const Expanded(
+        Expanded(
           child: _MetricItem(
             svgAsset: 'assets/wifi.svg',
-            label: '5 ms',
-            subLabel: 'Lat. ISP',
-            color: Color(0xFF00D285),
+            label: senialStr,
+            subLabel: 'Señal WiFi',
+            color: wifiInfo != null
+                ? const Color(0xFF00D285)
+                : const Color(0xFF2C2C3E),
+            onTap: () => context.push('/check_health/offline'),
           ),
         ),
-        const Expanded(
+        Expanded(
           child: _MetricItem(
             svgAsset: 'assets/clock_speed.svg',
-            label: '248 Mbps',
+            label: velocidad != null
+                ? '${velocidad.toStringAsFixed(0)} Mbps'
+                : '--',
             subLabel: 'Velocidad',
-            color: Color(0xFF00D285),
+            color: velocidad != null
+                ? const Color(0xFF00D285)
+                : const Color(0xFF2C2C3E),
           ),
         ),
       ],
@@ -226,8 +321,8 @@ class CheckHealthScreen extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 55,
-        decoration: const BoxDecoration(
-          color: Color(0xFF00D285),
+        decoration: BoxDecoration(
+          color: const Color(0xFF00D285),
           borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         child: const Center(
@@ -290,12 +385,6 @@ class CheckHealthScreen extends StatelessWidget {
           subtitle: 'Latencia y servidores',
           onTap: () => context.push('/check_health/gaming'),
         ),
-        // _MenuCard(
-        //   svgAsset: 'assets/streaming.svg',
-        //   title: 'Streaming',
-        //   subtitle: 'Plataformas de video',
-        //   onTap: () => context.push('/check_health/streaming'),
-        // ),
       ],
     );
   }

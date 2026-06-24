@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../shared/app_colors.dart';
+import '../../../core/providers/providers.dart';
+import '../../../logic/auth/auth_notifier.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentBannerIndex = 0;
   final PageController _bannerController = PageController();
 
@@ -18,6 +21,100 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _bannerController.dispose();
     super.dispose();
+  }
+
+  void _showProfileSheet() {
+    final perfil = ref.read(perfilProvider);
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1E1E32),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 24),
+              perfil.when(
+                data: (user) => Column(
+                  children: [
+                    const CircleAvatar(
+                      radius: 36,
+                      backgroundColor: Color(0xFF32324A),
+                      child: Icon(Icons.person_outline, color: Colors.white, size: 36),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      user.nombre,
+                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      user.email,
+                      style: const TextStyle(color: Color(0xFFB0B0C3), fontSize: 14),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF00D285).withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        user.planContratado,
+                        style: const TextStyle(color: Color(0xFF00D285), fontSize: 13, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    if (user.telefono.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        user.telefono,
+                        style: const TextStyle(color: Color(0xFFB0B0C3), fontSize: 14),
+                      ),
+                    ],
+                  ],
+                ),
+                loading: () => const CircularProgressIndicator(color: Color(0xFF00D285)),
+                error: (err, _) => const Text('Error al cargar perfil', style: TextStyle(color: Colors.white54)),
+              ),
+              const SizedBox(height: 28),
+              const Divider(color: Color(0xFF2E2E42), height: 1),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    _logout();
+                  },
+                  icon: const Icon(Icons.logout, color: Color(0xFFFF4B55), size: 20),
+                  label: const Text(
+                    'Cerrar sesión',
+                    style: TextStyle(color: Color(0xFFFF4B55), fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _logout() {
+    ref.read(authNotifierProvider.notifier).logout();
+    context.go('/login');
   }
 
   @override
@@ -31,11 +128,9 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              // Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Oneplay Logo
                   SvgPicture.asset(
                     'assets/hub/logo_oneplay.svg',
                     height: 25,
@@ -65,13 +160,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                       const SizedBox(width: 20),
-                      const CircleAvatar(
-                        radius: 16,
-                        backgroundColor: Color(0xFF32324A),
-                        child: Icon(
-                          Icons.person_outline,
-                          color: Colors.white,
-                          size: 20,
+                      GestureDetector(
+                        onTap: _showProfileSheet,
+                        child: const CircleAvatar(
+                          radius: 16,
+                          backgroundColor: Color(0xFF32324A),
+                          child: Icon(
+                            Icons.person_outline,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                         ),
                       ),
                     ],
@@ -88,7 +186,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Banner Carousel
               _buildBannerCarousel(),
               const SizedBox(height: 30),
               const Text(
@@ -100,7 +197,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Services Grid
               GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -161,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final banners = [
       'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2071&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2071&auto=format&fit=crop', // Extra placeholder
+      'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2071&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop',
     ];
 
@@ -196,7 +292,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        // Page Indicators
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(

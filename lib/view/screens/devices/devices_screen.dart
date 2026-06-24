@@ -1,13 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../shared/app_colors.dart';
+import '../../../core/providers/providers.dart';
+import '../../../data/models/dispositivo.dart';
 
-class DevicesScreen extends StatelessWidget {
+class DevicesScreen extends ConsumerWidget {
   const DevicesScreen({super.key});
 
+  String _svgForTipo(String tipo) {
+    switch (tipo) {
+      case 'smartphone':
+        return 'assets/smartphone.svg';
+      case 'laptop':
+        return 'assets/laptop.svg';
+      case 'pc':
+        return 'assets/pc.svg';
+      case 'router':
+        return 'assets/router.svg';
+      default:
+        return 'assets/smartphone.svg';
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dispositivosAsync = ref.watch(dispositivosProvider);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -30,51 +50,52 @@ class DevicesScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            const SizedBox(height: 10),
-            _buildMainHeader(),
-            const SizedBox(height: 25),
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildDeviceItem(
-                    name: 'Samsung S23',
-                    status: 'Conectado',
-                    isConnected: true,
-                    svgAsset: 'assets/smartphone.svg',
+        child: dispositivosAsync.when(
+          data: (dispositivos) {
+            final conectados =
+                dispositivos.where((d) => d.conectado).length;
+            return Column(
+              children: [
+                const SizedBox(height: 10),
+                _buildMainHeader(conectados, dispositivos.length),
+                const SizedBox(height: 25),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: dispositivos.length,
+                    itemBuilder: (context, index) {
+                      final d = dispositivos[index];
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          bottom: index < dispositivos.length - 1 ? 15 : 0,
+                        ),
+                        child: _buildDeviceItem(
+                          name: d.nombre,
+                          status: d.conectado ? 'Conectado' : 'Desconectado',
+                          isConnected: d.conectado,
+                          svgAsset: _svgForTipo(d.tipo),
+                        ),
+                      );
+                    },
                   ),
-                  const SizedBox(height: 15),
-                  _buildDeviceItem(
-                    name: 'Samsung A40',
-                    status: 'Conectado',
-                    isConnected: true,
-                    svgAsset: 'assets/smartphone.svg',
-                  ),
-                  const SizedBox(height: 15),
-                  _buildDeviceItem(
-                    name: 'Motorola 45-8',
-                    status: 'Conectado',
-                    isConnected: true,
-                    svgAsset: 'assets/smartphone.svg',
-                  ),
-                  const SizedBox(height: 15),
-                  _buildDeviceItem(
-                    name: 'MacBook Pro',
-                    status: 'Conectado',
-                    isConnected: true,
-                    svgAsset: 'assets/laptop.svg',
-                  ),
-                ],
-              ),
+                ),
+              ],
+            );
+          },
+          loading: () => const Center(
+            child: CircularProgressIndicator(color: Color(0xFF00D285)),
+          ),
+          error: (err, _) => Center(
+            child: Text(
+              'Error al cargar dispositivos',
+              style: const TextStyle(color: Colors.red),
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildMainHeader() {
+  Widget _buildMainHeader(int conectados, int total) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
@@ -82,28 +103,30 @@ class DevicesScreen extends StatelessWidget {
         color: const Color(0xFF32324A),
         borderRadius: BorderRadius.circular(25),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 35,
             backgroundColor: Color(0xFF00D285),
             child: Icon(Icons.check, color: Colors.white, size: 45),
           ),
-          SizedBox(height: 25),
+          const SizedBox(height: 25),
           Text(
-            '4 dispositivos\nconectados',
+            '$conectados dispositivos\nconectados',
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 28,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
-            'Tu conexión está funcionando perfectamente',
+            total > 0
+                ? 'Total: $total dispositivos en la red'
+                : 'Tu conexión está funcionando perfectamente',
             textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.textBody, fontSize: 13),
+            style: const TextStyle(color: AppColors.textBody, fontSize: 13),
           ),
         ],
       ),

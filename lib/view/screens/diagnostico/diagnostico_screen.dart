@@ -1,50 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import '../../shared/app_colors.dart';
+import '../../../logic/diagnostico/diagnostico_notifier.dart';
 
-class DiagnosticoScreen extends StatefulWidget {
+class DiagnosticoScreen extends ConsumerStatefulWidget {
   const DiagnosticoScreen({super.key});
 
   @override
-  State<DiagnosticoScreen> createState() => _DiagnosticoScreenState();
+  ConsumerState<DiagnosticoScreen> createState() => _DiagnosticoScreenState();
 }
 
-class _DiagnosticoScreenState extends State<DiagnosticoScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
+class _DiagnosticoScreenState extends ConsumerState<DiagnosticoScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 4),
-    );
-
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller)
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          context.pushReplacement('/check_health/diagnostico_result');
-        }
-      });
-
-    _controller.forward();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(diagnosticoNotifierProvider.notifier).reset();
+      ref.read(diagnosticoNotifierProvider.notifier).iniciarDiagnostico();
+    });
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  double _stepProgress(DiagnosticoStep step) {
+    switch (step) {
+      case DiagnosticoStep.idle:
+        return 0.0;
+      case DiagnosticoStep.pingGoogle:
+        return 0.1;
+      case DiagnosticoStep.pingIsp:
+        return 0.25;
+      case DiagnosticoStep.speedtest:
+        return 0.45;
+      case DiagnosticoStep.wifiInfo:
+        return 0.6;
+      case DiagnosticoStep.fibra:
+        return 0.75;
+      case DiagnosticoStep.guardando:
+        return 0.9;
+      case DiagnosticoStep.completado:
+        return 1.0;
+      case DiagnosticoStep.error:
+        return 0.0;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final progress = _animation.value;
+    final state = ref.watch(diagnosticoNotifierProvider);
+    final progress = _stepProgress(state.step);
+
+    ref.listen(diagnosticoNotifierProvider, (prev, next) {
+      if (next.step == DiagnosticoStep.completado) {
+        context.pushReplacement('/check_health/diagnostico_result');
+      }
+      if (next.step == DiagnosticoStep.error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${next.errorMsg}')),
+        );
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -97,10 +112,10 @@ class _DiagnosticoScreenState extends State<DiagnosticoScreen>
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const Text(
-                        'Analizando velocidad\n de internet',
+                      Text(
+                        _stepLabel(state.step),
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.textBody,
                           fontSize: 12,
                         ),
@@ -111,35 +126,49 @@ class _DiagnosticoScreenState extends State<DiagnosticoScreen>
               ),
             ),
             const SizedBox(height: 50),
-            const SizedBox(height: 50),
             _buildStatusItem(
               'Velocidad de internet',
-              progress >= 0.25
-                  ? 'Descarga: 248 Mbps / Carga: 95 Mbps'
+              state.velocidadBajadaMbps != null
+                  ? 'Descarga: ${state.velocidadBajadaMbps!.toStringAsFixed(1)} Mbps / Subida: ${state.velocidadSubidaMbps?.toStringAsFixed(1) ?? '...'} Mbps'
                   : 'Analizando...',
-              isDone: progress >= 0.25,
-              isLoading: progress < 0.25,
+              isDone: state.step.index >= DiagnosticoStep.speedtest.index,
+              isLoading: state.step == DiagnosticoStep.speedtest,
             ),
             const SizedBox(height: 15),
             _buildStatusItem(
               'Red Wifi Doméstica',
-              progress >= 0.5 ? 'Señal estable' : 'Esperando...',
-              isDone: progress >= 0.5,
-              isLoading: progress >= 0.25 && progress < 0.5,
+              state.latenciaIspMs != null
+                  ? '${state.latenciaIspMs} ms'
+                  : 'Esperando...',
+              isDone: state.step.index >= DiagnosticoStep.pingIsp.index,
+              isLoading: state.step == DiagnosticoStep.pingIsp,
+            ),
+            const SizedBox(height: 15),
+            _buildStatusItem(
+              'Conexión WiFi',
+              state.wifiSsid != null
+                  ? '${state.wifiSsid} (${state.wifiBanda ?? '--'})'
+                  : 'Analizando señal...',
+              isDone: state.step.index >= DiagnosticoStep.wifiInfo.index,
+              isLoading: state.step == DiagnosticoStep.wifiInfo,
             ),
             const SizedBox(height: 15),
             _buildStatusItem(
               'Fibra óptica',
-              progress >= 0.75 ? 'Potencia óptima' : 'Esperando...',
-              isDone: progress >= 0.75,
-              isLoading: progress >= 0.5 && progress < 0.75,
+              state.fibraEstado != null
+                  ? 'Potencia: ${state.fibraPotenciaDbm}'
+                  : 'Esperando...',
+              isDone: state.step.index >= DiagnosticoStep.fibra.index,
+              isLoading: state.step == DiagnosticoStep.fibra,
             ),
             const SizedBox(height: 15),
             _buildStatusItem(
               'Latencia y estabilidad',
-              progress >= 0.95 ? '12ms (Excelente)' : 'Esperando...',
-              isDone: progress >= 0.95,
-              isLoading: progress >= 0.75 && progress < 0.95,
+              state.latenciaGoogleMs != null
+                  ? '${state.latenciaGoogleMs}ms (Google)'
+                  : 'Esperando...',
+              isDone: state.step.index >= DiagnosticoStep.pingGoogle.index,
+              isLoading: state.step == DiagnosticoStep.pingGoogle,
             ),
             const Spacer(),
             _buildCancelButton(context),
@@ -148,6 +177,29 @@ class _DiagnosticoScreenState extends State<DiagnosticoScreen>
         ),
       ),
     );
+  }
+
+  String _stepLabel(DiagnosticoStep step) {
+    switch (step) {
+      case DiagnosticoStep.idle:
+        return 'Preparando diagnóstico';
+      case DiagnosticoStep.pingGoogle:
+        return 'Midiendo latencia...';
+      case DiagnosticoStep.pingIsp:
+        return 'Analizando red local...';
+      case DiagnosticoStep.speedtest:
+        return 'Analizando velocidad de internet';
+      case DiagnosticoStep.wifiInfo:
+        return 'Escaneando WiFi...';
+      case DiagnosticoStep.fibra:
+        return 'Verificando fibra óptica...';
+      case DiagnosticoStep.guardando:
+        return 'Guardando resultados...';
+      case DiagnosticoStep.completado:
+        return 'Completado';
+      case DiagnosticoStep.error:
+        return 'Error en diagnóstico';
+    }
   }
 
   Widget _buildStatusItem(
@@ -180,19 +232,19 @@ class _DiagnosticoScreenState extends State<DiagnosticoScreen>
                     size: 24,
                   )
                 : isLoading
-                ? const LoadingIndicator(
-                    indicatorType: Indicator.lineSpinFadeLoader,
-                    colors: [AppColors.textBody],
-                    strokeWidth: 2,
-                  )
-                : Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.textBody,
-                    ),
-                  ),
+                    ? const LoadingIndicator(
+                        indicatorType: Indicator.lineSpinFadeLoader,
+                        colors: [AppColors.textBody],
+                        strokeWidth: 2,
+                      )
+                    : Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.textBody,
+                        ),
+                      ),
           ),
           const SizedBox(width: 15),
           Expanded(
@@ -213,8 +265,8 @@ class _DiagnosticoScreenState extends State<DiagnosticoScreen>
                     color: isDone
                         ? const Color(0xFF00D285)
                         : isLoading
-                        ? const Color.fromARGB(255, 164, 164, 223)
-                        : AppColors.textBody,
+                            ? const Color.fromARGB(255, 164, 164, 223)
+                            : AppColors.textBody,
                     fontSize: 12,
                   ),
                 ),
