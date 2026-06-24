@@ -39,7 +39,6 @@ import '../../shared/data/local/local_storage.dart';
 
 const _publicRoutes = {'/login'};
 
-final appRouterProvider = Provider<GoRouter>((ref) => _buildRouter());
 
 GoRouter _buildRouter() {
   return GoRouter(

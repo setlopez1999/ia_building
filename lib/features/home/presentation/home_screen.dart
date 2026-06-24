@@ -24,7 +24,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _showProfileSheet() {
-    final perfil = ref.read(perfilProvider);
+    final perfil = ref.watch(perfilProvider);
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF1E1E32),

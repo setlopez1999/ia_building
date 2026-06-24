@@ -5,9 +5,9 @@ import '../../../shared/data/models/user.dart';
 import '../../../core/providers/providers.dart';
 
 final perfilRepositoryProvider = Provider<PerfilRepository>((ref) {
-  return PerfilRepositoryImpl(ref.read(apiClientProvider));
+  return PerfilRepositoryImpl(ref.watch(apiClientProvider));
 });
 
 final perfilProvider = FutureProvider<User>((ref) async {
-  return ref.read(perfilRepositoryProvider).getProfile();
+  return ref.watch(perfilRepositoryProvider).getProfile();
 });

@@ -5,11 +5,11 @@ import '../../../shared/data/models/notificacion.dart';
 import '../../../core/providers/providers.dart';
 
 final notificacionRepositoryProvider = Provider<NotificacionRepository>((ref) {
-  return NotificacionRepositoryImpl(ref.read(apiClientProvider));
+  return NotificacionRepositoryImpl(ref.watch(apiClientProvider));
 });
 
 final notificacionesProvider = FutureProvider<List<Notificacion>>((ref) async {
-  return ref.read(notificacionRepositoryProvider).getNotificaciones();
+  return ref.watch(notificacionRepositoryProvider).getNotificaciones();
 });
 
 final notificacionesNoLeidasProvider = Provider<int>((ref) {

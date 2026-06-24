@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/services/network_analyzer_service.dart';
-import '../providers/gaming_provider.dart';
+import '../logic/gaming_server_providers.dart';
 
 part 'gaming_monitor_service.g.dart';
 
@@ -192,14 +192,12 @@ class GamingMonitor extends _$GamingMonitor {
     final deepResult = await _analyzer.analyze(bestServer.target, count: 3);
 
     if (deepResult.success) {
-      final repository = ref.read(gamingRepositoryProvider);
-      repository.updateGameMetrics(
+      final repository = ref.read(gamingApiRepositoryImplProvider);
+      repository.updateMetrics(
         id: gameId,
-        ping: deepResult.avgPing,
-        loss: deepResult.lossPercent,
-        jitter: deepResult.jitter,
-        serverName: bestServer.name,
-        serverLocation: bestServer.location,
+        pingMs: deepResult.avgPing.round(),
+        jitterMs: deepResult.jitter.round(),
+        perdidaPaquetesPct: deepResult.lossPercent,
       );
       return true;
     }

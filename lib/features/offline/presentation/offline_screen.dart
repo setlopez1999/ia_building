@@ -7,7 +7,7 @@ import '../../../core/services/local_device_service.dart';
 import '../../../shared/data/models/wifi_info.dart';
 
 final _offlineScanProvider = FutureProvider.autoDispose((ref) async {
-  final service = ref.read(localDeviceServiceProvider);
+  final service = ref.watch(localDeviceServiceProvider);
   final wifiInfo = await service.getWifiInfo();
   final deviceInfo = await service.getDeviceInfo();
   final devices = await service.scanLocalDevices();

@@ -11,7 +11,7 @@ import '../../fibra/logic/fibra_providers.dart';
 import '../../diagnostico/logic/diagnostico_providers.dart';
 
 final _lastWifiInfoProvider = FutureProvider.autoDispose((ref) async {
-  final service = ref.read(localDeviceServiceProvider);
+  final service = ref.watch(localDeviceServiceProvider);
   return service.getWifiInfo();
 });
 

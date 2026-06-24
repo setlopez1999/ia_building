@@ -5,9 +5,9 @@ import '../../../shared/data/models/diagnostico.dart';
 import '../../../core/providers/providers.dart';
 
 final diagnosticoRepositoryProvider = Provider<DiagnosticoRepository>((ref) {
-  return DiagnosticoRepositoryImpl(ref.read(apiClientProvider));
+  return DiagnosticoRepositoryImpl(ref.watch(apiClientProvider));
 });
 
 final historialDiagnosticoProvider = FutureProvider<List<Diagnostico>>((ref) async {
-  return ref.read(diagnosticoRepositoryProvider).getHistorial();
+  return ref.watch(diagnosticoRepositoryProvider).getHistorial();
 });

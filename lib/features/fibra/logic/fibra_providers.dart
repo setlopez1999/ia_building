@@ -5,9 +5,9 @@ import '../../../shared/data/models/fibra.dart';
 import '../../../core/providers/providers.dart';
 
 final fibraRepositoryProvider = Provider<FibraRepository>((ref) {
-  return FibraRepositoryImpl(ref.read(apiClientProvider));
+  return FibraRepositoryImpl(ref.watch(apiClientProvider));
 });
 
 final fibraProvider = FutureProvider<Fibra>((ref) async {
-  return ref.read(fibraRepositoryProvider).getFibra();
+  return ref.watch(fibraRepositoryProvider).getFibra();
 });

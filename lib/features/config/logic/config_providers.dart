@@ -5,9 +5,9 @@ import '../../../shared/data/models/remote_config.dart';
 import '../../../core/providers/providers.dart';
 
 final configRepositoryProvider = Provider<ConfigRepository>((ref) {
-  return ConfigRepositoryImpl(ref.read(apiClientProvider));
+  return ConfigRepositoryImpl(ref.watch(apiClientProvider));
 });
 
 final appRemoteConfigProvider = FutureProvider<AppRemoteConfig>((ref) async {
-  return ref.read(configRepositoryProvider).getConfig();
+  return ref.watch(configRepositoryProvider).getConfig();
 });

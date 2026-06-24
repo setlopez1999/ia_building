@@ -5,19 +5,19 @@ import '../../../shared/data/models/servidor_juego.dart';
 import '../../../core/providers/providers.dart';
 
 final gamingApiRepositoryImplProvider = Provider<GamingApiRepositoryImpl>((ref) {
-  final repo = GamingApiRepositoryImpl(ref.read(apiClientProvider));
+  final repo = GamingApiRepositoryImpl(ref.watch(apiClientProvider));
   ref.onDispose(repo.dispose);
   return repo;
 });
 
 final gamingApiRepositoryProvider = Provider<IGamingRepository>((ref) {
-  return ref.read(gamingApiRepositoryImplProvider);
+  return ref.watch(gamingApiRepositoryImplProvider);
 });
 
 final servidoresJuegoProvider = FutureProvider<List<ServidorJuego>>((ref) async {
-  return ref.read(gamingApiRepositoryProvider).getServidores();
+  return ref.watch(gamingApiRepositoryProvider).getServidores();
 });
 
 final servidoresJuegoStreamProvider = StreamProvider<List<ServidorJuego>>((ref) {
-  return ref.read(gamingApiRepositoryImplProvider).watchServidores();
+  return ref.watch(gamingApiRepositoryImplProvider).watchServidores();
 });

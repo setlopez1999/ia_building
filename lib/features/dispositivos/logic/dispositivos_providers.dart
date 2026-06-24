@@ -6,13 +6,13 @@ import '../../../core/providers/providers.dart';
 import '../../../core/services/local_device_service.dart';
 
 final dispositivoRepositoryProvider = Provider<DispositivoRepository>((ref) {
-  return DispositivoRepositoryImpl(ref.read(apiClientProvider));
+  return DispositivoRepositoryImpl(ref.watch(apiClientProvider));
 });
 
 final dispositivosProvider = FutureProvider<List<Dispositivo>>((ref) async {
   try {
-    final localDevices = await ref.read(localDeviceServiceProvider).scanLocalDevices();
+    final localDevices = await ref.watch(localDeviceServiceProvider).scanLocalDevices();
     if (localDevices.isNotEmpty) return localDevices;
   } catch (_) {}
-  return ref.read(dispositivoRepositoryProvider).getDispositivos();
+  return ref.watch(dispositivoRepositoryProvider).getDispositivos();
 });
