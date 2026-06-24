@@ -3,18 +3,9 @@ import '../interfaces/gaming_repository.dart';
 import '../../models/servidor_juego.dart';
 import '../../sources/remote/api_client.dart';
 
-/// Implementación real de IGamingRepository.
-/// GET /v1/gaming/servers  (GAMING-1)
-///
-/// También expone un stream local para actualización en tiempo real
-/// de métricas de ping (usado por GamingMonitorService).
 class GamingRepositoryImpl implements IGamingRepository {
   final ApiClient _api;
-
-  /// Stream interno para actualizaciones en tiempo real de métricas.
-  final _streamController =
-      StreamController<List<ServidorJuego>>.broadcast();
-
+  final _streamController = StreamController<List<ServidorJuego>>.broadcast();
   List<ServidorJuego> _servidores = [];
 
   GamingRepositoryImpl(this._api);
@@ -22,25 +13,24 @@ class GamingRepositoryImpl implements IGamingRepository {
   @override
   Future<List<ServidorJuego>> getServidores() async {
     final data = await _api.get('/v1/gaming/servers');
-    final list = data['servidores'] as List<dynamic>;
+    final list = data['servidores'] as List<dynamic>? ?? [];
     _servidores = list
         .map((e) => ServidorJuego(
-              id: e['id'] as String,
-              juego: e['juego'] as String,
-              servidor: e['servidor'] as String,
-              ubicacion: e['ubicacion'] as String,
-              pingMs: e['ping_ms'] as int,
-              jitterMs: e['jitter_ms'] as int,
+              id: (e['id'] as String?) ?? '',
+              juego: (e['juego'] as String?) ?? '',
+              servidor: (e['servidor'] as String?) ?? '',
+              ubicacion: (e['ubicacion'] as String?) ?? '',
+              pingMs: (e['ping_ms'] as int?) ?? 0,
+              jitterMs: (e['jitter_ms'] as int?) ?? 0,
               perdidaPaquetesPct:
-                  (e['perdida_paquetes_pct'] as num).toDouble(),
-              estado: e['estado'] as String,
+                  ((e['perdida_paquetes_pct'] as num?) ?? 0).toDouble(),
+              estado: (e['estado'] as String?) ?? 'SIN_CONEXIÓN',
             ))
         .toList();
     _streamController.add(List.from(_servidores));
     return _servidores;
   }
 
-  /// Actualiza las métricas de un servidor en el stream local.
   void updateMetrics({
     required String id,
     required int pingMs,

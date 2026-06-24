@@ -3,8 +3,6 @@ import '../../models/app_config.dart';
 import '../../sources/remote/api_client.dart';
 import '../../sources/local/local_storage.dart';
 
-/// Implementación real de AuthRepository.
-/// POST /v1/auth/login  (AUTH-1)
 class AuthRepositoryImpl implements AuthRepository {
   final ApiClient _api;
 
@@ -21,16 +19,16 @@ class AuthRepositoryImpl implements AuthRepository {
       throw Exception(data['msg'] ?? 'Error de autenticación');
     }
 
+    final user = data['user'] as Map<String, dynamic>? ?? {};
     final result = AuthResult(
-      token: data['token'] as String,
-      clienteId: data['cliente_id'] as String,
-      nombre: data['user']['nombre'] as String,
-      apellido: data['user']['apellido'] as String,
-      email: data['user']['email'] as String,
-      role: data['user']['role'] as String,
+      token: (data['token'] as String?) ?? '',
+      clienteId: (data['cliente_id'] as String?) ?? '',
+      nombre: (user['nombre'] as String?) ?? '',
+      apellido: (user['apellido'] as String?) ?? '',
+      email: (user['email'] as String?) ?? '',
+      role: (user['role'] as String?) ?? '',
     );
 
-    // Persiste sesión en SharedPreferences
     await LocalStorage.setToken(result.token);
     await LocalStorage.setClienteId(result.clienteId);
 

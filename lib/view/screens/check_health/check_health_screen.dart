@@ -266,6 +266,7 @@ class CheckHealthScreen extends ConsumerWidget {
                 : const Color(0xFF2C2C3E),
           ),
         ),
+        const SizedBox(width: 12),
         Expanded(
           child: _MetricItem(
             svgAsset: 'assets/devices-svgrepo-com.svg',
@@ -277,6 +278,7 @@ class CheckHealthScreen extends ConsumerWidget {
             onTap: () => context.push('/check_health/dispositivos'),
           ),
         ),
+        const SizedBox(width: 12),
         Expanded(
           child: _MetricItem(
             svgAsset: 'assets/loading-16-svgrepo-c.svg',
@@ -287,6 +289,7 @@ class CheckHealthScreen extends ConsumerWidget {
                 : const Color(0xFF2C2C3E),
           ),
         ),
+        const SizedBox(width: 12),
         Expanded(
           child: _MetricItem(
             svgAsset: 'assets/wifi.svg',
@@ -298,6 +301,7 @@ class CheckHealthScreen extends ConsumerWidget {
             onTap: () => context.push('/check_health/offline'),
           ),
         ),
+        const SizedBox(width: 12),
         Expanded(
           child: _MetricItem(
             svgAsset: 'assets/clock_speed.svg',

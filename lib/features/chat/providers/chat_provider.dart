@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../data/sources/remote/api_client.dart';
 import '../../../core/providers/providers.dart';
@@ -42,25 +43,58 @@ class Chat extends _$Chat {
     );
     state = [...state, botTyping];
 
-    final response = await ref.read(chatRepositoryProvider).sendMessage(
-      text,
-      sessionId: _sessionId,
-    );
+    try {
+      final response = await ref.read(chatRepositoryProvider).sendMessage(
+        text,
+        sessionId: _sessionId,
+      );
 
-    _sessionId = response['session_id'] as String?;
-    if (_sessionId != null) {
-      await LocalStorage.setChatSessionId(_sessionId!);
+      if (response['success'] == false) {
+        final errMsg = response['msg'] as String? ?? 'Error al procesar el mensaje';
+        state = [
+          for (final msg in state)
+            if (msg == botTyping)
+              msg.copyWith(text: errMsg, timestamp: DateTime.now())
+            else
+              msg,
+        ];
+        return;
+      }
+
+      _sessionId = response['session_id'] as String?;
+      if (_sessionId != null) {
+        await LocalStorage.setChatSessionId(_sessionId!);
+      }
+
+      final reply = response['reply'] as String? ?? 'Sin respuesta';
+
+      state = [
+        for (final msg in state)
+          if (msg == botTyping)
+            msg.copyWith(text: reply, timestamp: DateTime.now())
+          else
+            msg,
+      ];
+    } catch (e) {
+      String errMsg;
+      if (e is DioException) {
+        if (e.type == DioExceptionType.connectionTimeout ||
+            e.type == DioExceptionType.receiveTimeout) {
+          errMsg = 'Tiempo de espera agotado. Intenta de nuevo.';
+        } else {
+          errMsg = 'Error de conexión. Verifica tu red.';
+        }
+      } else {
+        errMsg = 'Error interno. Intenta de nuevo.';
+      }
+      state = [
+        for (final msg in state)
+          if (msg == botTyping)
+            msg.copyWith(text: errMsg, timestamp: DateTime.now())
+          else
+            msg,
+      ];
     }
-
-    final reply = response['reply'] as String? ?? 'Sin respuesta';
-
-    state = [
-      for (final msg in state)
-        if (msg == botTyping)
-          msg.copyWith(text: reply, timestamp: DateTime.now())
-        else
-          msg,
-    ];
   }
 
   void clearChat() {

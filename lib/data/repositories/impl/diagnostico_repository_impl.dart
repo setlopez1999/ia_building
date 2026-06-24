@@ -2,9 +2,6 @@ import '../interfaces/diagnostico_repository.dart';
 import '../../models/diagnostico.dart';
 import '../../sources/remote/api_client.dart';
 
-/// Implementación real de DiagnosticoRepository.
-/// GET  /v1/diagnosticos  (DIAG-2)
-/// POST /v1/diagnosticos  (DIAG-1)
 class DiagnosticoRepositoryImpl implements DiagnosticoRepository {
   final ApiClient _api;
 
@@ -13,15 +10,15 @@ class DiagnosticoRepositoryImpl implements DiagnosticoRepository {
   @override
   Future<List<Diagnostico>> getHistorial() async {
     final data = await _api.get('/v1/diagnosticos');
-    final list = data['historial'] as List<dynamic>;
+    final list = data['historial'] as List<dynamic>? ?? [];
     return list
         .map((e) => Diagnostico(
-              id: e['id'] as String,
-              fecha: DateTime.parse(e['fecha'] as String),
-              latenciaIspMs: e['latencia_isp_ms'] as int,
+              id: (e['id'] as String?) ?? '',
+              fecha: DateTime.tryParse(e['fecha'] as String? ?? '') ?? DateTime.now(),
+              latenciaIspMs: (e['latencia_isp_ms'] as int?) ?? 0,
               velocidadBajadaMbps:
-                  (e['velocidad_bajada_mbps'] as num).toDouble(),
-              resultado: e['resultado'] as String,
+                  ((e['velocidad_bajada_mbps'] as num?) ?? 0).toDouble(),
+              resultado: (e['resultado'] as String?) ?? 'MALO',
             ))
         .toList();
   }
@@ -42,9 +39,9 @@ class DiagnosticoRepositoryImpl implements DiagnosticoRepository {
       },
     );
     return DiagnosticoSaveResult(
-      success: data['success'] as bool,
-      diagnosticoId: data['diagnostico_id'] as String,
-      resultado: data['resultado'] as String,
+      success: data['success'] as bool? ?? false,
+      diagnosticoId: (data['diagnostico_id'] as String?) ?? '',
+      resultado: (data['resultado'] as String?) ?? 'MALO',
     );
   }
 }

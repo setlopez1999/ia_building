@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/providers.dart';
 import '../../data/models/app_config.dart';
@@ -56,10 +57,26 @@ class AuthNotifier extends StateNotifier<AuthState> {
         authResult: result,
       );
     } catch (e) {
+      String msg;
+      if (e is DioException) {
+        if (e.type == DioExceptionType.connectionTimeout ||
+            e.type == DioExceptionType.receiveTimeout) {
+          msg = 'Tiempo de espera agotado. Verifica tu conexión.';
+        } else if (e.type == DioExceptionType.connectionError) {
+          msg = 'Error de conexión. Verifica tu red.';
+        } else {
+          msg = 'Error de autenticación. Intenta de nuevo.';
+        }
+      } else {
+        msg = e.toString().replaceFirst('Exception: ', '');
+        if (msg.isEmpty || msg == 'null') {
+          msg = 'Credenciales inválidas';
+        }
+      }
       state = state.copyWith(
         isLoading: false,
         isAuthenticated: false,
-        errorMsg: e.toString().replaceFirst('Exception: ', ''),
+        errorMsg: msg,
       );
     }
   }

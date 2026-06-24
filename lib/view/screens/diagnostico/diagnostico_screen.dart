@@ -85,17 +85,17 @@ class _DiagnosticoScreenState extends ConsumerState<DiagnosticoScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
             Center(
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   SizedBox(
-                    width: 200,
-                    height: 200,
+                    width: 170,
+                    height: 170,
                     child: CircularProgressIndicator(
                       value: progress,
-                      strokeWidth: 30,
+                      strokeWidth: 24,
                       strokeCap: StrokeCap.round,
                       backgroundColor: Colors.white12,
                       color: const Color.fromARGB(255, 173, 170, 203),
@@ -108,7 +108,7 @@ class _DiagnosticoScreenState extends ConsumerState<DiagnosticoScreen> {
                         '${(progress * 100).toInt()}%',
                         style: const TextStyle(
                           color: Color.fromARGB(255, 173, 170, 203),
-                          fontSize: 40,
+                          fontSize: 32,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -117,7 +117,7 @@ class _DiagnosticoScreenState extends ConsumerState<DiagnosticoScreen> {
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: AppColors.textBody,
-                          fontSize: 12,
+                          fontSize: 11,
                         ),
                       ),
                     ],
@@ -125,54 +125,61 @@ class _DiagnosticoScreenState extends ConsumerState<DiagnosticoScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 50),
-            _buildStatusItem(
-              'Velocidad de internet',
-              state.velocidadBajadaMbps != null
-                  ? 'Descarga: ${state.velocidadBajadaMbps!.toStringAsFixed(1)} Mbps / Subida: ${state.velocidadSubidaMbps?.toStringAsFixed(1) ?? '...'} Mbps'
-                  : 'Analizando...',
-              isDone: state.step.index >= DiagnosticoStep.speedtest.index,
-              isLoading: state.step == DiagnosticoStep.speedtest,
+            const SizedBox(height: 20),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildStatusItem(
+                      'Velocidad de internet',
+                      state.velocidadBajadaMbps != null
+                          ? 'Descarga: ${state.velocidadBajadaMbps!.toStringAsFixed(1)} Mbps / Subida: ${state.velocidadSubidaMbps?.toStringAsFixed(1) ?? '...'} Mbps'
+                          : 'Analizando...',
+                      isDone: state.step.index >= DiagnosticoStep.speedtest.index,
+                      isLoading: state.step == DiagnosticoStep.speedtest,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildStatusItem(
+                      'Red Wifi Doméstica',
+                      state.latenciaIspMs != null
+                          ? '${state.latenciaIspMs} ms'
+                          : 'Esperando...',
+                      isDone: state.step.index >= DiagnosticoStep.pingIsp.index,
+                      isLoading: state.step == DiagnosticoStep.pingIsp,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildStatusItem(
+                      'Conexión WiFi',
+                      state.wifiSsid != null
+                          ? '${state.wifiSsid} (${state.wifiBanda ?? '--'})'
+                          : 'Analizando señal...',
+                      isDone: state.step.index >= DiagnosticoStep.wifiInfo.index,
+                      isLoading: state.step == DiagnosticoStep.wifiInfo,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildStatusItem(
+                      'Fibra óptica',
+                      state.fibraEstado != null
+                          ? 'Potencia: ${state.fibraPotenciaDbm}'
+                          : 'Esperando...',
+                      isDone: state.step.index >= DiagnosticoStep.fibra.index,
+                      isLoading: state.step == DiagnosticoStep.fibra,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildStatusItem(
+                      'Latencia y estabilidad',
+                      state.latenciaGoogleMs != null
+                          ? '${state.latenciaGoogleMs}ms (Google)'
+                          : 'Esperando...',
+                      isDone: state.step.index >= DiagnosticoStep.pingGoogle.index,
+                      isLoading: state.step == DiagnosticoStep.pingGoogle,
+                    ),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 15),
-            _buildStatusItem(
-              'Red Wifi Doméstica',
-              state.latenciaIspMs != null
-                  ? '${state.latenciaIspMs} ms'
-                  : 'Esperando...',
-              isDone: state.step.index >= DiagnosticoStep.pingIsp.index,
-              isLoading: state.step == DiagnosticoStep.pingIsp,
-            ),
-            const SizedBox(height: 15),
-            _buildStatusItem(
-              'Conexión WiFi',
-              state.wifiSsid != null
-                  ? '${state.wifiSsid} (${state.wifiBanda ?? '--'})'
-                  : 'Analizando señal...',
-              isDone: state.step.index >= DiagnosticoStep.wifiInfo.index,
-              isLoading: state.step == DiagnosticoStep.wifiInfo,
-            ),
-            const SizedBox(height: 15),
-            _buildStatusItem(
-              'Fibra óptica',
-              state.fibraEstado != null
-                  ? 'Potencia: ${state.fibraPotenciaDbm}'
-                  : 'Esperando...',
-              isDone: state.step.index >= DiagnosticoStep.fibra.index,
-              isLoading: state.step == DiagnosticoStep.fibra,
-            ),
-            const SizedBox(height: 15),
-            _buildStatusItem(
-              'Latencia y estabilidad',
-              state.latenciaGoogleMs != null
-                  ? '${state.latenciaGoogleMs}ms (Google)'
-                  : 'Esperando...',
-              isDone: state.step.index >= DiagnosticoStep.pingGoogle.index,
-              isLoading: state.step == DiagnosticoStep.pingGoogle,
-            ),
-            const Spacer(),
             _buildCancelButton(context),
-            const SizedBox(height: 40),
+            const SizedBox(height: 20),
           ],
         ),
       ),
