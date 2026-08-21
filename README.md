@@ -1,16 +1,50 @@
-# health_check_ext
+# tvapp
 
-A new Flutter project.
+## Requisitos
 
-## Getting Started
+- [FVM](https://fvm.app/) — Flutter Version Manager
+- Flutter `3.35.7` (gestionado por FVM)
+- Android SDK (para compilar APK)
 
-This project is a starting point for a Flutter application.
+## Setup inicial (primera vez o después de clonar)
 
-A few resources to get you started if this is your first Flutter project:
+```bash
+fvm install                                                         # 1. Instalar Flutter 3.35.7
+fvm flutter clean                                                    # 2. Limpiar build / .dart_tool
+fvm flutter pub get                                                  # 3. Bajar dependencias
+fvm dart run build_runner build --delete-conflicting-outputs         # 4. Generar freezed / g.dart
+fvm flutter run                                                      # 5. Correr la app
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+> Los archivos `*.freezed.dart` y `*.g.dart` son auto-generados y no están en git.
+> Debes generarlos localmente antes de correr la app (paso 4).
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Correr la app
+
+```bash
+fvm flutter run
+```
+
+## Compilar APK
+
+```bash
+# Debug
+fvm flutter build apk --debug
+
+# Release
+fvm flutter build apk --release
+```
+
+## Regenerar código tras cambios en modelos
+
+Cada vez que modifiques una clase `@freezed`, un provider `@riverpod`, o un DTO `@JsonSerializable`, vuelve a correr:
+
+```bash
+fvm dart run build_runner build --delete-conflicting-outputs
+```
+
+O en modo watch durante desarrollo:
+
+```bash
+fvm dart run build_runner watch --delete-conflicting-outputs
+```

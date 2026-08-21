@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1009763251368",
+    "project_id": "camarasproyectocdlatam",
+    "storage_bucket": "camarasproyectocdlatam.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009763251368:android:22b0609fded44bd8453e9d",
+        "android_client_info": {
+          "package_name": "tv.cdlatam.streamlink.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD31cMhcMd7AvcxgDxAbS54FsNOrfgAfxM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

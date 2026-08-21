@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"bantel-tv","appId":"1:437006153385:android:d33c2de99dc589bf22dbb8","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"bantel-tv","configurations":{"android":"1:437006153385:android:d33c2de99dc589bf22dbb8","ios":"1:437006153385:ios:d206fad3e0cf866122dbb8"}}}}}}
