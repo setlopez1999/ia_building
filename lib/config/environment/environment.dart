@@ -40,14 +40,29 @@ class Environment {
   static Color gradientColor2 = HexColor(dotenv.env['GRADIENT_COLOR_2'] ?? '004E92');
 
   /// Theme config
+  /// Fondo unico de la app. Toda pantalla debe usar este color.
+  static Color backgroundColor =
+      HexColor(dotenv.env['BACKGROUND_COLOR'] ?? '#14161C');
+
+  /// Color de los botones de accion principal (flujo de registro).
+  /// Modo demostración: las pantallas cuyo endpoint todavia no existe
+  /// muestran datos de muestra. En false no queda ningun dato inventado.
+  static bool demoMode = (dotenv.env['DEMO'] ?? 'false') == 'true';
+
+  /// Fundido al cambiar de canal.
+  static bool channelFadeEnabled = (dotenv.env['CHANNEL_FADE_ENABLED'] ?? 'true') == 'true';
+  static int channelFadeMs =
+      int.tryParse(dotenv.env['CHANNEL_FADE_MS'] ?? '') ?? 250;
+
+  static Color actionColor = HexColor(dotenv.env['ACTION_COLOR'] ?? '#00CC66');
+
   static Color lightThemeColor = HexColor(dotenv.env['LIGHT_THEME_COLOR']!);
   static Color darkThemeColor = HexColor(dotenv.env['DARK_THEME_COLOR']!);
-  static Color secondaryLightThemeColor = HexColor(
-    dotenv.env['SECONDARY_LIGHT_THEME_COLOR']!,
-  );
-  static Color secondaryDarkThemeColor = HexColor(
-    dotenv.env['SECONDARY_DARK_THEME_COLOR']!,
-  );
+  /// Acento de la app. Antes cada tema tenia el suyo (`SECONDARY_*`), que en
+  /// IPTV se veia violeta mientras el resto de la app era verde. Ahora los dos
+  /// derivan de [actionColor]: un solo valor en el `.env` cambia todo.
+  static Color get secondaryLightThemeColor => actionColor;
+  static Color get secondaryDarkThemeColor => actionColor;
   static Color lightThemeColorText = HexColor(
     dotenv.env['LIGHT_THEME_TEXT_COLOR']!,
   );

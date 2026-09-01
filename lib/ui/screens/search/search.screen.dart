@@ -11,6 +11,7 @@ import 'package:tvapp/ui/providers/auth/auth_provider.dart';
 import 'package:tvapp/ui/providers/channels_searched/channels_searched_provider.dart';
 import 'package:tvapp/ui/screens/login/login.screen.dart';
 import 'package:tvapp/ui/shared/widgets/app_bar.widget.dart';
+import 'package:tvapp/ui/shared/widgets/app_input.widget.dart';
 import 'package:tvapp/ui/shared/widgets/row_button_channel.dart';
 import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
 
@@ -127,46 +128,22 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(80),
                 child: Container(
-                  height: 70,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: AppTheme.textColor(context),
-                    ),
-                  ),
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: [
                       Expanded(
-                        child: TextField(
-                          style: const TextStyle(
-                            color: Colors.white,
-                          ),
+                        // Regla 3: input compartido, sin estilo propio.
+                        child: AppSearchInput(
                           controller: _searchController,
-                          textInputAction: TextInputAction.done,
-                          onChanged: (value) => {
-                            _searchInJson(value)
-                          },
-                          decoration: InputDecoration(
-                            fillColor: Colors.transparent,
-                            hintText: '¿Qué canal buscas?',
-                            hintStyle: TextStyle(
-                              color: AppTheme.textColor(context),
-                            ),
-                            prefixIcon: _speech.isListening
-                                ? Icon(
-                              Icons.graphic_eq,
-                              color: AppTheme.secondaryColor(context),
-                            )
-                                : null,
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(100),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
+                          hint: '¿Qué canal buscas?',
+                          prefixIcon: _speech.isListening
+                              ? Icon(
+                                  Icons.graphic_eq,
+                                  color: AppTheme.secondaryColor(context),
+                                )
+                              : const Icon(Icons.search,
+                                  color: AppInput.hintColor, size: 20),
+                          onChanged: _searchInJson,
                         ),
                       ),
                       IconButton(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tvapp/config/theme/app.theme.dart';
+import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/ui/screens/login/login.screen.dart';
 import 'package:tvapp/ui/shared/widgets/google_text_span.widget.dart';
 import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
@@ -41,7 +41,7 @@ class _RegisterScreenState extends ConsumerState<RegisterConfirmationScreen>{
                   const SizedBox(height: 50),
                   Icon(
                     Icons.check_circle,
-                    color: AppTheme.secondaryColor(context),
+                    color: Environment.actionColor,
                     size: 50,
                   ),
                   const SizedBox(height: 12),
@@ -95,6 +95,7 @@ class _RegisterScreenState extends ConsumerState<RegisterConfirmationScreen>{
               ),
               FilledButton(
                 style: FilledButton.styleFrom(
+                  backgroundColor: Environment.actionColor,
                   minimumSize: const Size.fromHeight(64),
                   textStyle: const TextStyle(
                     fontSize: 24,

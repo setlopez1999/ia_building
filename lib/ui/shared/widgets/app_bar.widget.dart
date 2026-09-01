@@ -15,7 +15,7 @@ AppBar customAppBar(
   PreferredSizeWidget? bottom,
 }) {
   return AppBar(
-    backgroundColor: AppTheme.primaryColor(context),
+    backgroundColor: backgroundColor ?? Environment.backgroundColor,
     centerTitle: false,
     leading: leading.isNotNull
         ? leading!

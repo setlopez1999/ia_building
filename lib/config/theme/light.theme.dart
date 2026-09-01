@@ -11,7 +11,7 @@ final lightTheme = ThemeData(
     primarySwatch: swatchColorFromHexString(env('LIGHT_THEME_COLOR')),
   ),
   useMaterial3: true,
-  scaffoldBackgroundColor: Environment.lightThemeColor,
+  scaffoldBackgroundColor: Environment.backgroundColor,
   filledButtonTheme: FilledButtonThemeData(
     style: FilledButton.styleFrom(
       minimumSize: const Size(128, 39),

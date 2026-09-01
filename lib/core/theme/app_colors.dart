@@ -3,7 +3,8 @@ import 'package:tvapp/config/environment/environment.dart';
 
 class AppColors {
   // Backgrounds
-  static const Color background = Color(0xFF1E1E1E);
+  /// Fondo unico, definido en el .env (BACKGROUND_COLOR).
+  static Color get background => Environment.backgroundColor;
   static const Color surface = Color(0xFF2C2C3E);
 
   // Containers
