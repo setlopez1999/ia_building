@@ -8,7 +8,11 @@ import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 import 'package:tvapp/core/domain/entities/tools/camera_entity.dart';
 import 'package:tvapp/ui/providers/auth/auth_provider.dart';
 import 'package:tvapp/ui/providers/connectivity/internet_check_provider.dart';
+import 'package:tvapp/ui/screens/account/account_screen.dart';
 import 'package:tvapp/ui/screens/change_password/change_password_screen.dart';
+import 'package:tvapp/ui/screens/channels/channels_screen.widget.dart';
+import 'package:tvapp/ui/screens/favorites/favorites.screen.dart';
+import 'package:tvapp/ui/screens/family_filter/family_filter_code_sent_screen.dart';
 import 'package:tvapp/ui/screens/family_filter/family_filter_screen.dart';
 import 'package:tvapp/ui/screens/guide/guide.screen.dart';
 import 'package:tvapp/ui/screens/home/home.screen.dart';
@@ -18,6 +22,8 @@ import 'package:tvapp/ui/screens/no_internet/no_internet_screen.dart';
 import 'package:tvapp/ui/screens/notification_detail/notification_detail_screen.dart';
 import 'package:tvapp/ui/screens/notifications/notifications.screen.dart';
 import 'package:tvapp/ui/screens/plan/plan_screen.dart';
+import 'package:tvapp/ui/screens/products/associated_products_screen.dart';
+import 'package:tvapp/ui/screens/products/product_detail_screen.dart';
 import 'package:tvapp/ui/screens/player/player_screen.dart';
 import 'package:tvapp/ui/screens/privacy_policies/privacy_policies.screen.dart';
 import 'package:tvapp/ui/screens/profile/profile_screen.dart';
@@ -148,6 +154,54 @@ GoRouter appRouter(Ref ref) {
         name: HomeScreen.name,
         builder: (_, __) => const HomeScreen(),
           pageBuilder: GoTransitions.cupertino
+      ),
+
+      /// Control Parental: confirmacion de codigo enviado.
+      /// Ruta registrada pero OCULTA: todavia nadie navega hasta aca.
+      GoRoute(
+        path: FamilyFilterCodeSentScreen.path,
+        name: FamilyFilterCodeSentScreen.name,
+        builder: (_, __) => const FamilyFilterCodeSentScreen(),
+        pageBuilder: GoTransitions.cupertino,
+      ),
+
+      /// Mi cuenta: se llega desde el avatar del hub.
+      GoRoute(
+        path: '/account',
+        name: MyAccountScreen.name,
+        builder: (_, __) => const MyAccountScreen(),
+        pageBuilder: GoTransitions.cupertino,
+      ),
+
+      /// Otros productos asociados
+      GoRoute(
+        path: AssociatedProductsScreen.path,
+        name: AssociatedProductsScreen.name,
+        builder: (_, __) => const AssociatedProductsScreen(),
+        pageBuilder: GoTransitions.cupertino,
+      ),
+      GoRoute(
+        path: ProductDetailScreen.path,
+        name: ProductDetailScreen.name,
+        builder: (_, __) => const ProductDetailScreen(),
+        pageBuilder: GoTransitions.cupertino,
+      ),
+
+      /// Favorites route
+      GoRoute(
+        path: '/favorites',
+        name: FavoritesScreen.name,
+        builder: (_, __) => const FavoritesScreen(),
+        pageBuilder: GoTransitions.cupertino,
+      ),
+
+      /// Channels route - entrada directa del modulo IPTV desde el hub,
+      /// sin pasar por el home antiguo ni por su barra inferior.
+      GoRoute(
+        path: '/channels',
+        name: ChannelsScreen.name,
+        builder: (_, __) => const ChannelsScreen(),
+        pageBuilder: GoTransitions.cupertino,
       ),
 
       /// Notifications route

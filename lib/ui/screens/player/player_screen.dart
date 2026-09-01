@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:better_player_plus/better_player_plus.dart';
 import 'package:floating/floating.dart';
 import 'package:flutter/material.dart';
+import 'package:tvapp/ui/shared/widgets/channel_fade.widget.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chrome_cast/flutter_chrome_cast.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -656,7 +657,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
 
     if(Platform.isAndroid) {
       return PiPSwitcher(
-        childWhenDisabled: content(context),
+        childWhenDisabled: ChannelFade(
+          channelKey: stream?.channel.number,
+          child: content(context),
+        ),
         childWhenEnabled: _videoController != null ? AspectRatio(
           aspectRatio: _videoController!.getAspectRatio() ?? 16/9,
           child: BetterPlayer(controller: _videoController!),
@@ -664,7 +668,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       );
     }
 
-    return content(context);
+    return ChannelFade(
+      channelKey: stream?.channel.number,
+      child: content(context),
+    );
 
   }
 }

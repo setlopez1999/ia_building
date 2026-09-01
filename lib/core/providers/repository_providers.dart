@@ -1,10 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/core/infraestructure/repositories/auth_http_repository.dart';
 import 'package:tvapp/core/infraestructure/repositories/category_http_repository.dart';
 import 'package:tvapp/core/infraestructure/repositories/channels_http_repository.dart';
 import 'package:tvapp/core/infraestructure/repositories/guide_http_repository.dart';
 import 'package:tvapp/core/infraestructure/repositories/location_http_repository.dart';
 import 'package:tvapp/core/infraestructure/repositories/multicdn_http_repository.dart';
+import 'package:tvapp/core/infraestructure/repositories/notification_demo_repository.dart';
 import 'package:tvapp/core/infraestructure/repositories/notification_http_repository.dart';
 import 'package:tvapp/core/infraestructure/repositories/remember_repository.dart';
 import 'package:tvapp/core/infraestructure/repositories/settings_http_repository.dart';
@@ -24,7 +26,9 @@ final guideRepositoryProvider =
     Provider<GuideHttpRepository>((ref) => GuideHttpRepository());
 
 final notificationRepositoryProvider =
-    Provider<NotificationHttpRepository>((ref) => NotificationHttpRepository());
+    Provider<NotificationHttpRepository>((ref) => Environment.demoMode
+        ? NotificationDemoRepository()
+        : NotificationHttpRepository());
 
 final multicdnRepositoryProvider =
     Provider<MultiCDNHttpRepository>((ref) => MultiCDNHttpRepository());

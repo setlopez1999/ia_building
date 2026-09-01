@@ -14,7 +14,9 @@ abstract class NotificationEntity with _$NotificationEntity {
     @Default(0) int topic_id,
     required String created_at,
     required String updated_at,
-    @Default('https://cdn-icons-png.flaticon.com/512/4226/4226663.png') String image_url,
+    /// Vacio a proposito: si el servidor no manda imagen, la app usa su propio
+    /// marcador en vez de depender de un CDN externo.
+    @Default('') String image_url,
   }) = _NotificationEntity;
 
   factory NotificationEntity.fromJson(Map<String, dynamic> json) => _$NotificationEntityFromJson(json);

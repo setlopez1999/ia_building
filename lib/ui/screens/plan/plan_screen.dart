@@ -16,7 +16,7 @@ class PlanScreen extends ConsumerWidget {
     return Scaffold(
       appBar: customAppBar(
         context,
-        title: 'Perfil',
+        title: 'Mi Plan',
       ),
       body: auth.maybeWhen(orElse: () => const CircularProgressIndicator(color: Colors.white), success: (user) {
         return Padding(
@@ -34,8 +34,12 @@ class PlanScreen extends ConsumerWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
+                    // Regla 4: si el servidor no manda plan no se inventa
+                    // uno; se dice que no hay.
                     subtitle: GoogleTextWidget(
-                      user.plan ?? 'Plan Familiar',
+                      (user.plan == null || user.plan!.trim().isEmpty)
+                          ? 'No tienes un plan asociado'
+                          : user.plan!,
                       style: const TextStyle(
                         fontSize: 18,
                       ),

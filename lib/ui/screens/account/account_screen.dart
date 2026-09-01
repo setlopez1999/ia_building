@@ -6,14 +6,18 @@ import 'package:tvapp/config/theme/app.theme.dart';
 import 'package:tvapp/ui/providers/auth/auth_provider.dart';
 import 'package:tvapp/ui/screens/change_password/change_password_screen.dart';
 import 'package:tvapp/ui/screens/family_filter/family_filter_screen.dart';
+import 'package:tvapp/ui/screens/favorites/favorites.screen.dart';
 import 'package:tvapp/ui/screens/login/login.screen.dart';
 import 'package:tvapp/ui/screens/plan/plan_screen.dart';
+import 'package:tvapp/ui/screens/products/associated_products_screen.dart';
 import 'package:tvapp/ui/screens/profile/profile_screen.dart';
 import 'package:tvapp/ui/shared/widgets/app_bar.widget.dart';
 import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
 
 class MyAccountScreen extends ConsumerStatefulWidget {
   const MyAccountScreen({super.key});
+
+  static String name = 'my-account';
 
   @override
   ConsumerState createState() => _MyAccountScreenState();
@@ -102,6 +106,44 @@ class _MyAccountScreenState extends ConsumerState<MyAccountScreen> {
                 ),
                 title: GoogleTextWidget(
                   'Control Parental',
+                  style: TextStyle(
+                    fontSize: Environment.h1FSize,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+
+              /// Favorites
+              ListTile(
+                onTap: () {
+                  context.pushNamed(FavoritesScreen.name);
+                },
+                leading: const Icon(
+                  Icons.favorite_border,
+                  color: Colors.white,
+                  size: 32,
+                ),
+                title: GoogleTextWidget(
+                  'Favoritos',
+                  style: TextStyle(
+                    fontSize: Environment.h1FSize,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+
+              /// Otros productos asociados
+              ListTile(
+                onTap: () {
+                  context.pushNamed(AssociatedProductsScreen.name);
+                },
+                leading: const Icon(
+                  Icons.widgets_outlined,
+                  color: Colors.white,
+                  size: 32,
+                ),
+                title: GoogleTextWidget(
+                  'Otros productos asociados',
                   style: TextStyle(
                     fontSize: Environment.h1FSize,
                     fontWeight: FontWeight.w500,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/ui/providers/notification_selected/notification_selected_provider.dart';
+import 'package:tvapp/ui/screens/notifications/notifications.screen.dart';
 import 'package:tvapp/ui/shared/widgets/app_bar.widget.dart';
 import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
 
@@ -26,13 +26,7 @@ class NotificationDetailScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.network(
-                '${Environment.baseHost}/${notification.image_url}',
-                height: 200,
-                width: 200,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.notifications, size: 80),
-              ),
+              NotificationImage(url: notification.image_url, size: 160),
               const SizedBox(height: 32),
               GoogleTextWidget(
                 DateFormat('dd/MM').format(

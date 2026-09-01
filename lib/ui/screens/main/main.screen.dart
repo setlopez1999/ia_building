@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tvapp/config/hub/hub_module_catalog.dart';
+import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/config/router/event_notification_router.dart';
 import 'package:tvapp/ui/providers/auth/auth_provider.dart';
-import 'package:tvapp/ui/screens/home/home.screen.dart';
+import 'package:tvapp/ui/providers/hub/hub_modules_provider.dart';
+import 'package:tvapp/ui/screens/account/account_screen.dart';
+import 'package:tvapp/ui/screens/channels/channels_screen.widget.dart';
+import 'package:tvapp/ui/screens/notifications/notifications.screen.dart';
+import 'package:tvapp/ui/screens/tools/cameras/cameras_screen.dart';
 import 'package:tvapp/ui/screens/tools/check_health/check_health_screen.dart';
 import 'package:tvapp/ui/shared/constants/app_assets.dart';
 
@@ -31,20 +37,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     super.dispose();
   }
 
-  void _showProfileSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1E1E32),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => _ProfileSheet(
-        onLogout: () {
-          Navigator.pop(ctx);
-          _logout();
-        },
-      ),
-    );
+  /// El avatar abre Mi cuenta directamente. Antes abría un panel con dos
+  /// opciones, pero "Cerrar sesión" ya vive dentro de Mi cuenta.
+  void _openAccount() {
+    context.pushNamed(MyAccountScreen.name);
   }
 
   void _logout() {
@@ -85,7 +81,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         if (shouldLogout == true && mounted) _logout();
       },
       child: Scaffold(
-      backgroundColor: const Color(0xFF1E1E32),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -93,7 +89,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              _AppBar(onProfileTap: _showProfileSheet),
+              _AppBar(onProfileTap: _openAccount),
               const SizedBox(height: 30),
               const Text(
                 '¡Bienvenido!',
@@ -148,24 +144,16 @@ class _AppBar extends StatelessWidget {
         ),
         Row(
           children: [
-            Stack(
-              children: [
-                const Icon(Icons.notifications_none, color: Colors.white, size: 28),
-                Positioned(
-                  right: 4,
-                  top: 4,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      color: AppColors.error,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 20),
+            // Oculto: el backend todavia no manda señales de notificacion, y
+            // el badge rojo fijo hacia creer que habia mensajes sin leer.
+            if (Environment.notificationsEnabled) ...[
+              GestureDetector(
+                onTap: () => context.pushNamed(NotificationsScreen.name),
+                child: const Icon(Icons.notifications_none,
+                    color: Colors.white, size: 28),
+              ),
+              const SizedBox(width: 20),
+            ],
             GestureDetector(
               onTap: onProfileTap,
               child: const CircleAvatar(
@@ -249,9 +237,28 @@ class _BannerCarousel extends StatelessWidget {
   }
 }
 
-class _ServicesGrid extends StatelessWidget {
+class _ServicesGrid extends ConsumerWidget {
+  const _ServicesGrid();
+
+  void _openModule(BuildContext context, HubModuleId id) {
+    switch (id) {
+      case HubModuleId.iptv:
+        // Entra directo a canales: el home antiguo y su barra inferior
+        // quedan fuera del flujo del modulo IPTV.
+        context.pushNamed(ChannelsScreen.name);
+      case HubModuleId.camaras:
+        context.pushNamed(CamerasScreen.name);
+      case HubModuleId.checkHealth:
+        context.pushNamed(CheckHealthScreen.name);
+      case HubModuleId.eventos || HubModuleId.vod || HubModuleId.clubDescuentos:
+        break;
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final modules = ref.watch(hubModulesProvider);
+    if (modules.isEmpty) return const SizedBox.shrink();
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -260,44 +267,15 @@ class _ServicesGrid extends StatelessWidget {
       mainAxisSpacing: 15,
       childAspectRatio: 0.85,
       children: [
-        _HubServiceCard(
-          svgAsset: AppAssets.hubEventos,
-          title: 'Eventos',
-          subtitle: 'Deportes, conciertos y mas...',
-          onTap: () {},
-        ),
-        _HubServiceCard(
-          svgAsset: AppAssets.hubTv,
-          title: 'IPTV',
-          subtitle: 'Canales para todos',
-          onTap: () => context.pushNamed(HomeScreen.name),
-        ),
-        _HubServiceCard(
-          svgAsset: AppAssets.hubPlay,
-          title: 'VOD',
-          subtitle: 'Entretenimiento',
-          onTap: () {},
-        ),
-        _HubServiceCard(
-          svgAsset: AppAssets.hubShieldCam,
-          title: 'Cámaras',
-          subtitle: 'Cuida tu hogar y a los tuyos',
-          onTap: () => context.pushNamed('CamerasScreen'),
-        ),
-        _HubServiceCard(
-          svgAsset: AppAssets.hubDescuento,
-          title: 'Club de descuentos',
-          subtitle: 'Restaurantes, tiendas y retail',
-          isNew: true,
-          onTap: () {},
-        ),
-        _HubServiceCard(
-          svgAsset: AppAssets.hubCheckHealth,
-          title: 'Check Health',
-          subtitle: 'Revisa el estado de tu WIFI',
-          isHealth: true,
-          onTap: () => context.pushNamed(CheckHealthScreen.name),
-        ),
+        for (final module in modules)
+          _HubServiceCard(
+            svgAsset: module.svgAsset,
+            title: module.title,
+            subtitle: module.subtitle,
+            isNew: module.isNew,
+            isHealth: module.isHealth,
+            onTap: () => _openModule(context, module.id),
+          ),
       ],
     );
   }
@@ -392,52 +370,3 @@ class _HubServiceCard extends StatelessWidget {
   }
 }
 
-class _ProfileSheet extends StatelessWidget {
-  final VoidCallback onLogout;
-
-  const _ProfileSheet({required this.onLogout});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 24),
-          const CircleAvatar(
-            radius: 36,
-            backgroundColor: AppColors.container,
-            child: Icon(Icons.person_outline, color: Colors.white, size: 36),
-          ),
-          const SizedBox(height: 28),
-          const Divider(color: Color(0xFF2E2E42), height: 1),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: TextButton.icon(
-              onPressed: onLogout,
-              icon: const Icon(Icons.logout, color: AppColors.error, size: 20),
-              label: const Text(
-                'Cerrar sesión',
-                style: TextStyle(
-                  color: AppColors.error,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
