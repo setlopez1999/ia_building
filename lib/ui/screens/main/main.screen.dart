@@ -7,6 +7,9 @@ import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/config/router/event_notification_router.dart';
 import 'package:tvapp/ui/providers/auth/auth_provider.dart';
+import 'package:tvapp/ui/providers/banners/banners_provider.dart';
+import 'package:tvapp/core/application/states/content/content_state.dart';
+import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 import 'package:tvapp/ui/providers/hub/hub_modules_provider.dart';
 import 'package:tvapp/ui/screens/account/account_screen.dart';
 import 'package:tvapp/ui/screens/channels/channels_screen.widget.dart';
@@ -169,46 +172,101 @@ class _AppBar extends StatelessWidget {
   }
 }
 
-class _BannerCarousel extends StatelessWidget {
-  final int currentIndex;
-  final PageController controller;
-  final void Function(int) onPageChanged;
-
+/// Carrusel de banners del operador.
+///
+/// Consume [bannersProvider], que decide la fuente: el servidor en modo normal
+/// y las fotos de stock solo con `DEMO=true`.
+///
+/// **Excepción documentada a la Regla 1** (ver docs/REGLAS.md): si no hay
+/// banners o la carga falla, el carrusel no ocupa lugar en vez de mostrar un
+/// cartel de error. Es contenido promocional: el usuario no pierde ninguna
+/// funcion, y una caja de error en medio del home es ruido. El fallo igual se
+/// hace visible, pero solo con `APP_DEBUG_MODE=true`.
+class _BannerCarousel extends ConsumerStatefulWidget {
   const _BannerCarousel({
     required this.currentIndex,
     required this.controller,
     required this.onPageChanged,
   });
 
-  static const _banners = [
-    'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2071&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2071&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop',
-  ];
+  final int currentIndex;
+  final PageController controller;
+  final void Function(int) onPageChanged;
+
+  @override
+  ConsumerState<_BannerCarousel> createState() => _BannerCarouselState();
+}
+
+class _BannerCarouselState extends ConsumerState<_BannerCarousel> {
+  static const double _alto = 160;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => ref.read(bannersProvider.notifier).load());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ref.watch(bannersProvider).when(
+          // Mismo alto que el carrusel, para que el hub no salte al cargar.
+          initial: () => const _BannerPlaceholder(alto: _alto),
+          loading: () => const _BannerPlaceholder(alto: _alto),
+          error: (failure) => Environment.appDebugMode
+              ? _BannerDebugError(failure: failure)
+              : const SizedBox.shrink(),
+          success: (urls) {
+            if (urls.isEmpty) return const SizedBox.shrink();
+            return _BannerPager(
+              urls: urls,
+              currentIndex: widget.currentIndex,
+              controller: widget.controller,
+              onPageChanged: widget.onPageChanged,
+              alto: _alto,
+            );
+          },
+        );
+  }
+}
+
+class _BannerPager extends StatelessWidget {
+  const _BannerPager({
+    required this.urls,
+    required this.currentIndex,
+    required this.controller,
+    required this.onPageChanged,
+    required this.alto,
+  });
+
+  final List<String> urls;
+  final int currentIndex;
+  final PageController controller;
+  final void Function(int) onPageChanged;
+  final double alto;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         SizedBox(
-          height: 160,
+          height: alto,
           child: PageView.builder(
             controller: controller,
             onPageChanged: onPageChanged,
-            itemCount: _banners.length,
+            itemCount: urls.length,
             itemBuilder: (ctx, index) => Container(
               margin: const EdgeInsets.symmetric(horizontal: 5),
+              clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
+                color: AppColors.container,
                 borderRadius: BorderRadius.circular(20),
-                image: DecorationImage(
-                  image: NetworkImage(_banners[index]),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.2),
-                    BlendMode.darken,
-                  ),
-                ),
+              ),
+              child: Image.network(
+                urls[index],
+                fit: BoxFit.cover,
+                width: double.infinity,
+                // Una imagen caida no debe dejar un hueco negro.
+                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
               ),
             ),
           ),
@@ -217,7 +275,7 @@ class _BannerCarousel extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
-            _banners.length,
+            urls.length,
             (index) => AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -226,13 +284,73 @@ class _BannerCarousel extends StatelessWidget {
               decoration: BoxDecoration(
                 color: currentIndex == index
                     ? AppColors.success
-                    : Colors.white.withOpacity(0.3),
+                    : Colors.white.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _BannerPlaceholder extends StatelessWidget {
+  const _BannerPlaceholder({required this.alto});
+
+  final double alto;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: alto,
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      decoration: BoxDecoration(
+        color: AppColors.container,
+        borderRadius: BorderRadius.circular(20),
+      ),
+    );
+  }
+}
+
+/// Solo visible con APP_DEBUG_MODE=true (Regla 1.b).
+class _BannerDebugError extends StatelessWidget {
+  const _BannerDebugError({required this.failure});
+
+  final AppException failure;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.black26,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.orangeAccent.withValues(alpha: 0.4)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'DEBUG - banners no disponibles',
+            style: TextStyle(
+              color: Colors.orangeAccent,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 6),
+          SelectableText(
+            failure.detail ?? failure.message,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 10,
+              fontFamily: 'monospace',
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

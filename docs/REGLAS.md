@@ -25,6 +25,12 @@ Siempre que se consuma una API y su resultado se dibuje en pantalla, la interfaz
 falla. En agosto 2026 la pantalla de canales estuvo vacía durante días por esto:
 el servidor devolvía 404 y la app no mostraba absolutamente nada.
 
+### Excepción vigente
+
+| Elemento | Trato | Motivo |
+|---|---|---|
+| Carrusel de banners del hub | Si falla o viene vacío, **no ocupa lugar**. El error se ve solo con `APP_DEBUG_MODE=true`. | Es contenido promocional: el usuario no pierde ninguna función y un cartel de error en medio del home es ruido. El fallo igual queda visible para quien desarrolla. |
+
 ### Regla 1.b — El detalle técnico del error, solo en debug
 
 Cuando la llamada falla, el usuario ve **un mensaje entendible en castellano**.
