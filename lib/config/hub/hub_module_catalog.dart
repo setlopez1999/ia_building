@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/core/domain/entities/modulos/modulos_entity.dart';
 import 'package:tvapp/ui/shared/constants/app_assets.dart';
 
@@ -28,10 +28,15 @@ class HubModule {
 /// El backend decide QUÉ módulos se muestran (flags en /api/inicio);
 /// este catálogo define CÓMO se ve cada uno.
 class HubModuleCatalog {
-  /// ÚNICO INTERRUPTOR: en debug se muestran todos los módulos sin
-  /// importar los flags del backend. En release se obedece estrictamente
-  /// la API y, si no vienen flags, no se muestra ningún módulo.
-  static bool get showAll => kDebugMode;
+  /// ÚNICO INTERRUPTOR: con `DEMO=true` en el .env se muestran todos los
+  /// módulos sin importar los flags del backend. Con `DEMO=false` se obedece
+  /// estrictamente la API y, si no vienen flags, no se muestra ninguno.
+  ///
+  /// Usa el mismo flag que el resto de las pantallas cuyo endpoint todavía no
+  /// existe (productos, notificaciones). Antes dependía de `kDebugMode`, que
+  /// no se puede configurar por ISP ni permite probar el comportamiento real
+  /// desde una build de debug.
+  static bool get showAll => Environment.demoMode;
 
   static const List<HubModule> all = [
     HubModule(

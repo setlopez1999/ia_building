@@ -251,14 +251,61 @@ class _ServicesGrid extends ConsumerWidget {
       case HubModuleId.checkHealth:
         context.pushNamed(CheckHealthScreen.name);
       case HubModuleId.eventos || HubModuleId.vod || HubModuleId.clubDescuentos:
-        break;
+        // Todavia sin pantalla. Un tap que no hace nada se lee como que la
+        // app esta rota; conviene decir que el modulo esta por venir.
+        _avisarProximamente(context, id);
     }
+  }
+
+  void _avisarProximamente(BuildContext context, HubModuleId id) {
+    final nombre = HubModuleCatalog.all
+        .firstWhere((m) => m.id == id,
+            orElse: () => HubModuleCatalog.all.first)
+        .title;
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.container,
+          behavior: SnackBarBehavior.floating,
+          content: Text(
+            '$nombre estara disponible proximamente.',
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+      );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final modules = ref.watch(hubModulesProvider);
-    if (modules.isEmpty) return const SizedBox.shrink();
+
+    // Regla 1: si no hay modulos hay que decirlo. Antes devolvia un
+    // SizedBox.shrink() y quedaba el titulo "Mis productos" sobre un vacio,
+    // sin forma de saber si estaba cargando, si fallo o si no hay nada.
+    if (modules.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+        decoration: BoxDecoration(
+          color: AppColors.container,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: const Column(
+          children: [
+            Icon(Icons.widgets_outlined, color: Colors.white38, size: 40),
+            SizedBox(height: 12),
+            Text(
+              'No tienes productos disponibles.\n'
+              'Comunicate con tu operador si crees que es un error.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.textBody, fontSize: 13),
+            ),
+          ],
+        ),
+      );
+    }
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
