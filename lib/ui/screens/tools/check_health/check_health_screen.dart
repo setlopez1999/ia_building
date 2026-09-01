@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tvapp/config/environment/environment.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -66,6 +67,16 @@ class CheckHealthScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
+            // Regla 1: los datos de arriba caen a null/0 cuando la llamada
+            // falla, asi que el fallo era indistinguible de "no hay datos".
+            _AvisoModuloNoDisponible(
+              fallo: dispositivosAsync.hasError ||
+                  historialAsync.hasError ||
+                  fibraAsync.hasError,
+              detalle: dispositivosAsync.error?.toString() ??
+                  historialAsync.error?.toString() ??
+                  fibraAsync.error?.toString(),
+            ),
             _WifiStatusCard(fibraEstado: fibraEstado, ssid: ssid),
             const SizedBox(height: 30),
             const Text(
@@ -499,6 +510,65 @@ class _MenuCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Aviso de que el modulo no esta respondiendo.
+///
+/// Check Health consulta `TOOLS_BASE_URL`, que hoy apunta al servidor de
+/// pruebas mientras la sesion la emite produccion: esas llamadas responden
+/// 401. Ver la seccion de autenticacion en AGENTS.md.
+class _AvisoModuloNoDisponible extends StatelessWidget {
+  const _AvisoModuloNoDisponible({required this.fallo, this.detalle});
+
+  final bool fallo;
+  final String? detalle;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!fallo) return const SizedBox.shrink();
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.warning.withValues(alpha: 0.5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded,
+                  color: AppColors.warning, size: 20),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Los datos de tu conexion no estan disponibles en este '
+                  'momento. Los valores que ves pueden no ser reales.',
+                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                ),
+              ),
+            ],
+          ),
+          // Regla 1.b: el detalle tecnico solo con APP_DEBUG_MODE=true.
+          if (Environment.appDebugMode && detalle != null) ...[
+            const SizedBox(height: 10),
+            SelectableText(
+              detalle!,
+              style: const TextStyle(
+                color: Colors.white54,
+                fontSize: 10,
+                fontFamily: 'monospace',
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

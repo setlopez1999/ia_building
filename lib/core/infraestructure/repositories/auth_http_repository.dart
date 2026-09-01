@@ -280,7 +280,20 @@ class AuthHttpRepository implements AuthRepository {
   }) async {
     if (_registroSimulado) {
       await Future.delayed(const Duration(seconds: 2));
-      return const Right(null);
+
+      // Con DEMO=true se simula el exito para poder recorrer el flujo
+      // completo. Sin DEMO se dice la verdad: no hay backend de registro,
+      // asi que no se crea ninguna cuenta (Regla 4 de docs/REGLAS.md).
+      if (Environment.demoMode) return const Right(null);
+
+      return Left(AppException(
+        identifier: 'Registro',
+        message: 'El registro de nuevas cuentas todavia no esta disponible. '
+            'Comunicate con tu operador para dar de alta tu servicio.',
+        statusCode: 6100,
+        detail: '_registroSimulado = true en auth_http_repository.dart. '
+            'El endpoint real de registro todavia no existe. Ver AGENTS.md.',
+      ));
     }
 
     try {

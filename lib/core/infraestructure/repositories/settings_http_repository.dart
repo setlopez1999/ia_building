@@ -6,6 +6,10 @@ import 'package:tvapp/core/domain/repositories/settings_repository.dart';
 import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 
 class SettingsHttpRepository implements SettingsRepository {
+  /// Ver el comentario en [getSettings]. Hoy la fuente de los textos legales
+  /// pertenece a otro operador.
+  static const bool _textosLegalesConfiables = false;
+
   @override
   Future<Either<AppException, Settings>> getSettings() async {
     final dio = Dio();
@@ -27,8 +31,18 @@ class SettingsHttpRepository implements SettingsRepository {
       }))[0]['value'];
 
       return Right(Settings(
-          terms: terms,
-          policies: policies,
+          // ⚠️ Los textos legales que devuelve MIDDLEWARE_HOST son de BANTEL,
+          // otro operador: dicen "BANTEL S.A.C." y "Bantel tv+". Mostrarlos
+          // como propios de OnePlay es un problema legal, no estetico, asi que
+          // se bloquean hasta que el backend entregue los correctos.
+          //
+          // Las pantallas ya manejan el caso vacio: muestran que el contenido
+          // no esta disponible en vez de una pantalla en blanco.
+          //
+          // Para reactivarlos: poner [_textosLegalesConfiables] en true una vez
+          // que MIDDLEWARE_HOST apunte al middleware de OnePlay.
+          terms: _textosLegalesConfiables ? terms : '',
+          policies: _textosLegalesConfiables ? policies : '',
           planFreeSelected: planFreeSelected
       ));
     }
