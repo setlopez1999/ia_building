@@ -1,11 +1,19 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tvapp/core/infraestructure/datasource/session_token_source.dart';
 import 'i_tools_api_datasource.dart';
 
-/// Cliente HTTP dedicado para los endpoints de herramientas de red (tools).
-/// Lee el token JWT de la misma clave SharedPreferences que usa el auth de la app ('data').
+/// Cliente HTTP de los endpoints de herramientas de red (Check Health).
+///
+/// Usa **la misma sesión que el resto de la app**: el token de `/api/inicio`,
+/// pedido a [SessionTokenSource]. No es un token JWT ni un login aparte; ese
+/// comentario era incorrecto y confundía dos sistemas distintos.
+///
+/// ⚠️ El token vale **solo contra el servidor que lo emitió** (`BASE_HOST`).
+/// Mientras `TOOLS_BASE_URL` apunte a un servidor distinto —hoy el de pruebas,
+/// porque el backend de herramientas todavía no migró a producción— estas
+/// llamadas van a responder 401. Eso no es un fallo de la app: es que el
+/// módulo apunta a un servidor donde esta sesión no existe.
 class ToolsApiClient implements IToolsApiDatasource {
   static final ToolsApiClient _instance = ToolsApiClient._internal();
   factory ToolsApiClient() => _instance;
@@ -55,35 +63,47 @@ class ToolsApiClient implements IToolsApiDatasource {
     _initialized = true;
   }
 
-  /// Obtiene el token desde la misma clave SharedPreferences que usa el auth de la app.
-  Future<String?> _getToken() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final raw = prefs.getString('data');
-      if (raw == null) return null;
-      final map = jsonDecode(raw) as Map<String, dynamic>;
-      return map['token'] as String?;
-    } catch (_) {
-      return null;
-    }
-  }
+  /// Fuente única de la sesión. Ver [SessionTokenSource].
+  Future<String?> _getToken() => SessionTokenSource().token();
 
   Future<Map<String, dynamic>> get(String path) async {
     final d = await dio;
     final response = await d.get(path);
-    if (response.statusCode == 401) throw Exception('Sesión expirada');
-    if (response.statusCode != 200) throw Exception('Error ${response.statusCode}');
+    _verificar(response, path);
     return response.data as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> post(String path, {Map<String, dynamic>? body}) async {
     final d = await dio;
     final response = await d.post(path, data: body);
-    if (response.statusCode == 401) throw Exception('Sesión expirada');
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      throw Exception('Error ${response.statusCode}');
-    }
+    _verificar(response, path, aceptaCreado: true);
     return response.data as Map<String, dynamic>;
+  }
+
+  /// Traduce la respuesta a un error que la UI pueda mostrar.
+  ///
+  /// El 401 casi nunca significa "el usuario cerró sesión": significa que este
+  /// servidor no reconoce la sesión de la app. Decirlo así ahorra horas de
+  /// buscar el problema en el lado equivocado.
+  void _verificar(Response<dynamic> response, String path,
+      {bool aceptaCreado = false}) {
+    final code = response.statusCode ?? 0;
+    if (code == 200 || (aceptaCreado && code == 201)) return;
+
+    if (code == 401) {
+      throw ToolsUnavailableException(
+        'El servicio no está disponible para tu cuenta en este momento.',
+        detail: 'GET/POST $path → HTTP 401\n'
+            'El servidor de herramientas (TOOLS_BASE_URL) no reconoce la '
+            'sesión emitida por BASE_HOST. Los dos apuntan a servidores '
+            'distintos.',
+      );
+    }
+
+    throw ToolsUnavailableException(
+      'No se pudo completar la operación. Intenta nuevamente.',
+      detail: '$path → HTTP $code\n${response.data}',
+    );
   }
 
   /// Como [post] pero retorna el body incluso en respuestas 4xx/5xx.
@@ -93,4 +113,16 @@ class ToolsApiClient implements IToolsApiDatasource {
     final response = await d.post(path, data: body);
     return response.data as Map<String, dynamic>;
   }
+}
+
+/// Error del módulo de herramientas, con detalle técnico separado del mensaje
+/// que ve el usuario (Regla 1.b de docs/REGLAS.md).
+class ToolsUnavailableException implements Exception {
+  ToolsUnavailableException(this.message, {this.detail});
+
+  final String message;
+  final String? detail;
+
+  @override
+  String toString() => message;
 }
