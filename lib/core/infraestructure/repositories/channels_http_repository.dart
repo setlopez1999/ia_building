@@ -14,22 +14,42 @@ class ChannelsHttpRepository implements ChannelsRepository {
   @override
   Future<Either<AppException, List<Channel>>> getChannelsByCategory(String token, String id) async {
     final Dio dio = Dio();
-    final res = await dio.get('${Environment.baseHost}/$token/st$id.json');
-
-    final data = res.data!;
-
-    if(res.statusCode != 200  || data is Map && data.containsKey('error') && data['error'] == 404) {
+    final Response<dynamic> res;
+    try {
+      // validateStatus como en category_http_repository: el servidor responde 404
+      // cuando la cuenta no tiene contenido, y sin esto Dio lanza en vez de devolver.
+      res = await dio.get(
+        '${Environment.baseHost}/$token/st$id.json',
+        options: Options(validateStatus: (status) => true),
+      );
+    } catch (_) {
       return Left(AppException(
-          statusCode: 3001,
-          message: 'Error al obtener los canales',
+          statusCode: 3002,
+          message: 'No se pudo conectar con el servidor. Verifica tu conexión.',
           identifier: 'Error'));
     }
 
+    final data = res.data;
+
+    if (res.statusCode == 404 ||
+        (data is Map && data.containsKey('error') && data['error'] == 404)) {
+      return Left(AppException(
+          statusCode: 3003,
+          message: 'No hay canales disponibles en esta categoría.',
+          identifier: 'Sin contenido'));
+    }
+
+    if (res.statusCode != 200) {
+      return Left(AppException(
+          statusCode: 3001,
+          message: 'No se pudieron cargar los canales. Intenta nuevamente.',
+          identifier: 'Error'));
+    }
 
     if (data is! List) {
       return Left(AppException(
           statusCode: 4001,
-          message: 'Error al obtener los canales',
+          message: 'El servidor respondió de forma inesperada.',
           identifier: 'Error'));
     }
 
@@ -56,18 +76,33 @@ class ChannelsHttpRepository implements ChannelsRepository {
   @override
   Future<Either<AppException, List<Channel>>> getAllChannels(String token) async {
     final Dio dio = Dio();
-    final res = await dio.get('${Environment.baseHost}/$token/0.json');
+    final Response<dynamic> res;
+    try {
+      res = await dio.get(
+        '${Environment.baseHost}/$token/0.json',
+        options: Options(validateStatus: (status) => true),
+      );
+    } catch (_) {
+      return Left(AppException(
+          statusCode: 3002,
+          message: 'No se pudo conectar con el servidor. Verifica tu conexión.',
+          identifier: 'Error'));
+    }
 
-    final data = res.data!;
+    final data = res.data;
 
-    if(
-      res.statusCode != 200  ||
-      (data is Map && data.containsKey('error') && data['error'] == 404) ||
-      data is! List
-    ) {
+    if (res.statusCode == 404 ||
+        (data is Map && data.containsKey('error') && data['error'] == 404)) {
+      return Left(AppException(
+          statusCode: 3003,
+          message: 'No hay canales disponibles para tu cuenta.',
+          identifier: 'Sin contenido'));
+    }
+
+    if (res.statusCode != 200 || data is! List) {
       return Left(AppException(
           statusCode: 3001,
-          message: 'Error al obtener los canales',
+          message: 'No se pudieron cargar los canales. Intenta nuevamente.',
           identifier: 'Error'));
     }
 

@@ -4,6 +4,7 @@ import 'package:tvapp/core/application/use_cases/content/get_categories_use_case
 import 'package:tvapp/core/domain/entities/category/category_entity.dart';
 import 'package:tvapp/core/application/states/auth/auth_state.dart';
 import 'package:tvapp/core/providers/repository_providers.dart';
+import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 import 'package:tvapp/ui/providers/auth/auth_provider.dart';
 import 'package:tvapp/ui/providers/category_selected/category_selected_provider.dart';
 
@@ -25,13 +26,20 @@ class Categories extends _$Categories {
           (content) {
             state = ContentState.success(content);
             final selectedCategory = ref.read(categorySelectedProvider);
-            if (selectedCategory == null) {
+            // Una cuenta sin plan devuelve la lista vacia; sin esta guarda
+            // `content.first` lanza 'Bad state: No element' y nada se dibuja.
+            if (selectedCategory == null && content.isNotEmpty) {
               ref.read(categorySelectedProvider.notifier).selectCategory(content.first);
             }
           },
         );
       },
-      orElse: () {},
+      orElse: () {
+        state = ContentState.error(AppException(
+            statusCode: 3004,
+            message: 'Tu sesión no está disponible. Vuelve a iniciar sesión.',
+            identifier: 'Sesión'));
+      },
     );
   }
 }
