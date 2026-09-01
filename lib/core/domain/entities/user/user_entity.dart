@@ -21,6 +21,9 @@ abstract class User with _$User {
     bool? enabledvod,
     String? vencimientoplan,
     String? plan,
+    /// Flags de módulos del hub enviados por el backend dentro de `info`.
+    /// Llega crudo; el parseo tipado lo hace [ModulosParser].
+    Map<String, dynamic>? modulos,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
