@@ -17,6 +17,7 @@ abstract class ModulosEntity with _$ModulosEntity {
     bool? camaras,
     @JsonKey(name: 'club_descuentos') bool? clubDescuentos,
     @JsonKey(name: 'check_health') bool? checkHealth,
+    bool? mascotas,
   }) = _ModulosEntity;
 
   factory ModulosEntity.fromJson(Map<String, dynamic> json) =>

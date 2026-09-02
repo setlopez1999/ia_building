@@ -21,6 +21,7 @@ import 'package:tvapp/ui/screens/login/login.screen.dart';
 import 'package:tvapp/ui/screens/no_internet/no_internet_screen.dart';
 import 'package:tvapp/ui/screens/notification_detail/notification_detail_screen.dart';
 import 'package:tvapp/ui/screens/notifications/notifications.screen.dart';
+import 'package:tvapp/ui/screens/mascotas/mascotas_screen.dart';
 import 'package:tvapp/ui/screens/plan/plan_screen.dart';
 import 'package:tvapp/ui/screens/products/associated_products_screen.dart';
 import 'package:tvapp/ui/screens/products/product_detail_screen.dart';
@@ -184,6 +185,14 @@ GoRouter appRouter(Ref ref) {
         path: ProductDetailScreen.path,
         name: ProductDetailScreen.name,
         builder: (_, __) => const ProductDetailScreen(),
+        pageBuilder: GoTransitions.cupertino,
+      ),
+
+      /// Mascotas: asistencia telefonica
+      GoRoute(
+        path: MascotasScreen.path,
+        name: MascotasScreen.name,
+        builder: (_, __) => const MascotasScreen(),
         pageBuilder: GoTransitions.cupertino,
       ),
 

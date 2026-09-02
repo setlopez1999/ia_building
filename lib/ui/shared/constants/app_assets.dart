@@ -22,6 +22,7 @@ class AppAssets {
   static const String hubShieldCam = 'assets/hub/shield_cam.svg';
   static const String hubDescuento = 'assets/hub/descuento.svg';
   static const String hubCheckHealth = 'assets/hub/check_health_icon.svg';
+  static const String hubMascotas = 'assets/hub/mascotas.svg';
 
   // Tools icons
   static const String toolsWifi = 'assets/tools/wifi.svg';

@@ -3,7 +3,15 @@ import 'package:tvapp/core/domain/entities/modulos/modulos_entity.dart';
 import 'package:tvapp/ui/shared/constants/app_assets.dart';
 
 /// Identificadores de los módulos del hub.
-enum HubModuleId { eventos, iptv, vod, camaras, clubDescuentos, checkHealth }
+enum HubModuleId {
+  eventos,
+  iptv,
+  vod,
+  camaras,
+  clubDescuentos,
+  checkHealth,
+  mascotas,
+}
 
 class HubModule {
   final HubModuleId id;
@@ -77,6 +85,13 @@ class HubModuleCatalog {
       svgAsset: AppAssets.hubCheckHealth,
       isHealth: true,
     ),
+    HubModule(
+      id: HubModuleId.mascotas,
+      title: 'Mascotas',
+      subtitle: 'Asistencia veterinaria por telefono',
+      svgAsset: AppAssets.hubMascotas,
+      isNew: true,
+    ),
   ];
 }
 
@@ -88,5 +103,6 @@ extension ModulosEntityX on ModulosEntity {
         HubModuleId.camaras => camaras,
         HubModuleId.clubDescuentos => clubDescuentos,
         HubModuleId.checkHealth => checkHealth,
+        HubModuleId.mascotas => mascotas,
       };
 }

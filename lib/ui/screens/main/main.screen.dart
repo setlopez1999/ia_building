@@ -13,6 +13,7 @@ import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 import 'package:tvapp/ui/providers/hub/hub_modules_provider.dart';
 import 'package:tvapp/ui/screens/account/account_screen.dart';
 import 'package:tvapp/ui/screens/channels/channels_screen.widget.dart';
+import 'package:tvapp/ui/screens/mascotas/mascotas_screen.dart';
 import 'package:tvapp/ui/screens/notifications/notifications.screen.dart';
 import 'package:tvapp/ui/screens/tools/cameras/cameras_screen.dart';
 import 'package:tvapp/ui/screens/tools/check_health/check_health_screen.dart';
@@ -368,6 +369,8 @@ class _ServicesGrid extends ConsumerWidget {
         context.pushNamed(CamerasScreen.name);
       case HubModuleId.checkHealth:
         context.pushNamed(CheckHealthScreen.name);
+      case HubModuleId.mascotas:
+        context.pushNamed(MascotasScreen.name);
       case HubModuleId.eventos || HubModuleId.vod || HubModuleId.clubDescuentos:
         // Todavia sin pantalla. Un tap que no hace nada se lee como que la
         // app esta rota; conviene decir que el modulo esta por venir.
