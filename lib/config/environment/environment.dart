@@ -45,6 +45,10 @@ class Environment {
       HexColor(dotenv.env['BACKGROUND_COLOR'] ?? '#14161C');
 
   /// Color de los botones de accion principal (flujo de registro).
+  /// Telefonia del modulo Mascotas.
+  static String callApiHost = dotenv.env['CALL_API_HOST'] ?? '10.0.2.2';
+  static String callApiPort = dotenv.env['CALL_API_PORT'] ?? '8080';
+
   /// Modo demostración: las pantallas cuyo endpoint todavia no existe
   /// muestran datos de muestra. En false no queda ningun dato inventado.
   static bool demoMode = (dotenv.env['DEMO'] ?? 'false') == 'true';

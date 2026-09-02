@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tvapp/core/domain/repositories/call_repository.dart';
-import 'package:tvapp/core/infraestructure/repositories/call_noop_repository.dart';
+import 'package:tvapp/core/infraestructure/repositories/call_asterisk_repository.dart';
 import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 
 /// Única decisión sobre quién origina la llamada.
@@ -8,7 +8,7 @@ import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 /// Punto de cambio para conectar la central: se reemplaza esta instancia y la
 /// pantalla no se entera.
 final callRepositoryProvider =
-    Provider<CallRepository>((ref) => CallNoopRepository());
+    Provider<CallRepository>((ref) => CallAsteriskRepository());
 
 /// Estado del pedido de llamada.
 sealed class CallState {
