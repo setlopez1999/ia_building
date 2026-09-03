@@ -1,8 +1,9 @@
 import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-import 'package:tvapp/core/domain/entities/tools/wifi_info.dart';
 import 'package:tvapp/core/domain/entities/tools/dispositivo.dart';
+import 'package:tvapp/core/domain/entities/tools/wifi_info.dart';
 
 class LocalDeviceService {
   final _networkInfo = NetworkInfo();
@@ -46,7 +47,7 @@ class LocalDeviceService {
       } catch (_) {}
 
       return WifiInfo(
-        ssid: ssid != null ? ssid.replaceAll('"', '') : null,
+        ssid: ssid?.replaceAll('"', ''),
         bssid: bssid,
         signalStrengthDbm: signalDbm,
         frequencyMhz: frequencyMhz,
@@ -450,7 +451,7 @@ class LocalDeviceService {
 
   List<Dispositivo> _mockDevices() {
     return [
-      Dispositivo(
+      const Dispositivo(
         id: 'gw',
         nombre: 'Router Principal',
         mac: 'FF:FF:FF:FF:FF:01',
@@ -458,7 +459,7 @@ class LocalDeviceService {
         tipo: 'router',
         conectado: true,
       ),
-      Dispositivo(
+      const Dispositivo(
         id: 'mock_1',
         nombre: 'Smartphone',
         mac: 'AA:BB:CC:DD:EE:01',
@@ -466,7 +467,7 @@ class LocalDeviceService {
         tipo: 'smartphone',
         conectado: true,
       ),
-      Dispositivo(
+      const Dispositivo(
         id: 'mock_2',
         nombre: 'PC',
         mac: 'AA:BB:CC:DD:EE:02',

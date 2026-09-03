@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tvapp/config/theme/app.theme.dart';
-import 'package:tvapp/ui/shared/utils/check_index.handler.dart';
 import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
 
 class IconVerticalButton extends StatelessWidget {

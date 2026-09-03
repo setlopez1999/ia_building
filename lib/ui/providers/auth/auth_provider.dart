@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/core/application/states/auth/auth_state.dart';
 import 'package:tvapp/core/application/use_cases/auth/clean_session_use_case.dart';
 import 'package:tvapp/core/application/use_cases/auth/get_login_info_use_case.dart';
@@ -14,9 +16,8 @@ import 'package:tvapp/core/domain/entities/contact/contact_entity.dart';
 import 'package:tvapp/core/domain/entities/sensitive_data/sensitive_data_entity.dart';
 import 'package:tvapp/core/domain/entities/user/user_entity.dart';
 import 'package:tvapp/core/providers/repository_providers.dart';
-import 'package:tvapp/core/shared/exceptions/app_exception.dart';
-import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/core/services/fcm_service.dart';
+import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 import 'package:tvapp/storage/tools/local_storage.dart';
 
 part 'auth_provider.g.dart';

@@ -7,10 +7,10 @@ import 'package:tvapp/ui/providers/tools/diagnostico_providers.dart';
 import 'package:tvapp/ui/shared/widgets/app_loading.dart';
 
 class HistorialScreen extends ConsumerWidget {
-  static const String name = 'Historial';
-  static const String path = '/tools/historial';
 
   const HistorialScreen({super.key});
+  static const String name = 'Historial';
+  static const String path = '/tools/historial';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -60,9 +60,9 @@ class HistorialScreen extends ConsumerWidget {
 // ── Widgets privados ──────────────────────────────────────────────────────────
 
 class _DiagnosticoItem extends StatelessWidget {
-  final Diagnostico item;
 
   const _DiagnosticoItem({required this.item});
+  final Diagnostico item;
 
   // Mismos colores/umbrales que diagnostico_result_screen.dart — un solo
   // resultado ('resultado'), pintado igual en cualquier pantalla que lo muestre.

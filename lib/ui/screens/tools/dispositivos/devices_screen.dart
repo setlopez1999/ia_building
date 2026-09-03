@@ -7,9 +7,9 @@ import 'package:tvapp/ui/providers/tools/dispositivos_providers.dart';
 import 'package:tvapp/ui/shared/constants/app_assets.dart';
 
 class DevicesScreen extends ConsumerWidget {
-  static const String name = 'Devices';
 
   const DevicesScreen({super.key});
+  static const String name = 'Devices';
 
   String _svgForTipo(String tipo) {
     switch (tipo) {
@@ -81,9 +81,9 @@ class DevicesScreen extends ConsumerWidget {
 }
 
 class _DevicesHeader extends StatelessWidget {
+  const _DevicesHeader({required this.conectados, required this.total});
   final int conectados;
   final int total;
-  const _DevicesHeader({required this.conectados, required this.total});
 
   @override
   Widget build(BuildContext context) {
@@ -120,11 +120,11 @@ class _DevicesHeader extends StatelessWidget {
 }
 
 class _DeviceItem extends StatelessWidget {
+
+  const _DeviceItem({required this.nombre, required this.conectado, required this.svgAsset});
   final String nombre;
   final bool conectado;
   final String svgAsset;
-
-  const _DeviceItem({required this.nombre, required this.conectado, required this.svgAsset});
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tvapp/core/domain/entities/tools/camera_entity.dart';
 import 'package:tvapp/config/router/navigation_service.dart';
+import 'package:tvapp/core/domain/entities/tools/camera_entity.dart';
 
 /// Cola de navegación para abrir el reproductor de evento de movimiento
 /// cuando la app arranca desde una notificación (cold start).

@@ -1,11 +1,4 @@
 class CameraEventEntity {
-  final String tipo;
-  final int unix;
-  final String utc;
-  final String video;
-  final int duracion;
-  final String ip;
-  final String serial;
 
   const CameraEventEntity({
     required this.tipo,
@@ -28,6 +21,13 @@ class CameraEventEntity {
       serial: json['serial'] as String? ?? '',
     );
   }
+  final String tipo;
+  final int unix;
+  final String utc;
+  final String video;
+  final int duracion;
+  final String ip;
+  final String serial;
 
   Map<String, dynamic> toJson() => {
     'tipo': tipo,

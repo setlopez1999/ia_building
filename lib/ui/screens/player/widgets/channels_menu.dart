@@ -3,9 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:tvapp/config/theme/app.theme.dart';
 import 'package:tvapp/core/application/states/content/content_state.dart';
-import 'package:tvapp/core/domain/entities/category/category_entity.dart';
-import 'package:tvapp/core/domain/entities/channel/channel_entity.dart';
-import 'package:tvapp/core/domain/entities/stream/stream_entity.dart';
 import 'package:tvapp/ui/providers/category/category_provider.dart';
 import 'package:tvapp/ui/providers/category_selected/category_selected_provider.dart';
 import 'package:tvapp/ui/providers/channel_playing/channel_playing_provider.dart';
@@ -31,7 +28,7 @@ class ChannelsMenu extends ConsumerWidget {
       appBar: categoriesState.maybeWhen(
         success: (categories) {
 
-          final index = (categories as List<Category>).indexWhere((cat) => cat.id == categorySelectedState!.id);
+          final index = categories.indexWhere((cat) => cat.id == categorySelectedState!.id);
 
           return AppBar(
             automaticallyImplyLeading: false,
@@ -84,13 +81,12 @@ class ChannelsMenu extends ConsumerWidget {
                 itemCount: channels.length,
                 itemBuilder: (context, index) {
                   final channel = channels[index];
-                  final isPlaying = (channelPlaying as StreamEntity).channel.studio == (channel as Channel).studio;
+                  final isPlaying = channelPlaying.channel.studio == channel.studio;
                   if(isPlaying){
                     Future.microtask((){
                       scrollController.scrollTo(
                           index: index,
-                          duration: const Duration(milliseconds: 10),
-                          curve: Curves.linear
+                          duration: const Duration(milliseconds: 10)
                       );
                     });
                   }

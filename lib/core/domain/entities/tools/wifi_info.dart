@@ -1,4 +1,18 @@
 class WifiInfo {
+
+  const WifiInfo({
+    this.ssid,
+    this.bssid,
+    this.signalStrengthDbm,
+    this.frequencyMhz,
+    this.ipAddress,
+    this.gatewayAddress,
+    this.subnetMask,
+    this.bandOverride,
+    this.signalQualityOverride,
+  });
+
+  factory WifiInfo.empty() => const WifiInfo();
   final String? ssid;
   final String? bssid;
   final int? signalStrengthDbm;
@@ -28,18 +42,4 @@ class WifiInfo {
     if (rssi >= -70) return 'Regular';
     return 'Mala';
   }
-
-  const WifiInfo({
-    this.ssid,
-    this.bssid,
-    this.signalStrengthDbm,
-    this.frequencyMhz,
-    this.ipAddress,
-    this.gatewayAddress,
-    this.subnetMask,
-    this.bandOverride,
-    this.signalQualityOverride,
-  });
-
-  factory WifiInfo.empty() => const WifiInfo();
 }

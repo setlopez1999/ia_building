@@ -4,9 +4,9 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:tvapp/core/theme/app_colors.dart';
 
 class AsistenciaLoadingScreen extends StatefulWidget {
-  static const String name = 'Asistencia';
 
   const AsistenciaLoadingScreen({super.key});
+  static const String name = 'Asistencia';
 
   @override
   State<AsistenciaLoadingScreen> createState() => _AsistenciaLoadingScreenState();
@@ -21,7 +21,7 @@ class _AsistenciaLoadingScreenState extends State<AsistenciaLoadingScreen>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: const Duration(seconds: 4));
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller)
+    _animation = Tween<double>(begin: 0, end: 1).animate(_controller)
       ..addListener(() => setState(() {}))
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
@@ -91,11 +91,11 @@ class _AsistenciaLoadingScreenState extends State<AsistenciaLoadingScreen>
 }
 
 class _StepItem extends StatelessWidget {
+
+  const _StepItem({required this.title, this.isDone = false, this.isLoading = false});
   final String title;
   final bool isDone;
   final bool isLoading;
-
-  const _StepItem({required this.title, this.isDone = false, this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:tvapp/core/domain/entities/call/call_credentials.dart';
+import 'package:tvapp/core/domain/repositories/call_repository.dart' show CallRepository;
 import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 
 /// De dónde salen los datos de la central.

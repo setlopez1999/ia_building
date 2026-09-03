@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tvapp/config/environment/environment.dart';
-import 'package:tvapp/ui/shared/constants/app_assets.dart';
-import 'package:tvapp/config/theme/app.theme.dart';
 import 'package:tvapp/ui/providers/connectivity/internet_check_provider.dart';
 import 'package:tvapp/ui/screens/initial_loader/initial_loader.screen.dart';
-import 'package:tvapp/ui/shared/widgets/app_bar.widget.dart';
+import 'package:tvapp/ui/shared/constants/app_assets.dart';
 
 class NoInternetScreen extends ConsumerWidget {
   const NoInternetScreen({super.key});
@@ -25,7 +23,6 @@ class NoInternetScreen extends ConsumerWidget {
         title: SvgPicture.asset(
           AppAssets.logoOneplay,
           width: MediaQuery.of(context).size.width * (Environment.splashWidth),
-          fit: BoxFit.contain,
         ),
       ),
       body: SafeArea(

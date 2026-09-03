@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/core/application/states/content/content_state.dart';
-import 'package:tvapp/ui/shared/widgets/square_button_channel.dart';
 import 'package:tvapp/ui/providers/top_channels/top_channels_provider.dart';
 import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
+import 'package:tvapp/ui/shared/widgets/square_button_channel.dart';
 
 class TopChannels extends ConsumerWidget {
   const TopChannels({super.key});

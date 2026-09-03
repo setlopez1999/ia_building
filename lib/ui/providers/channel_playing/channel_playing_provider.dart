@@ -1,6 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:tvapp/config/environment/environment.dart';
-import 'package:tvapp/config/error_handler/domain_exception.dart';
 import 'package:tvapp/core/application/states/content/content_state.dart';
 import 'package:tvapp/core/application/use_cases/auth/get_session_use_case.dart';
 import 'package:tvapp/core/application/use_cases/content/get_stream_use_case.dart';
@@ -54,8 +53,8 @@ class ChannelPlaying extends _$ChannelPlaying {
       success: (channels) async {
         await state.maybeWhen(
           success: (stream) async {
-            final index = (channels as List<Channel>)
-                .indexWhere((element) => element.studio == (stream as StreamEntity).channel.studio);
+            final index = channels
+                .indexWhere((element) => element.studio == stream.channel.studio);
 
             //ERROR: CANAL NO ENTONCTRADO
             if(index == -1) return;
@@ -81,8 +80,8 @@ class ChannelPlaying extends _$ChannelPlaying {
         success: (channels) async {
           await state.maybeWhen(
               success: (stream) async {
-                final index = (channels as List<Channel>)
-                    .indexWhere((element) => element.studio == (stream as StreamEntity).channel.studio);
+                final index = channels
+                    .indexWhere((element) => element.studio == stream.channel.studio);
 
                 //ERROR: CANAL NO ENTONCTRADO
                 if(index == -1) return;
@@ -116,7 +115,7 @@ class ChannelPlaying extends _$ChannelPlaying {
     try {
       // Get current stream from state
       final currentStream = state.maybeWhen(
-        success: (stream) => stream as StreamEntity,
+        success: (stream) => stream,
         orElse: () => null,
       );
 

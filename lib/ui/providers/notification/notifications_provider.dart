@@ -43,7 +43,7 @@ class Notifications extends _$Notifications {
         .checkConnectivity();
 
     if (!connected) {
-      print("Sin conexión, no se consultan notificaciones.");
+      print('Sin conexión, no se consultan notificaciones.');
       return;
     }
 
@@ -61,8 +61,8 @@ class Notifications extends _$Notifications {
     final result = await useCase.execute(user.us_id);
 
     state = result.fold(
-          (err) => ContentState.error(err),
-          (data) => ContentState.success(data),
+          ContentState.error,
+          ContentState.success,
     );
   }
 

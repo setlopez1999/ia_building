@@ -1,8 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:tvapp/core/application/states/auth/auth_state.dart';
 import 'package:tvapp/core/application/states/content/content_state.dart';
 import 'package:tvapp/core/application/use_cases/content/get_categories_use_case.dart';
 import 'package:tvapp/core/domain/entities/category/category_entity.dart';
-import 'package:tvapp/core/application/states/auth/auth_state.dart';
 import 'package:tvapp/core/providers/repository_providers.dart';
 import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 import 'package:tvapp/ui/providers/auth/auth_provider.dart';

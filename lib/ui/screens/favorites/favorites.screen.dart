@@ -7,9 +7,9 @@ import 'package:tvapp/ui/screens/search/search.screen.dart';
 import 'package:tvapp/ui/shared/widgets/app_bar.widget.dart';
 
 class FavoritesScreen extends ConsumerStatefulWidget {
-  static String name = 'favorites';
 
   const FavoritesScreen({super.key});
+  static String name = 'favorites';
 
   @override
   ConsumerState createState() => _FavoritesScreenState();

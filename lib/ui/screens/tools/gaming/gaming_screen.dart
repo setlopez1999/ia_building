@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/core/domain/entities/tools/servidor_juego.dart';
-import 'package:tvapp/ui/providers/tools/gaming_server_providers.dart';
+import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/ui/providers/tools/gaming_monitor_service.dart';
-import 'package:tvapp/ui/shared/widgets/juego_logo_widget.dart';
+import 'package:tvapp/ui/providers/tools/gaming_server_providers.dart';
 import 'package:tvapp/ui/shared/widgets/app_loading.dart';
+import 'package:tvapp/ui/shared/widgets/juego_logo_widget.dart';
 
 class GamingScreen extends ConsumerWidget {
-  static const String name = 'Gaming';
 
   const GamingScreen({super.key});
+  static const String name = 'Gaming';
 
   Color _colorForEstado(String estado) {
     switch (estado) {
@@ -99,15 +99,15 @@ class GamingScreen extends ConsumerWidget {
 }
 
 class _GamesListCard extends StatelessWidget {
-  final List<ServidorJuego> servidores;
-  final void Function(ServidorJuego) onGameTap;
-  final Color Function(String) colorForEstado;
 
   const _GamesListCard({
     required this.servidores,
     required this.onGameTap,
     required this.colorForEstado,
   });
+  final List<ServidorJuego> servidores;
+  final void Function(ServidorJuego) onGameTap;
+  final Color Function(String) colorForEstado;
 
   @override
   Widget build(BuildContext context) {
@@ -135,15 +135,15 @@ class _GamesListCard extends StatelessWidget {
 }
 
 class _GameRow extends StatelessWidget {
-  final ServidorJuego servidor;
-  final VoidCallback onTap;
-  final Color statusColor;
 
   const _GameRow({
     required this.servidor,
     required this.onTap,
     required this.statusColor,
   });
+  final ServidorJuego servidor;
+  final VoidCallback onTap;
+  final Color statusColor;
 
   @override
   Widget build(BuildContext context) {

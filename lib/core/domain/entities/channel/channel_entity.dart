@@ -20,9 +20,9 @@ abstract class Channel with _$Channel {
     @Default([]) List<Epg>? epg
   }) = _Channel;
 
+  factory Channel.fromJson(Map<String, dynamic> json) => _$ChannelFromJson(json);
+
   const Channel._();
 
   bool get isAdulto => adulto == 1;
-
-  factory Channel.fromJson(Map<String, dynamic> json) => _$ChannelFromJson(json);
 }

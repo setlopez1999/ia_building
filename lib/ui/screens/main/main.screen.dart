@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tvapp/config/hub/hub_module_catalog.dart';
 import 'package:tvapp/config/environment/environment.dart';
-import 'package:tvapp/core/theme/app_colors.dart';
+import 'package:tvapp/config/hub/hub_module_catalog.dart';
 import 'package:tvapp/config/router/event_notification_router.dart';
-import 'package:tvapp/ui/providers/auth/auth_provider.dart';
-import 'package:tvapp/ui/providers/banners/banners_provider.dart';
 import 'package:tvapp/core/application/states/content/content_state.dart';
 import 'package:tvapp/core/shared/exceptions/app_exception.dart';
+import 'package:tvapp/core/theme/app_colors.dart';
+import 'package:tvapp/ui/providers/auth/auth_provider.dart';
+import 'package:tvapp/ui/providers/banners/banners_provider.dart';
 import 'package:tvapp/ui/providers/hub/hub_modules_provider.dart';
 import 'package:tvapp/ui/screens/account/account_screen.dart';
 import 'package:tvapp/ui/screens/channels/channels_screen.widget.dart';
@@ -119,7 +119,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              _ServicesGrid(),
+              const _ServicesGrid(),
               const SizedBox(height: 40),
             ],
           ),
@@ -133,8 +133,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 // ── Widgets privados ──────────────────────────────────────────────────────────
 
 class _AppBar extends StatelessWidget {
-  final VoidCallback onProfileTap;
   const _AppBar({required this.onProfileTap});
+  final VoidCallback onProfileTap;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +144,6 @@ class _AppBar extends StatelessWidget {
         SvgPicture.asset(
           AppAssets.logoOneplay,
           height: 25,
-          fit: BoxFit.contain,
         ),
         Row(
           children: [
@@ -450,12 +449,6 @@ class _ServicesGrid extends ConsumerWidget {
 }
 
 class _HubServiceCard extends StatelessWidget {
-  final String svgAsset;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-  final bool isNew;
-  final bool isHealth;
 
   const _HubServiceCard({
     required this.svgAsset,
@@ -465,6 +458,12 @@ class _HubServiceCard extends StatelessWidget {
     this.isNew = false,
     this.isHealth = false,
   });
+  final String svgAsset;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+  final bool isNew;
+  final bool isHealth;
 
   @override
   Widget build(BuildContext context) {
@@ -487,7 +486,6 @@ class _HubServiceCard extends StatelessWidget {
                     svgAsset,
                     width: 45,
                     height: 45,
-                    fit: BoxFit.contain,
                   ),
                 ),
                 const SizedBox(height: 15),

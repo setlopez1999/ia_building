@@ -136,7 +136,7 @@ class BaseButtonChannel {
                     decoration: InputDecoration(
                       hintText: Environment.parentalPlaceholder,
                       hintStyle: TextStyle(fontSize: 14, color: AppTheme.secondaryColor(context)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
                       isDense: true,
                       // Aplicamos el borde rojo cuando isInvalid es true
                       enabledBorder: OutlineInputBorder(
@@ -154,7 +154,7 @@ class BaseButtonChannel {
                     obscureText: true,
                   ),
                   if(Environment.showParentalDescription)
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                   if(Environment.showParentalDescription)
                     GoogleTextWidget(stream.channel.description,
                         style: const TextStyle(color: Colors.white, fontSize: 12),

@@ -6,9 +6,9 @@ import 'package:tvapp/ui/providers/tools/chat_provider.dart';
 import 'package:tvapp/ui/shared/widgets/app_loading.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  static const String name = 'Chat';
 
   const ChatScreen({super.key});
+  static const String name = 'Chat';
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
@@ -112,8 +112,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 }
 
 class _UserBubble extends StatelessWidget {
-  final String text;
   const _UserBubble({required this.text});
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -143,14 +143,13 @@ class _UserBubble extends StatelessWidget {
 }
 
 class _BotBubble extends StatelessWidget {
-  final String text;
   const _BotBubble({required this.text});
+  final String text;
 
   @override
   Widget build(BuildContext context) {
     final isTyping = text == '...';
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const CircleAvatar(
@@ -184,15 +183,15 @@ class _BotBubble extends StatelessWidget {
 }
 
 class _ChatInputBar extends StatelessWidget {
-  final TextEditingController controller;
-  final VoidCallback onSend;
-  final bool isSending;
 
   const _ChatInputBar({
     required this.controller,
     required this.onSend,
     required this.isSending,
   });
+  final TextEditingController controller;
+  final VoidCallback onSend;
+  final bool isSending;
 
   @override
   Widget build(BuildContext context) {

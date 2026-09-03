@@ -4,10 +4,10 @@ import 'package:flutter/widgets.dart';
 import 'package:tvapp/core/domain/entities/tools/camera_entity.dart';
 
 class NativePlayer extends StatelessWidget {
-  final CameraEntity camera;
-  final bool muted;
 
   const NativePlayer({super.key, required this.camera, this.muted = false});
+  final CameraEntity camera;
+  final bool muted;
 
   @override
   Widget build(BuildContext context) {

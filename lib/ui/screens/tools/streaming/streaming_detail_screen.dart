@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/core/domain/entities/tools/streaming_platform.dart';
-import 'package:tvapp/ui/providers/tools/streaming_provider.dart';
+import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/ui/providers/tools/streaming_monitor_service.dart';
+import 'package:tvapp/ui/providers/tools/streaming_provider.dart';
 
 class StreamingDetailScreen extends ConsumerWidget {
+  const StreamingDetailScreen({super.key, required this.platformId});
   static const String name = 'Streaming Detail';
 
   final String platformId;
-  const StreamingDetailScreen({super.key, required this.platformId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,8 +49,8 @@ class StreamingDetailScreen extends ConsumerWidget {
 }
 
 class _PlatformContent extends StatelessWidget {
-  final StreamingPlatform platform;
   const _PlatformContent({required this.platform});
+  final StreamingPlatform platform;
 
   @override
   Widget build(BuildContext context) {
@@ -124,11 +124,11 @@ class _PlatformContent extends StatelessWidget {
 }
 
 class _SpeedCard extends StatelessWidget {
+
+  const _SpeedCard({required this.label, required this.value, required this.icon});
   final String label;
   final String value;
   final IconData icon;
-
-  const _SpeedCard({required this.label, required this.value, required this.icon});
 
   @override
   Widget build(BuildContext context) {

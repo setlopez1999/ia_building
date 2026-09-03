@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tvapp/core/domain/entities/tools/camera_entity.dart';
 import 'package:tvapp/ui/providers/tools/camera_providers.dart';
 import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
 

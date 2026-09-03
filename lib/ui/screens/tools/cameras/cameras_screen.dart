@@ -5,13 +5,13 @@ import 'package:tvapp/core/domain/entities/tools/camera_entity.dart';
 import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/ui/providers/tools/camera_providers.dart';
 import 'package:tvapp/ui/shared/utils/list_type.enum.dart';
-import 'package:tvapp/ui/shared/widgets/channel_list_type_button.dart';
 import 'package:tvapp/ui/shared/widgets/app_input.widget.dart';
+import 'package:tvapp/ui/shared/widgets/channel_list_type_button.dart';
 
 class CamerasScreen extends ConsumerStatefulWidget {
-  static const name = 'CamerasScreen';
 
   const CamerasScreen({super.key});
+  static const name = 'CamerasScreen';
 
   @override
   ConsumerState<CamerasScreen> createState() => _CamerasScreenState();
@@ -214,10 +214,10 @@ class _CamerasGrid extends StatelessWidget {
 }
 
 class _CameraCard extends StatelessWidget {
-  final CameraEntity camera;
-  final VoidCallback onTap;
 
   const _CameraCard({required this.camera, required this.onTap});
+  final CameraEntity camera;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

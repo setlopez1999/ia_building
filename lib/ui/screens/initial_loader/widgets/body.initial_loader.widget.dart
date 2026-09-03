@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/core/application/states/auth/auth_state.dart';
-import 'package:tvapp/ui/shared/constants/app_assets.dart';
 import 'package:tvapp/ui/providers/auth/auth_provider.dart';
-import 'package:tvapp/ui/screens/home/home.screen.dart';
-import 'package:tvapp/ui/screens/main/main.screen.dart';
 import 'package:tvapp/ui/screens/login/login.screen.dart';
+import 'package:tvapp/ui/screens/main/main.screen.dart';
+import 'package:tvapp/ui/shared/constants/app_assets.dart';
 
 class BodyWidget extends ConsumerStatefulWidget {
   const BodyWidget({super.key});
@@ -71,7 +70,6 @@ class _BodyWidgetState extends ConsumerState<BodyWidget> {
           width: MediaQuery.of(context).size.width * Environment.splashWidth,
           child: SvgPicture.asset(
             AppAssets.logoOneplay,
-            fit: BoxFit.contain,
           ),
         ),
       ),

@@ -1,18 +1,18 @@
-library chromecast;
+library;
 
 class GoogleCastConnectState {
+  const GoogleCastConnectState._(this.name);
   static const disconnected = GoogleCastConnectState._('disconnected');
   static const connected = GoogleCastConnectState._('connected');
   static const connecting = GoogleCastConnectState._('connecting');
   final String name;
-  const GoogleCastConnectState._(this.name);
 }
 
 class GoogleCastDevice {
+  GoogleCastDevice({required this.deviceId, required this.friendlyName, this.modelName = ''});
   final String deviceId;
   final String friendlyName;
   final String modelName;
-  GoogleCastDevice({required this.deviceId, required this.friendlyName, this.modelName = ''});
 }
 
 class GoogleCastSession {
@@ -20,23 +20,23 @@ class GoogleCastSession {
 }
 
 class GoogleCastDiscoveryManager {
-  static final GoogleCastDiscoveryManager instance = GoogleCastDiscoveryManager._();
   GoogleCastDiscoveryManager._();
+  static final GoogleCastDiscoveryManager instance = GoogleCastDiscoveryManager._();
   final devicesStream = Stream<List<GoogleCastDevice>>.empty();
   Future<void> startDiscovery() async {}
   Future<void> stopDiscovery() async {}
 }
 
 class GoogleCastRemoteMediaClient {
-  static final GoogleCastRemoteMediaClient instance = GoogleCastRemoteMediaClient._();
   GoogleCastRemoteMediaClient._();
+  static final GoogleCastRemoteMediaClient instance = GoogleCastRemoteMediaClient._();
   final mediaStatusStream = Stream<CastMediaStatus?>.empty();
   Future<void> queueLoadItems(List<GoogleCastQueueItem> items, {GoogleCastQueueLoadOptions? options}) async {}
 }
 
 class GoogleCastSessionManager {
-  static final GoogleCastSessionManager instance = GoogleCastSessionManager._();
   GoogleCastSessionManager._();
+  static final GoogleCastSessionManager instance = GoogleCastSessionManager._();
   GoogleCastConnectState get connectionState => GoogleCastConnectState.disconnected;
   final currentSessionStream = Stream<GoogleCastSession?>.empty();
   Future<void> endSessionAndStopCasting() async {}
@@ -49,32 +49,32 @@ class GoogleCastDiscoveryCriteria {
 }
 
 class GoogleCastOptions {
-  final String receiverApplicationId;
   GoogleCastOptions({required this.receiverApplicationId});
+  final String receiverApplicationId;
 }
 
 class GoogleCastContext {
+  GoogleCastContext() { _inst = this; }
+  GoogleCastContext._();
   static GoogleCastContext? _inst;
   static GoogleCastContext get instance => _inst!;
   void setSharedInstanceWithOptions(GoogleCastOptions options) { _inst = GoogleCastContext._(); }
-  GoogleCastContext._();
-  GoogleCastContext({required GoogleCastOptions options}) { _inst = this; }
 }
 
 class CastMediaStreamType {
+  const CastMediaStreamType._(this.name);
   static const Buffered = CastMediaStreamType._('Buffered');
   static const live = CastMediaStreamType._('Live');
   final String name;
-  const CastMediaStreamType._(this.name);
 }
 
 class CastMediaPlayerState {
+  const CastMediaPlayerState._(this.name);
   static const loading = CastMediaPlayerState._('loading');
   static const buffering = CastMediaPlayerState._('buffering');
   static const playing = CastMediaPlayerState._('playing');
   static const idle = CastMediaPlayerState._('idle');
   final String name;
-  const CastMediaPlayerState._(this.name);
 }
 
 class CastMediaStatus {
@@ -83,35 +83,35 @@ class CastMediaStatus {
 }
 
 class GoogleCastMediaInformationAndroid {
-  GoogleCastMediaInformationAndroid({contentId, streamType, Uri? contentUrl, contentType, metadata});
+  GoogleCastMediaInformationAndroid();
 }
 
 class GoogleCastMovieMediaMetadata {
-  GoogleCastMovieMediaMetadata({String? title, List<GoogleCastImage>? images, String? subtitle, String? studio, dynamic releaseDate});
+  GoogleCastMovieMediaMetadata();
 }
 
 class GoogleCastImage {
-  GoogleCastImage({Uri? url, int? height, int? width});
+  GoogleCastImage();
 }
 
 class GoogleCastQueueItem {
-  GoogleCastQueueItem({mediaInformation, bool? autoplay, double? startTime, preloadTime, double? playDuration});
+  GoogleCastQueueItem();
 }
 
 class GoogleCastQueueLoadOptions {
-  GoogleCastQueueLoadOptions({List<GoogleCastQueueItem>? items, int? repeatMode, double? startIndex, double? playPosition, customData});
+  GoogleCastQueueLoadOptions();
 }
 
 class GoogleCastMediaIdleReason {
+  const GoogleCastMediaIdleReason._(this.name);
   static const None = GoogleCastMediaIdleReason._('None');
   static const Cancelled = GoogleCastMediaIdleReason._('Cancelled');
   static const Interrupted = GoogleCastMediaIdleReason._('Interrupted');
   static const Finished = GoogleCastMediaIdleReason._('Finished');
   static const error = GoogleCastMediaIdleReason._('Error');
   final String name;
-  const GoogleCastMediaIdleReason._(this.name);
 }
 
 class GoogleCastOptionsAndroid extends GoogleCastOptions {
-  GoogleCastOptionsAndroid({String? appId, bool? enable11, launchOptions}) : super(receiverApplicationId: appId ?? '');
+  GoogleCastOptionsAndroid({String? appId}) : super(receiverApplicationId: appId ?? '');
 }

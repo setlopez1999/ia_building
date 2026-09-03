@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/core/domain/entities/tools/wifi_info.dart';
 import 'package:tvapp/core/services/local_device_service.dart';
+import 'package:tvapp/core/theme/app_colors.dart';
 
 final _offlineScanProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
   final service = ref.read(localDeviceServiceProvider);
@@ -20,11 +20,11 @@ final _offlineScanProvider = FutureProvider.autoDispose<Map<String, dynamic>>((r
 });
 
 class OfflineResultScreen extends ConsumerWidget {
+
+  const OfflineResultScreen({super.key, required this.type});
   static const String name = 'Offline Result';
 
   final String type;
-
-  const OfflineResultScreen({super.key, required this.type});
 
   String _title() => switch (type) {
         'device' => 'Estado del dispositivo',
@@ -129,8 +129,8 @@ class OfflineResultScreen extends ConsumerWidget {
 }
 
 class _StatusBanner extends StatelessWidget {
-  final bool online;
   const _StatusBanner({required this.online});
+  final bool online;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +144,6 @@ class _StatusBanner extends StatelessWidget {
         borderRadius: const BorderRadius.all(Radius.circular(20)),
         border: Border.all(
           color: online ? AppColors.success : Colors.redAccent,
-          width: 1,
         ),
       ),
       child: Column(
@@ -176,8 +175,8 @@ class _StatusBanner extends StatelessWidget {
 }
 
 class _SectionTitle extends StatelessWidget {
-  final String text;
   const _SectionTitle(this.text);
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -196,9 +195,9 @@ class _SectionTitle extends StatelessWidget {
 }
 
 class _ResultItem extends StatelessWidget {
+  const _ResultItem({required this.label, required this.value});
   final String label;
   final String value;
-  const _ResultItem({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {

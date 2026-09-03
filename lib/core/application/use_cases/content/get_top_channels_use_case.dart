@@ -8,7 +8,7 @@ class GetTopChannelsUseCase {
 
   final TopChannelsRepository _channelsRepository;
 
-  Future<Either<AppException, List<Channel>>> execute(String user_id) {
-    return _channelsRepository.getTopChannels(user_id);
+  Future<Either<AppException, List<Channel>>> execute(String userId) {
+    return _channelsRepository.getTopChannels(userId);
   }
 }

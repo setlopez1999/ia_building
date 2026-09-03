@@ -2,10 +2,14 @@ import 'dart:async';
 import 'package:tvapp/core/domain/entities/tools/streaming_platform.dart';
 
 class StreamingRepository {
+
+  StreamingRepository() {
+    scheduleMicrotask(() => _platformsController.add(_platforms));
+  }
   final _platformsController =
       StreamController<List<StreamingPlatform>>.broadcast();
 
-  List<StreamingPlatform> _platforms = [
+  final List<StreamingPlatform> _platforms = [
     const StreamingPlatform(
       id: 'netflix',
       name: 'Netflix',
@@ -52,10 +56,6 @@ class StreamingRepository {
       serverLocation: 'USA',
     ),
   ];
-
-  StreamingRepository() {
-    scheduleMicrotask(() => _platformsController.add(_platforms));
-  }
 
   void updatePlatformMetrics({
     required String id,

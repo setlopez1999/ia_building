@@ -1,6 +1,5 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:tvapp/core/domain/entities/contact/contact_entity.dart';
-import 'package:tvapp/core/domain/entities/login_info/login_info_entity.dart';
 import 'package:tvapp/core/domain/repositories/auth_repository.dart';
 import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 

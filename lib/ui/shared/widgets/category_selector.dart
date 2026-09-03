@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:tvapp/core/domain/entities/category/category_entity.dart';
-import 'package:tvapp/ui/providers/category_selected/category_selected_provider.dart';
-import 'package:tvapp/ui/providers/notification_selected/notification_selected_provider.dart';
 import 'package:tvapp/ui/shared/widgets/category_chip.dart';
 
 class CategorySelector extends ConsumerWidget {

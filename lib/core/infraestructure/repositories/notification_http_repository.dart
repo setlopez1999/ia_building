@@ -31,7 +31,7 @@ class NotificationHttpRepository implements NotificationRepository {
         ));
 
     if (response.statusCode != 200) {
-      print("Error fetching notifications: ${response.statusCode}");
+      print('Error fetching notifications: ${response.statusCode}');
       return Left(AppException(
           identifier: 'getNotifications', message: 'Error', statusCode: 5000));
     }

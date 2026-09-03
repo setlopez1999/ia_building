@@ -128,7 +128,6 @@ class _BodyWidgetState extends ConsumerState<BodyWidget> {
               SvgPicture.asset(
                 AppAssets.logoOneplay,
                 height: 24,
-                fit: BoxFit.contain,
               ),
               // El bloque central se centra en el espacio libre y el boton
               // queda anclado abajo. El ConstrainedBox permite que, cuando el

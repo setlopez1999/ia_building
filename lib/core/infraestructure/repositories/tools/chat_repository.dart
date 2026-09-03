@@ -1,9 +1,9 @@
 import 'package:tvapp/core/infraestructure/datasource/tools/tools_api_client.dart';
 
 class ChatRepository {
-  final ToolsApiClient _api;
 
   ChatRepository({required ToolsApiClient apiClient}) : _api = apiClient;
+  final ToolsApiClient _api;
 
   Future<Map<String, dynamic>> sendMessage(
     String text, {
@@ -14,16 +14,16 @@ class ChatRepository {
       body['session_id'] = sessionId;
     }
     final data = await _api.post('/v1/chat/message', body: body);
-    return data as Map<String, dynamic>;
+    return data;
   }
 
   Future<Map<String, dynamic>> getHistory(String sessionId) async {
     final data = await _api.get('/v1/chat/history?session_id=$sessionId');
-    return data as Map<String, dynamic>;
+    return data;
   }
 
   Future<Map<String, dynamic>> newSession() async {
     final data = await _api.post('/v1/chat/new', body: {});
-    return data as Map<String, dynamic>;
+    return data;
   }
 }

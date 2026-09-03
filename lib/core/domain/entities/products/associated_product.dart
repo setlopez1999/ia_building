@@ -58,21 +58,6 @@ class AssociatedProduct {
     this.footerNote = '',
   });
 
-  final String id;
-  final ProductCategory category;
-
-  /// Lista y detalle.
-  final String title;
-  final String subtitle;
-  final ProductStatus status;
-  final String imageUrl;
-  final String priceLabel;
-
-  /// Solo detalle.
-  final String description;
-  final String paymentInfo;
-  final String footerNote;
-
   factory AssociatedProduct.fromJson(Map<String, dynamic> json) {
     return AssociatedProduct(
       id: (json['id'] ?? '').toString(),
@@ -88,4 +73,19 @@ class AssociatedProduct {
       footerNote: (json['nota'] ?? '').toString(),
     );
   }
+
+  final String id;
+  final ProductCategory category;
+
+  /// Lista y detalle.
+  final String title;
+  final String subtitle;
+  final ProductStatus status;
+  final String imageUrl;
+  final String priceLabel;
+
+  /// Solo detalle.
+  final String description;
+  final String paymentInfo;
+  final String footerNote;
 }

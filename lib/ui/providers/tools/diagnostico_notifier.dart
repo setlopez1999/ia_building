@@ -3,9 +3,10 @@ import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/core/application/use_cases/tools/run_diagnostico_use_case.dart';
 import 'package:tvapp/core/domain/entities/tools/fibra.dart';
 import 'package:tvapp/core/domain/entities/tools/wifi_info.dart';
-import 'package:tvapp/core/services/tools/network_analyzer_service.dart';
 import 'package:tvapp/core/services/local_device_service.dart';
+import 'package:tvapp/core/services/tools/network_analyzer_service.dart';
 import 'package:tvapp/storage/tools/local_storage.dart';
+
 import 'diagnostico_providers.dart';
 import 'fibra_providers.dart';
 import 'wifi_notifier.dart';
@@ -24,22 +25,6 @@ enum DiagnosticoStep {
 enum ItemCalidad { pendiente, cargando, bueno, regular, malo, fallido }
 
 class DiagnosticoState {
-  final DiagnosticoStep step;
-  final int? latenciaGoogleMs;
-  final int? latenciaIspMs;
-  final double? velocidadBajadaMbps;
-  final double? velocidadSubidaMbps;
-  final String? fibraPotenciaDbm;
-  final String? fibraEstado;
-  final String? wifiSsid;
-  final int? wifiSenialDbm;
-  final String? wifiBanda;
-  final String? wifiGateway;
-  final String? resultadoFinal;
-  final ItemCalidad calidadGoogle;
-  final ItemCalidad calidadIsp;
-  final ItemCalidad calidadVelocidad;
-  final ItemCalidad calidadFibra;
 
   const DiagnosticoState({
     this.step = DiagnosticoStep.idle,
@@ -59,6 +44,22 @@ class DiagnosticoState {
     this.calidadVelocidad = ItemCalidad.pendiente,
     this.calidadFibra = ItemCalidad.pendiente,
   });
+  final DiagnosticoStep step;
+  final int? latenciaGoogleMs;
+  final int? latenciaIspMs;
+  final double? velocidadBajadaMbps;
+  final double? velocidadSubidaMbps;
+  final String? fibraPotenciaDbm;
+  final String? fibraEstado;
+  final String? wifiSsid;
+  final int? wifiSenialDbm;
+  final String? wifiBanda;
+  final String? wifiGateway;
+  final String? resultadoFinal;
+  final ItemCalidad calidadGoogle;
+  final ItemCalidad calidadIsp;
+  final ItemCalidad calidadVelocidad;
+  final ItemCalidad calidadFibra;
 
   DiagnosticoState copyWith({
     DiagnosticoStep? step,

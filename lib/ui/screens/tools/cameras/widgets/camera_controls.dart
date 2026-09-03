@@ -135,7 +135,6 @@ class CameraControls extends ConsumerWidget {
               child: GoogleTextWidget('Menú de Cámaras', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextButton.icon(

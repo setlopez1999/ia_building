@@ -100,7 +100,7 @@ class _WelcomeSliderState extends ConsumerState<WelcomeSlider> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: categories.maybeWhen(
             orElse: () => [],
-            success: (categories) => getDots(categories)
+            success: getDots
         ),
       ),
     ]);

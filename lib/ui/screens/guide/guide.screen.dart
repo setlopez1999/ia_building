@@ -330,7 +330,6 @@ class _GuideScreenState extends ConsumerState<GuideScreen> {
       child: Padding(
         padding: const EdgeInsets.only(left: 12),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               child: GoogleTextWidget(

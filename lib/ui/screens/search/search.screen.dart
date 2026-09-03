@@ -2,18 +2,16 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:tvapp/config/theme/app.theme.dart';
 import 'package:tvapp/core/application/states/content/content_state.dart';
 import 'package:tvapp/core/domain/entities/channel/channel_entity.dart';
 import 'package:tvapp/ui/providers/auth/auth_provider.dart';
 import 'package:tvapp/ui/providers/channels_searched/channels_searched_provider.dart';
-import 'package:tvapp/ui/screens/login/login.screen.dart';
 import 'package:tvapp/ui/shared/widgets/app_bar.widget.dart';
 import 'package:tvapp/ui/shared/widgets/app_input.widget.dart';
-import 'package:tvapp/ui/shared/widgets/row_button_channel.dart';
 import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
+import 'package:tvapp/ui/shared/widgets/row_button_channel.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});

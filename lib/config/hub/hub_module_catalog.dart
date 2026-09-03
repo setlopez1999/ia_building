@@ -14,12 +14,6 @@ enum HubModuleId {
 }
 
 class HubModule {
-  final HubModuleId id;
-  final String title;
-  final String subtitle;
-  final String svgAsset;
-  final bool isNew;
-  final bool isHealth;
 
   const HubModule({
     required this.id,
@@ -29,6 +23,12 @@ class HubModule {
     this.isNew = false,
     this.isHealth = false,
   });
+  final HubModuleId id;
+  final String title;
+  final String subtitle;
+  final String svgAsset;
+  final bool isNew;
+  final bool isHealth;
 }
 
 /// Catálogo estático de módulos del hub + regla de visualización.

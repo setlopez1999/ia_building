@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tvapp/core/theme/app_colors.dart';
-import 'package:tvapp/ui/shared/constants/app_assets.dart';
 import 'package:tvapp/ui/screens/tools/offline/offline_result_screen.dart';
+import 'package:tvapp/ui/shared/constants/app_assets.dart';
 
 class OfflineScreen extends StatelessWidget {
-  static const String name = 'Offline';
 
   const OfflineScreen({super.key});
+  static const String name = 'Offline';
 
   @override
   Widget build(BuildContext context) {
@@ -111,10 +111,6 @@ class OfflineScreen extends StatelessWidget {
 }
 
 class _DiagnosticCard extends StatelessWidget {
-  final String iconPath;
-  final String title;
-  final String subtitle;
-  final VoidCallback onExecute;
 
   const _DiagnosticCard({
     required this.iconPath,
@@ -122,6 +118,10 @@ class _DiagnosticCard extends StatelessWidget {
     required this.subtitle,
     required this.onExecute,
   });
+  final String iconPath;
+  final String title;
+  final String subtitle;
+  final VoidCallback onExecute;
 
   @override
   Widget build(BuildContext context) {
@@ -195,8 +195,8 @@ class _DiagnosticCard extends StatelessWidget {
 }
 
 class _ExecuteAllButton extends StatelessWidget {
-  final VoidCallback onTap;
   const _ExecuteAllButton({required this.onTap});
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

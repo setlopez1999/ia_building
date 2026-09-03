@@ -1,12 +1,13 @@
-import 'config_repository.dart';
 import 'package:tvapp/core/domain/entities/tools/remote_config.dart';
 import 'package:tvapp/core/infraestructure/datasource/tools/tools_api_client.dart';
 import 'package:tvapp/storage/tools/local_storage.dart';
 
+import 'config_repository.dart';
+
 class ConfigRepositoryImpl implements ConfigRepository {
-  final ToolsApiClient _api;
 
   ConfigRepositoryImpl(this._api);
+  final ToolsApiClient _api;
 
   @override
   Future<AppRemoteConfig> getConfig() async {

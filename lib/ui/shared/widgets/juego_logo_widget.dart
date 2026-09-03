@@ -25,10 +25,10 @@ Uint8List? decodeGameImage(String raw) {
 }
 
 class JuegoLogoWidget extends StatefulWidget {
-  final String logo;
-  final double size;
 
   const JuegoLogoWidget({super.key, required this.logo, this.size = 45});
+  final String logo;
+  final double size;
 
   @override
   State<JuegoLogoWidget> createState() => _JuegoLogoWidgetState();

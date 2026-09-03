@@ -1,4 +1,5 @@
 import 'package:tvapp/core/domain/entities/modulos/modulos_entity.dart';
+import 'package:tvapp/core/infraestructure/parsers/modulos_parser_v1.dart' show ModulosParserV1;
 
 /// Contrato para extraer los flags de módulos del payload crudo `info`
 /// que responde el backend en `/api/inicio`.

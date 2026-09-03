@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
-
 import 'package:better_player_plus/better_player_plus.dart';
 import 'package:floating/floating.dart';
 import 'package:flutter/material.dart';
-import 'package:tvapp/ui/shared/widgets/channel_fade.widget.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chrome_cast/flutter_chrome_cast.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,6 +27,7 @@ import 'package:tvapp/ui/screens/player/widgets/controls.dart';
 import 'package:tvapp/ui/screens/player/widgets/epg_info.dart';
 import 'package:tvapp/ui/screens/player/widgets/player.dart';
 import 'package:tvapp/ui/shared/widgets/base_button_channel.dart';
+import 'package:tvapp/ui/shared/widgets/channel_fade.widget.dart';
 import 'package:tvapp/ui/shared/widgets/global_text.widget.dart';
 import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
 import 'package:volume_controller/volume_controller.dart';
@@ -56,7 +55,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   Timer? _timerHideInfo;
   Timer? _timerSendDataToDashboard;
   Timer? _errorRetryTimer;
-  bool _retrying = false;
+  final bool _retrying = false;
   double _volume = 0;
   double _illumination = 1;
   PlayerStatus playerStatus = PlayerStatus.buffering;
@@ -163,7 +162,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
 
 
     if(forceDevice) {
-      print("Forzando reproduccion en dispositivo");
+      print('Forzando reproduccion en dispositivo');
       launchChannelDevice(stream, force: forceDevice);
       return;
     }

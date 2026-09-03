@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tvapp/config/environment/environment.dart';
-import 'package:tvapp/ui/shared/constants/app_assets.dart';
 import 'package:tvapp/ui/screens/home/widgets/categories.widget.dart';
 import 'package:tvapp/ui/screens/home/widgets/notification_button.widget.dart';
 import 'package:tvapp/ui/screens/home/widgets/top_channels.widget.dart';
 import 'package:tvapp/ui/screens/home/widgets/welcome_slider.widget.dart';
-import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
+import 'package:tvapp/ui/shared/constants/app_assets.dart';
 
 class BodyHome extends StatelessWidget {
   const BodyHome({super.key});
@@ -28,7 +27,6 @@ class BodyHome extends StatelessWidget {
           child: SvgPicture.asset(
             AppAssets.logoOneplay,
             width: MediaQuery.of(context).size.width * (Environment.splashWidth),
-            fit: BoxFit.contain,
           ),
         ),
         actions: [
@@ -52,8 +50,8 @@ class BodyHome extends StatelessWidget {
   }
 
   Future<void> showTokensList(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? tokens = prefs.getStringList('tokens');
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String>? tokens = prefs.getStringList('tokens');
     //mostrar alerta con lostokens
     if (tokens != null) {
       await showDialog(

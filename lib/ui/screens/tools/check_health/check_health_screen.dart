@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:tvapp/config/environment/environment.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tvapp/core/theme/app_colors.dart';
-import 'package:tvapp/ui/shared/constants/app_assets.dart';
-import 'package:tvapp/ui/providers/tools/wifi_notifier.dart';
+import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/core/domain/entities/tools/diagnostico.dart';
+import 'package:tvapp/core/theme/app_colors.dart';
+import 'package:tvapp/ui/providers/tools/diagnostico_providers.dart';
 import 'package:tvapp/ui/providers/tools/dispositivos_providers.dart';
 import 'package:tvapp/ui/providers/tools/fibra_providers.dart';
-import 'package:tvapp/ui/providers/tools/diagnostico_providers.dart';
+import 'package:tvapp/ui/providers/tools/wifi_notifier.dart';
 import 'package:tvapp/ui/screens/main/main.screen.dart';
-import 'package:tvapp/ui/screens/tools/wifi_password/wifi_password_screen.dart';
 import 'package:tvapp/ui/screens/tools/asistencia/asistencia_loading_screen.dart';
 import 'package:tvapp/ui/screens/tools/chat/chat_screen.dart';
 import 'package:tvapp/ui/screens/tools/diagnostico/diagnostico_screen.dart';
@@ -19,12 +17,14 @@ import 'package:tvapp/ui/screens/tools/dispositivos/devices_screen.dart';
 import 'package:tvapp/ui/screens/tools/gaming/gaming_screen.dart';
 import 'package:tvapp/ui/screens/tools/historial/historial_screen.dart';
 import 'package:tvapp/ui/screens/tools/offline/offline_screen.dart';
+import 'package:tvapp/ui/screens/tools/wifi_password/wifi_password_screen.dart';
+import 'package:tvapp/ui/shared/constants/app_assets.dart';
 
 
 class CheckHealthScreen extends ConsumerWidget {
-  static const String name = 'Check Health';
 
   const CheckHealthScreen({super.key});
+  static const String name = 'Check Health';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -117,10 +117,10 @@ class CheckHealthScreen extends ConsumerWidget {
 // ── Widgets privados ──────────────────────────────────────────────────────────
 
 class _WifiStatusCard extends StatelessWidget {
-  final String? fibraEstado;
-  final String? ssid;
 
   const _WifiStatusCard({this.fibraEstado, this.ssid});
+  final String? fibraEstado;
+  final String? ssid;
 
   @override
   Widget build(BuildContext context) {
@@ -218,9 +218,9 @@ class _WifiStatusCard extends StatelessWidget {
 }
 
 class _LastDiagnosticChip extends StatelessWidget {
-  final Diagnostico? ultimo;
 
   const _LastDiagnosticChip({this.ultimo});
+  final Diagnostico? ultimo;
 
   String _hora(DateTime fecha) {
     final h = fecha.hour.toString().padLeft(2, '0');
@@ -264,10 +264,10 @@ class _LastDiagnosticChip extends StatelessWidget {
 }
 
 class _MetricsGrid extends StatelessWidget {
-  final Diagnostico? ultimo;
-  final int deviceCount;
 
   const _MetricsGrid({this.ultimo, required this.deviceCount});
+  final Diagnostico? ultimo;
+  final int deviceCount;
 
   // Mismos colores/umbrales que diagnostico_result_screen.dart e historial_screen.dart.
   Color _colorResultado(String r) {
@@ -324,11 +324,6 @@ class _MetricsGrid extends StatelessWidget {
 }
 
 class _MetricItem extends StatelessWidget {
-  final String svgAsset;
-  final String label;
-  final String subLabel;
-  final Color color;
-  final VoidCallback? onTap;
 
   const _MetricItem({
     required this.svgAsset,
@@ -337,6 +332,11 @@ class _MetricItem extends StatelessWidget {
     required this.color,
     this.onTap,
   });
+  final String svgAsset;
+  final String label;
+  final String subLabel;
+  final Color color;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -381,8 +381,8 @@ class _MetricItem extends StatelessWidget {
 }
 
 class _DiagnosticActionButton extends StatelessWidget {
-  final VoidCallback onTap;
   const _DiagnosticActionButton({required this.onTap});
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -415,8 +415,8 @@ class _DiagnosticActionButton extends StatelessWidget {
 }
 
 class _MenuGrid extends StatelessWidget {
-  final VoidCallback onTapChat;
   const _MenuGrid({required this.onTapChat});
+  final VoidCallback onTapChat;
 
   @override
   Widget build(BuildContext context) {
@@ -464,10 +464,6 @@ class _MenuGrid extends StatelessWidget {
 }
 
 class _MenuCard extends StatelessWidget {
-  final String svgAsset;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
 
   const _MenuCard({
     required this.svgAsset,
@@ -475,6 +471,10 @@ class _MenuCard extends StatelessWidget {
     required this.subtitle,
     required this.onTap,
   });
+  final String svgAsset;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

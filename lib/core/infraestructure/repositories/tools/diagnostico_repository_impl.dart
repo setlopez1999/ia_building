@@ -1,11 +1,12 @@
-import 'diagnostico_repository.dart';
 import 'package:tvapp/core/domain/entities/tools/diagnostico.dart';
 import 'package:tvapp/core/infraestructure/datasource/tools/tools_api_client.dart';
 
+import 'diagnostico_repository.dart';
+
 class DiagnosticoRepositoryImpl implements DiagnosticoRepository {
-  final ToolsApiClient _api;
 
   DiagnosticoRepositoryImpl(this._api);
+  final ToolsApiClient _api;
 
   @override
   Future<List<Diagnostico>> getHistorial() async {

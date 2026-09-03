@@ -234,7 +234,9 @@ class _PlayerCamerasScreenState extends ConsumerState<PlayerCamerasScreen> {
           _step == PlayerSteps.cameraEvents ||
           _step == PlayerSteps.cameraList ||
           _step == PlayerSteps.cameraGrid ||
-          _step == PlayerSteps.cameraInfo) return;
+          _step == PlayerSteps.cameraInfo) {
+        return;
+      }
       setState(() {
         _step = PlayerSteps.none;
       });
@@ -277,10 +279,10 @@ class _PlayerCamerasScreenState extends ConsumerState<PlayerCamerasScreen> {
                   ),
 
                   if(_step == PlayerSteps.none && dpadEnabled && camera.onvifApiUrl.isNotEmpty)
-                    Positioned(
+                    const Positioned(
                       bottom: 20,
                       right: 20,
-                      child: const DPad(),
+                      child: DPad(),
                     )
                 ],
               ),

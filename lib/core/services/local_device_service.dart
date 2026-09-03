@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tvapp/core/domain/entities/tools/wifi_info.dart';
 import 'package:tvapp/core/domain/entities/tools/dispositivo.dart';
+import 'package:tvapp/core/domain/entities/tools/wifi_info.dart';
 
 class LocalDeviceInfo {
+
+  const LocalDeviceInfo({this.name, this.model, this.ipAddress});
   final String? name;
   final String? model;
   final String? ipAddress;
-
-  const LocalDeviceInfo({this.name, this.model, this.ipAddress});
 }
 
 class LocalDeviceService {

@@ -24,10 +24,10 @@ abstract class StreamEntity with _$StreamEntity {
     @Default('') String linkMovil,
   }) = _StreamEntity;
 
+  factory StreamEntity.fromJson(Map<String, dynamic> json) => _$StreamEntityFromJson(json);
+
   const StreamEntity._();
 
   String get link => linkMovil;
   bool get catchupEnabled => catchup == 1;
-
-  factory StreamEntity.fromJson(Map<String, dynamic> json) => _$StreamEntityFromJson(json);
 }

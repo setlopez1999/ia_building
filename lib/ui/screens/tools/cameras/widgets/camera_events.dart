@@ -8,11 +8,11 @@ import 'package:tvapp/ui/providers/tools/camera_providers.dart';
 import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
 
 class _CombinedEvent {
+
+  _CombinedEvent({required this.inicio, this.fin, required this.video});
   final CameraEventEntity inicio;
   final CameraEventEntity? fin;
   final String video;
-
-  _CombinedEvent({required this.inicio, this.fin, required this.video});
 
   String get duracionText => fin != null && fin!.duracion > 0 ? '${fin!.duracion}s' : '—';
   String get inicioTime => _formatUtc(inicio.utc);
@@ -168,10 +168,10 @@ class _CameraEventsState extends ConsumerState<CameraEvents> {
 }
 
 class _CombinedEventTile extends StatelessWidget {
-  final _CombinedEvent item;
-  final CameraEntity parent;
 
   const _CombinedEventTile({required this.item, required this.parent});
+  final _CombinedEvent item;
+  final CameraEntity parent;
 
   @override
   Widget build(BuildContext context) {

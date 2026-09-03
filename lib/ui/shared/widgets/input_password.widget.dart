@@ -4,9 +4,6 @@ import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/ui/shared/widgets/google_text_span.widget.dart';
 
 class InputPassword extends StatelessWidget {
-  final TextEditingController passController;
-  final VoidCallback onTap;
-  final bool obscureText;
 
   const InputPassword({
     super.key,
@@ -14,6 +11,9 @@ class InputPassword extends StatelessWidget {
     required this.onTap,
     this.obscureText = true,
   });
+  final TextEditingController passController;
+  final VoidCallback onTap;
+  final bool obscureText;
 
   @override
   Widget build(BuildContext context) {

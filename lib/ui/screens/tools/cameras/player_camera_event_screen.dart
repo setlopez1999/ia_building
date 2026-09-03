@@ -1,20 +1,21 @@
 import 'dart:async';
+
+import 'package:better_player_plus/better_player_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:better_player_plus/better_player_plus.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:tvapp/core/domain/entities/tools/camera_entity.dart';
 import 'package:tvapp/core/services/native_player_control_service.dart';
 import 'package:tvapp/ui/screens/tools/cameras/widgets/event_controls.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class PlayerCameraEventScreen extends ConsumerStatefulWidget {
+
+  const PlayerCameraEventScreen({super.key, required this.stream});
   static const name = 'PlayerCameraEventScreen';
 
   final CameraEntity stream;
-
-  const PlayerCameraEventScreen({super.key, required this.stream});
 
   @override
   ConsumerState<PlayerCameraEventScreen> createState() => _PlayerCameraEventScreenState();
@@ -69,11 +70,11 @@ class _PlayerCameraEventScreenState extends ConsumerState<PlayerCameraEventScree
     );
 
     final controller = BetterPlayerController(
-      BetterPlayerConfiguration(
+      const BetterPlayerConfiguration(
         autoPlay: true,
         looping: true,
         fit: BoxFit.contain,
-        controlsConfiguration: const BetterPlayerControlsConfiguration(
+        controlsConfiguration: BetterPlayerControlsConfiguration(
           showControls: false,
         ),
         allowedScreenSleep: false,

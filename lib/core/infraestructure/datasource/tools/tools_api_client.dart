@@ -15,9 +15,9 @@ import 'i_tools_api_datasource.dart';
 /// llamadas van a responder 401. Eso no es un fallo de la app: es que el
 /// módulo apunta a un servidor donde esta sesión no existe.
 class ToolsApiClient implements IToolsApiDatasource {
-  static final ToolsApiClient _instance = ToolsApiClient._internal();
   factory ToolsApiClient() => _instance;
   ToolsApiClient._internal();
+  static final ToolsApiClient _instance = ToolsApiClient._internal();
 
   late final Dio _dio;
   bool _initialized = false;
@@ -66,6 +66,7 @@ class ToolsApiClient implements IToolsApiDatasource {
   /// Fuente única de la sesión. Ver [SessionTokenSource].
   Future<String?> _getToken() => SessionTokenSource().token();
 
+  @override
   Future<Map<String, dynamic>> get(String path) async {
     final d = await dio;
     final response = await d.get(path);

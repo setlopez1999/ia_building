@@ -1,11 +1,12 @@
-import 'dispositivo_repository.dart';
 import 'package:tvapp/core/domain/entities/tools/dispositivo.dart';
 import 'package:tvapp/core/infraestructure/datasource/tools/tools_api_client.dart';
 
+import 'dispositivo_repository.dart';
+
 class DispositivoRepositoryImpl implements DispositivoRepository {
-  final ToolsApiClient _api;
 
   DispositivoRepositoryImpl(this._api);
+  final ToolsApiClient _api;
 
   @override
   Future<List<Dispositivo>> getDispositivos() async {

@@ -40,7 +40,7 @@ class Favorites extends _$Favorites {
   bool isFavorite(int number) {
     return state.maybeWhen(
       orElse: () => false,
-      success: (channels) => (channels as List<Channel>).any((element) => element.number == number),
+      success: (channels) => channels.any((element) => element.number == number),
     );
   }
 

@@ -7,11 +7,11 @@ import 'package:tvapp/core/infraestructure/repositories/tools/wifi_repository_im
 part 'wifi_notifier.g.dart';
 
 class WifiActionState {
+
+  const WifiActionState({this.isLoading = false, this.success, this.errorMsg});
   final bool isLoading;
   final bool? success;
   final String? errorMsg;
-
-  const WifiActionState({this.isLoading = false, this.success, this.errorMsg});
 
   WifiActionState copyWith({bool? isLoading, bool? success, String? errorMsg}) =>
       WifiActionState(
@@ -35,7 +35,7 @@ class WifiNotifier extends _$WifiNotifier {
   WifiActionState build() => const WifiActionState();
 
   Future<void> cambiarNombre(String nuevoNombre) async {
-    state = state.copyWith(isLoading: true, errorMsg: null);
+    state = state.copyWith(isLoading: true);
     try {
       await ref.read(wifiRepositoryProvider).cambiarNombre(nuevoNombre);
       state = state.copyWith(isLoading: false, success: true);
@@ -49,7 +49,7 @@ class WifiNotifier extends _$WifiNotifier {
   }
 
   Future<void> cambiarPassword(String nuevaPassword) async {
-    state = state.copyWith(isLoading: true, errorMsg: null);
+    state = state.copyWith(isLoading: true);
     try {
       await ref.read(wifiRepositoryProvider).cambiarPassword(nuevaPassword);
       state = state.copyWith(isLoading: false, success: true);

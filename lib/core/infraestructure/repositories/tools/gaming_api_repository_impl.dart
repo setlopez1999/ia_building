@@ -1,14 +1,16 @@
 import 'dart:async';
-import 'i_gaming_repository.dart';
+
 import 'package:tvapp/core/domain/entities/tools/servidor_juego.dart';
 import 'package:tvapp/core/infraestructure/datasource/tools/i_tools_api_datasource.dart';
 
+import 'i_gaming_repository.dart';
+
 class GamingApiRepositoryImpl implements IGamingRepository {
+
+  GamingApiRepositoryImpl(this._api);
   final IToolsApiDatasource _api;
   final _streamController = StreamController<List<ServidorJuego>>.broadcast();
   List<ServidorJuego> _servidores = [];
-
-  GamingApiRepositoryImpl(this._api);
 
   @override
   Future<List<ServidorJuego>> getServidores() async {

@@ -3,9 +3,6 @@ import 'package:screen_brightness/screen_brightness.dart';
 import 'package:volume_controller/volume_controller.dart';
 
 class CameraEventControls extends StatefulWidget {
-  final VoidCallback onBack;
-  final VoidCallback? onRewind;
-  final VoidCallback? onForward;
 
   const CameraEventControls({
     super.key,
@@ -13,14 +10,17 @@ class CameraEventControls extends StatefulWidget {
     this.onRewind,
     this.onForward,
   });
+  final VoidCallback onBack;
+  final VoidCallback? onRewind;
+  final VoidCallback? onForward;
 
   @override
   State<CameraEventControls> createState() => _CameraEventControlsState();
 }
 
 class _CameraEventControlsState extends State<CameraEventControls> {
-  double _brightness = 1.0;
-  double _volume = 1.0;
+  double _brightness = 1;
+  double _volume = 1;
 
   @override
   void initState() {
@@ -86,8 +86,6 @@ class _CameraEventControlsState extends State<CameraEventControls> {
                     quarterTurns: -1,
                     child: Slider(
                       value: _brightness,
-                      min: 0,
-                      max: 1,
                       activeColor: Colors.white,
                       inactiveColor: Colors.grey,
                       thumbColor: Colors.transparent,
@@ -125,8 +123,6 @@ class _CameraEventControlsState extends State<CameraEventControls> {
                     quarterTurns: -1,
                     child: Slider(
                       value: _volume,
-                      min: 0,
-                      max: 1,
                       activeColor: Colors.white,
                       inactiveColor: Colors.grey,
                       thumbColor: Colors.transparent,

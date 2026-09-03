@@ -1,18 +1,13 @@
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 
 class PingResult {
-  final double avgPing;
-  final double lossPercent;
-  final double jitter;
-  final bool success;
-
-  double get avgMs => avgPing;
 
   PingResult({
     required this.avgPing,
@@ -23,16 +18,22 @@ class PingResult {
 
   factory PingResult.failure() =>
       PingResult(avgPing: 0, lossPercent: 100, jitter: 0, success: false);
+  final double avgPing;
+  final double lossPercent;
+  final double jitter;
+  final bool success;
+
+  double get avgMs => avgPing;
 }
 
 class SpeedTestResult {
-  final double downloadMbps;
-  final double uploadMbps;
 
   const SpeedTestResult({
     required this.downloadMbps,
     required this.uploadMbps,
   });
+  final double downloadMbps;
+  final double uploadMbps;
 }
 
 class NetworkAnalyzerService {

@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/ui/screens/login/login.screen.dart';
-import 'package:tvapp/ui/shared/widgets/google_text_span.widget.dart';
 import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
+import 'package:tvapp/ui/shared/widgets/google_text_span.widget.dart';
 
 /// Register Screen
 class RegisterConfirmationScreen extends ConsumerStatefulWidget {

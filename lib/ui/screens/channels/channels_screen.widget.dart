@@ -3,19 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tvapp/core/application/states/content/content_state.dart';
 import 'package:tvapp/core/domain/entities/channel/channel_entity.dart';
-import 'package:tvapp/ui/providers/channels_searched/channels_searched_provider.dart';
-import 'package:tvapp/ui/shared/utils/list_type.enum.dart';
 import 'package:tvapp/ui/providers/category/category_provider.dart';
 import 'package:tvapp/ui/providers/category_selected/category_selected_provider.dart';
 import 'package:tvapp/ui/providers/channels_loaded/channels_loaded_provider.dart';
+import 'package:tvapp/ui/providers/channels_searched/channels_searched_provider.dart';
+import 'package:tvapp/ui/screens/guide/guide.screen.dart';
+import 'package:tvapp/ui/screens/search/search.screen.dart';
+import 'package:tvapp/ui/shared/utils/list_type.enum.dart';
+import 'package:tvapp/ui/shared/widgets/api_state.widget.dart';
+import 'package:tvapp/ui/shared/widgets/app_bar.widget.dart';
 import 'package:tvapp/ui/shared/widgets/base_button_channel.dart';
 import 'package:tvapp/ui/shared/widgets/category_selector.dart';
 import 'package:tvapp/ui/shared/widgets/channel_list_type_button.dart';
 import 'package:tvapp/ui/shared/widgets/channels_list.dart';
-import 'package:tvapp/ui/screens/guide/guide.screen.dart';
-import 'package:tvapp/ui/screens/search/search.screen.dart';
-import 'package:tvapp/ui/shared/widgets/api_state.widget.dart';
-import 'package:tvapp/ui/shared/widgets/app_bar.widget.dart';
 
 class ChannelsScreen extends ConsumerStatefulWidget {
   const ChannelsScreen({super.key});

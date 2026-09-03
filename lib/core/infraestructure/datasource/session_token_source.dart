@@ -20,9 +20,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// ⚠️ Este es el único lugar del proyecto que puede leer la clave `'data'`.
 /// Cuando se cifre la sesión, se cambia solo este archivo.
 class SessionTokenSource {
-  static final SessionTokenSource _instance = SessionTokenSource._internal();
   factory SessionTokenSource() => _instance;
   SessionTokenSource._internal();
+  static final SessionTokenSource _instance = SessionTokenSource._internal();
 
   /// Clave donde el repositorio de auth guarda la sesión.
   static const String storageKey = 'data';

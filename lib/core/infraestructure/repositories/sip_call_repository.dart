@@ -4,9 +4,9 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:sip_ua/sip_ua.dart';
 import 'package:tvapp/core/domain/entities/call/call_credentials.dart';
+import 'package:tvapp/core/domain/entities/call/call_session_state.dart';
 import 'package:tvapp/core/domain/repositories/call_credentials_repository.dart';
 import 'package:tvapp/core/domain/repositories/call_repository.dart';
-import 'package:tvapp/core/domain/entities/call/call_session_state.dart';
 import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 
 /// Teléfono SIP real: el celular es un extremo de la llamada, no un botón que

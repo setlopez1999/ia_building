@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'notification_service.dart';
 import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/storage/tools/local_storage.dart';
+
+import 'notification_service.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -22,7 +24,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Map<String, dynamic>? _extractPayload(RemoteMessage message) {
   final data = message.data;
-  if (data == null || data.isEmpty) return null;
+  if (data.isEmpty) return null;
   final video = data['video'] as String? ?? '';
   final serial = data['serial'] as String? ?? '';
   final ip = data['ip'] as String? ?? '';
@@ -44,9 +46,7 @@ class FcmService {
 
       // Request permission (iOS)
       await messaging.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
+        
       );
 
       // Get FCM token

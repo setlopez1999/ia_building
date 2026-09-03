@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/core/domain/entities/tools/streaming_platform.dart';
+import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/ui/providers/tools/streaming_provider.dart';
 
 class StreamingScreen extends ConsumerWidget {
-  static const String name = 'Streaming';
 
   const StreamingScreen({super.key});
+  static const String name = 'Streaming';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -69,10 +69,10 @@ class StreamingScreen extends ConsumerWidget {
 }
 
 class _PlatformListCard extends StatelessWidget {
-  final List<StreamingPlatform> platforms;
-  final void Function(StreamingPlatform) onPlatformTap;
 
   const _PlatformListCard({required this.platforms, required this.onPlatformTap});
+  final List<StreamingPlatform> platforms;
+  final void Function(StreamingPlatform) onPlatformTap;
 
   @override
   Widget build(BuildContext context) {
@@ -92,10 +92,10 @@ class _PlatformListCard extends StatelessWidget {
 }
 
 class _PlatformRow extends StatelessWidget {
-  final StreamingPlatform platform;
-  final VoidCallback onTap;
 
   const _PlatformRow({required this.platform, required this.onTap});
+  final StreamingPlatform platform;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

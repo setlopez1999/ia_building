@@ -3,14 +3,14 @@ import 'package:supercontext/supercontext.dart';
 import 'package:tvapp/ui/shared/widgets/google_text_span.widget.dart';
 
 class InputText extends StatelessWidget {
-  final TextEditingController userController;
-  final String? hintText;
 
   const InputText({
     super.key,
     required this.userController,
     this.hintText
   });
+  final TextEditingController userController;
+  final String? hintText;
 
   @override
   Widget build(BuildContext context) {

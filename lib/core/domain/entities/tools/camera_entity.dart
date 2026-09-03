@@ -1,18 +1,4 @@
 class CameraEntity {
-  final String id;
-  final String serial;
-  final String name;
-  final bool isEvent;
-  final String srt;
-  final String hls;
-  final String onvif;
-  final String motionLogUrl;
-  final String onvifApiUrl;
-  final String ipCamara;
-  final String usuario;
-  final String passwordCamara;
-  final String? srtPuerto;
-  final bool fromLivePlayer;
 
   const CameraEntity({
     required this.id,
@@ -48,6 +34,20 @@ class CameraEntity {
       srtPuerto: json['srtPuerto'] as String?,
     );
   }
+  final String id;
+  final String serial;
+  final String name;
+  final bool isEvent;
+  final String srt;
+  final String hls;
+  final String onvif;
+  final String motionLogUrl;
+  final String onvifApiUrl;
+  final String ipCamara;
+  final String usuario;
+  final String passwordCamara;
+  final String? srtPuerto;
+  final bool fromLivePlayer;
 
   CameraEntity copyWith({
     String? id,

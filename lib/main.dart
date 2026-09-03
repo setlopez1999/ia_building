@@ -11,12 +11,12 @@ import 'package:tvapp/core/domain/entities/tools/camera_entity.dart';
 import 'package:tvapp/core/services/alert_scheduler_service.dart';
 import 'package:tvapp/core/services/fcm_service.dart';
 import 'package:tvapp/core/services/notification_service.dart';
+import 'package:tvapp/storage/tools/local_storage.dart';
 import 'package:tvapp/ui/providers/connectivity/internet_check_provider.dart';
 import 'package:tvapp/ui/providers/multicdn/multicdn_provider.dart';
 import 'package:tvapp/ui/providers/notification/notifications_provider.dart';
 
 import 'config/error_handler/error_handler.dart';
-import 'package:tvapp/storage/tools/local_storage.dart';
 
 
 Future<void> main() async {

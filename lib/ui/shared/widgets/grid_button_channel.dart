@@ -7,7 +7,7 @@ import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
 
 class GridButtonChannel extends ConsumerStatefulWidget {
   const GridButtonChannel(
-      {
+      {super.key, 
         required this.channel,
         this.fromHome = false,
       });
@@ -15,6 +15,7 @@ class GridButtonChannel extends ConsumerStatefulWidget {
   final Channel channel;
   final bool fromHome;
 
+  @override
   _GridButtonChannelState createState() => _GridButtonChannelState();
 }
 

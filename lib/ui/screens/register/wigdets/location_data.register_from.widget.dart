@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tvapp/config/extensions/context.extension.dart';
 import 'package:tvapp/config/environment/environment.dart';
+import 'package:tvapp/config/extensions/context.extension.dart';
 import 'package:tvapp/config/theme/app.theme.dart';
-import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/core/application/states/content/content_state.dart';
+import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/ui/providers/register/departments_provider.dart';
 import 'package:tvapp/ui/providers/register/districts_provider.dart';
 import 'package:tvapp/ui/providers/register/provinces_provider.dart';
 import 'package:tvapp/ui/screens/privacy_policies/privacy_policies.screen.dart';
 import 'package:tvapp/ui/screens/terms_and_conditions/terms_and_conditions.screen.dart';
-import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
 import 'package:tvapp/ui/shared/widgets/api_state.widget.dart';
 import 'package:tvapp/ui/shared/widgets/app_input.widget.dart';
+import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
 import 'package:tvapp/ui/shared/widgets/google_text_span.widget.dart';
 
 /// Widget Location Data Form For Register
@@ -88,7 +88,7 @@ class _LocationDataFormState extends ConsumerState<LocationDataForm> {
                               departments.map(
                                 (department) {
                                   return DropdownMenuItem(
-                                    value: department.code as String,
+                                    value: department.code,
                                     child: GoogleTextWidget(
                                       department.description,
                                       style: const TextStyle(color: Colors.white),
@@ -153,7 +153,7 @@ class _LocationDataFormState extends ConsumerState<LocationDataForm> {
                                 provinces.map(
                                   (province) {
                                     return DropdownMenuItem(
-                                      value: province.code as String,
+                                      value: province.code,
                                       child: GoogleTextWidget(
                                         province.description,
                                         style: const TextStyle(color: Colors.white),
@@ -193,7 +193,7 @@ class _LocationDataFormState extends ConsumerState<LocationDataForm> {
                                 districts.map(
                                   (district) {
                                     return DropdownMenuItem(
-                                      value: district.code as String,
+                                      value: district.code,
                                       child: GoogleTextWidget(
                                         district.description,
                                         style: const TextStyle(color: Colors.white),

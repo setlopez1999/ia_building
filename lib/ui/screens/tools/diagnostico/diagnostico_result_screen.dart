@@ -29,7 +29,7 @@ double scoreVelocidad(ItemCalidad calidad, double? bajadaMbps) {
     case ItemCalidad.malo:
       return (mbps / 5 * 4.9).clamp(0.0, 4.9);
     default:
-      return 0.0;
+      return 0;
   }
 }
 
@@ -42,7 +42,7 @@ ItemCalidad calidadWifiSenal(int? dbm) {
 
 /// Puntuación 0-10 — más cerca de 0 dBm es mejor señal.
 double scoreWifi(int? senialDbm) {
-  if (senialDbm == null) return 0.0;
+  if (senialDbm == null) return 0;
   final dbm = senialDbm;
   switch (calidadWifiSenal(dbm)) {
     case ItemCalidad.bueno:
@@ -52,7 +52,7 @@ double scoreWifi(int? senialDbm) {
     case ItemCalidad.malo:
       return (((dbm + 90).clamp(0, 19) / 19) * 4.9).clamp(0.0, 4.9);
     default:
-      return 0.0;
+      return 0;
   }
 }
 
@@ -62,14 +62,14 @@ double scoreFibra(ItemCalidad calidad) {
     case ItemCalidad.bueno:   return 9.5;
     case ItemCalidad.regular: return 6.5;
     case ItemCalidad.malo:    return 2.5;
-    default:                  return 0.0;
+    default:                  return 0;
   }
 }
 
 /// Puntuación 0-10 según el peor (mayor) ms entre Google e ISP — menos ms es mejor.
 double scoreLatencia(int? googleMs, int? ispMs) {
   final valores = [googleMs, ispMs].whereType<int>().where((v) => v > 0);
-  if (valores.isEmpty) return 0.0;
+  if (valores.isEmpty) return 0;
   final peorMs = valores.reduce((a, b) => a > b ? a : b);
 
   if (peorMs < 100) {
@@ -95,9 +95,9 @@ ItemCalidad peorCalidad(ItemCalidad a, ItemCalidad b) {
 }
 
 class DiagnosticoResultScreen extends ConsumerWidget {
-  static const String name = 'DiagnosticoResult';
 
   const DiagnosticoResultScreen({super.key});
+  static const String name = 'DiagnosticoResult';
 
   String _subtitleFibra(DiagnosticoState s) {
     if (s.calidadFibra == ItemCalidad.fallido) return 'No se pudo verificar la fibra';
@@ -248,9 +248,9 @@ class DiagnosticoResultScreen extends ConsumerWidget {
 }
 
 class _RecomendacionesCard extends StatelessWidget {
-  final String wifiSubtitle;
 
   const _RecomendacionesCard({required this.wifiSubtitle});
+  final String wifiSubtitle;
 
   static const _color = AppColors.accentBlue;
 
@@ -301,15 +301,15 @@ class _RecomendacionesCard extends StatelessWidget {
 }
 
 class _VelocidadResultItem extends StatelessWidget {
-  final ItemCalidad calidad;
-  final double? bajadaMbps;
-  final double? subidaMbps;
 
   const _VelocidadResultItem({
     required this.calidad,
     required this.bajadaMbps,
     required this.subidaMbps,
   });
+  final ItemCalidad calidad;
+  final double? bajadaMbps;
+  final double? subidaMbps;
 
   @override
   Widget build(BuildContext context) {
@@ -363,10 +363,10 @@ class _VelocidadResultItem extends StatelessWidget {
 }
 
 class _WifiResultItem extends StatelessWidget {
-  final int? senialDbm;
-  final String? banda;
 
   const _WifiResultItem({required this.senialDbm, required this.banda});
+  final int? senialDbm;
+  final String? banda;
 
   @override
   Widget build(BuildContext context) {
@@ -416,10 +416,10 @@ class _WifiResultItem extends StatelessWidget {
 }
 
 class _FibraResultItem extends StatelessWidget {
-  final ItemCalidad calidad;
-  final String subtitle;
 
   const _FibraResultItem({required this.calidad, required this.subtitle});
+  final ItemCalidad calidad;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -462,15 +462,15 @@ class _FibraResultItem extends StatelessWidget {
 }
 
 class _LatenciaResultItem extends StatelessWidget {
-  final ItemCalidad calidad;
-  final int? googleMs;
-  final int? ispMs;
 
   const _LatenciaResultItem({
     required this.calidad,
     required this.googleMs,
     required this.ispMs,
   });
+  final ItemCalidad calidad;
+  final int? googleMs;
+  final int? ispMs;
 
   @override
   Widget build(BuildContext context) {

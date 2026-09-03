@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/core/application/states/content/content_state.dart';
 import 'package:tvapp/core/domain/entities/category/category_entity.dart';
@@ -9,7 +8,6 @@ import 'package:tvapp/ui/providers/category/category_provider.dart';
 import 'package:tvapp/ui/providers/category_selected/category_selected_provider.dart';
 import 'package:tvapp/ui/providers/selected_tab/selected_tab.provider.dart';
 import 'package:tvapp/ui/screens/home/widgets/category_grid_button.dart';
-import 'package:tvapp/ui/screens/login/login.screen.dart';
 import 'package:tvapp/ui/shared/utils/array_utils.dart';
 import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
 

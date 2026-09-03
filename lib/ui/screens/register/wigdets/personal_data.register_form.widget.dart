@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supercontext/supercontext.dart';
 import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/core/infraestructure/dtos/register_dto/register_user_dto.dart';
-import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
 import 'package:tvapp/ui/shared/widgets/app_input.widget.dart';
-import 'package:tvapp/ui/shared/widgets/google_text_span.widget.dart';
+import 'package:tvapp/ui/shared/widgets/google_text.widget.dart';
 
 /// Widget Personal Data Form For Register
 class PersonalDataForm extends ConsumerStatefulWidget {

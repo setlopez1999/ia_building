@@ -11,8 +11,6 @@ import 'package:tvapp/core/theme/app_colors.dart';
 ///   AppLoading.screen()
 ///   AppLoading.screen(message: 'Iniciando...')
 class AppLoading extends StatelessWidget {
-  final String? message;
-  final bool _fullScreen;
 
   const AppLoading({
     super.key,
@@ -23,6 +21,8 @@ class AppLoading extends StatelessWidget {
     super.key,
     this.message,
   }) : _fullScreen = true;
+  final String? message;
+  final bool _fullScreen;
 
   Widget _content() {
     return Center(

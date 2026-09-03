@@ -8,7 +8,6 @@ import 'package:fpdart/fpdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/core/domain/entities/contact/contact_entity.dart';
-import 'package:tvapp/core/domain/entities/login_info/login_info_entity.dart';
 import 'package:tvapp/core/domain/entities/sensitive_data/sensitive_data_entity.dart';
 import 'package:tvapp/core/domain/entities/settings/settings_entity.dart';
 import 'package:tvapp/core/domain/entities/user/user_entity.dart';

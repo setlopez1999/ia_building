@@ -10,6 +10,7 @@ part 'notification_selected_provider.g.dart';
 @Riverpod(keepAlive: true)
 class NotificationSelected extends _$NotificationSelected {
 
+  @override
   final NotificationEntity? state = null;
 
   @override

@@ -26,11 +26,11 @@ DateTime _peruTime(DateTime utc) {
 
 /// Combina un evento de inicio con su fin en un solo movimiento registrado.
 class _CombinedMotion {
+
+  _CombinedMotion({required this.inicio, this.fin, required this.video});
   final CameraEventEntity inicio;
   final CameraEventEntity? fin;
   final String video;
-
-  _CombinedMotion({required this.inicio, this.fin, required this.video});
 
   String get duracionText => fin != null && fin!.duracion > 0 ? '${fin!.duracion}s' : '—';
 
@@ -260,19 +260,19 @@ class _CameraAlertsState extends ConsumerState<CameraAlerts> {
   }
 
   Widget _buildDisabledView() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.motion_photos_off, color: Colors.white24, size: 64),
-          const SizedBox(height: 16),
-          const GoogleTextWidget(
+          SizedBox(height: 16),
+          GoogleTextWidget(
             'Detección de movimientos desactivada',
             style: TextStyle(fontSize: 15, color: Colors.white60),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
-          const GoogleTextWidget(
+          SizedBox(height: 8),
+          GoogleTextWidget(
             'Actívala para programar horarios y recibir notificaciones.',
             style: TextStyle(fontSize: 12, color: Colors.white38),
             textAlign: TextAlign.center,
@@ -376,7 +376,7 @@ class _CameraAlertsState extends ConsumerState<CameraAlerts> {
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: List.generate(7, (i) => _buildDayButton(i)),
+          children: List.generate(7, _buildDayButton),
         ),
         const SizedBox(height: 24),
 

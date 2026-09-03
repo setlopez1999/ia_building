@@ -5,9 +5,9 @@ import 'package:tvapp/core/theme/app_colors.dart';
 
 // deprecated — use gaming_screen + streaming_screen individually
 class GamingStreamingScreen extends StatefulWidget {
-  static const String name = 'Gaming Streaming';
 
   const GamingStreamingScreen({super.key});
+  static const String name = 'Gaming Streaming';
 
   @override
   State<GamingStreamingScreen> createState() => _GamingStreamingScreenState();
@@ -72,11 +72,6 @@ class _GamingStreamingScreenState extends State<GamingStreamingScreen> {
 }
 
 class _CategoryCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String iconPath;
-  final bool isExpanded;
-  final VoidCallback onToggle;
 
   const _CategoryCard({
     required this.title,
@@ -85,6 +80,11 @@ class _CategoryCard extends StatelessWidget {
     required this.isExpanded,
     required this.onToggle,
   });
+  final String title;
+  final String subtitle;
+  final String iconPath;
+  final bool isExpanded;
+  final VoidCallback onToggle;
 
   @override
   Widget build(BuildContext context) {

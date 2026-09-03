@@ -50,7 +50,6 @@ class ChannelsList extends ConsumerWidget {
             child: GridView.count(
                 crossAxisCount: 2,
                 crossAxisSpacing: 16,
-                childAspectRatio: 1,
                 children: channels
                     .map((channel) => GridButtonChannel(channel: channel, fromHome: true))
                     .toList()

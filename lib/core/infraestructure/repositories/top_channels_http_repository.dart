@@ -8,9 +8,9 @@ import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 class TopChannelsHttpRepository implements TopChannelsRepository {
   @override
   Future<Either<AppException, List<Channel>>> getTopChannels(
-      String user_id) async {
+      String userId) async {
     final Dio dio = Dio();
-    final res = await dio.get('${Environment.baseHost}/api/mostwatched-channels?user_id=$user_id');
+    final res = await dio.get('${Environment.baseHost}/api/mostwatched-channels?user_id=$userId');
 
     final data = res.data!;
 

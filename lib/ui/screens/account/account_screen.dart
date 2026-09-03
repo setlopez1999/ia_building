@@ -7,7 +7,6 @@ import 'package:tvapp/ui/providers/auth/auth_provider.dart';
 import 'package:tvapp/ui/screens/change_password/change_password_screen.dart';
 import 'package:tvapp/ui/screens/family_filter/family_filter_screen.dart';
 import 'package:tvapp/ui/screens/favorites/favorites.screen.dart';
-import 'package:tvapp/ui/screens/login/login.screen.dart';
 import 'package:tvapp/ui/screens/plan/plan_screen.dart';
 import 'package:tvapp/ui/screens/products/associated_products_screen.dart';
 import 'package:tvapp/ui/screens/profile/profile_screen.dart';

@@ -6,12 +6,12 @@ import 'package:tvapp/ui/providers/tools/wifi_notifier.dart';
 import 'package:tvapp/ui/screens/tools/check_health/check_health_screen.dart';
 
 class WifiPasswordScreen extends ConsumerStatefulWidget {
+
+  const WifiPasswordScreen({super.key, required this.ssid});
   static const String name = 'wifi-password';
   static const String path = '/tools/wifi-password';
 
   final String ssid;
-
-  const WifiPasswordScreen({super.key, required this.ssid});
 
   @override
   ConsumerState<WifiPasswordScreen> createState() => _WifiPasswordScreenState();
@@ -117,8 +117,8 @@ class _WifiPasswordScreenState extends ConsumerState<WifiPasswordScreen> {
 }
 
 class _SsidCard extends StatelessWidget {
-  final String ssid;
   const _SsidCard({required this.ssid});
+  final String ssid;
 
   @override
   Widget build(BuildContext context) {
@@ -150,10 +150,6 @@ class _SsidCard extends StatelessWidget {
 }
 
 class _PassField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hint;
-  final bool obscure;
-  final VoidCallback onToggle;
 
   const _PassField({
     required this.controller,
@@ -161,6 +157,10 @@ class _PassField extends StatelessWidget {
     required this.obscure,
     required this.onToggle,
   });
+  final TextEditingController controller;
+  final String hint;
+  final bool obscure;
+  final VoidCallback onToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -190,10 +190,10 @@ class _PassField extends StatelessWidget {
 }
 
 class _SubmitButton extends StatelessWidget {
-  final bool isLoading;
-  final VoidCallback onTap;
 
   const _SubmitButton({required this.isLoading, required this.onTap});
+  final bool isLoading;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

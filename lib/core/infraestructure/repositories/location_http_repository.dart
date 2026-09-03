@@ -46,7 +46,7 @@ class LocationHttpRepository implements LocationRepository {
           result.add(LocationEntity.fromJson(json));
         }
       }
-    } on SocketException catch (error) {
+    } on SocketException {
       return Left(AppException(
         identifier: '9002',
         message: 'Error obteniendo distritos',

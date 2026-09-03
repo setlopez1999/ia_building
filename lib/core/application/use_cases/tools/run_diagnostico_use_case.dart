@@ -1,11 +1,11 @@
+import 'package:tvapp/core/domain/entities/tools/diagnostico.dart';
 import 'package:tvapp/core/domain/entities/tools/fibra.dart';
 import 'package:tvapp/core/domain/entities/tools/wifi_info.dart';
-import 'package:tvapp/core/services/tools/network_analyzer_service.dart';
-import 'package:tvapp/core/services/local_device_service.dart';
-import 'package:tvapp/core/domain/entities/tools/diagnostico.dart';
 import 'package:tvapp/core/infraestructure/repositories/tools/diagnostico_repository.dart';
 import 'package:tvapp/core/infraestructure/repositories/tools/fibra_repository.dart';
 import 'package:tvapp/core/infraestructure/repositories/tools/wifi_repository.dart';
+import 'package:tvapp/core/services/local_device_service.dart';
+import 'package:tvapp/core/services/tools/network_analyzer_service.dart';
 
 enum DiagnosticoProgress {
   pingGoogle,
@@ -17,10 +17,6 @@ enum DiagnosticoProgress {
 }
 
 class RunDiagnosticoInput {
-  final String googleTarget;
-  final String ispTarget;
-  final String clienteId;
-  final String serverBaseUrl;
 
   const RunDiagnosticoInput({
     required this.googleTarget,
@@ -28,20 +24,13 @@ class RunDiagnosticoInput {
     required this.clienteId,
     required this.serverBaseUrl,
   });
+  final String googleTarget;
+  final String ispTarget;
+  final String clienteId;
+  final String serverBaseUrl;
 }
 
 class RunDiagnosticoResult {
-  final int latenciaGoogleMs;
-  final int latenciaIspMs;
-  final double velocidadBajadaMbps;
-  final double velocidadSubidaMbps;
-  final String? wifiSsid;
-  final int? wifiSenialDbm;
-  final String? wifiBanda;
-  final String? wifiGateway;
-  final String? fibraPotenciaDbm;
-  final String? fibraEstado;
-  final String resultado;
 
   const RunDiagnosticoResult({
     required this.latenciaGoogleMs,
@@ -56,14 +45,20 @@ class RunDiagnosticoResult {
     this.fibraEstado,
     required this.resultado,
   });
+  final int latenciaGoogleMs;
+  final int latenciaIspMs;
+  final double velocidadBajadaMbps;
+  final double velocidadSubidaMbps;
+  final String? wifiSsid;
+  final int? wifiSenialDbm;
+  final String? wifiBanda;
+  final String? wifiGateway;
+  final String? fibraPotenciaDbm;
+  final String? fibraEstado;
+  final String resultado;
 }
 
 class RunDiagnosticoUseCase {
-  final NetworkAnalyzerService _networkService;
-  final LocalDeviceService _localDeviceService;
-  final DiagnosticoRepository _diagnosticoRepo;
-  final FibraRepository _fibraRepo;
-  final WifiRepository _wifiRepo;
 
   RunDiagnosticoUseCase({
     required NetworkAnalyzerService networkService,
@@ -76,6 +71,11 @@ class RunDiagnosticoUseCase {
         _diagnosticoRepo = diagnosticoRepo,
         _fibraRepo = fibraRepo,
         _wifiRepo = wifiRepo;
+  final NetworkAnalyzerService _networkService;
+  final LocalDeviceService _localDeviceService;
+  final DiagnosticoRepository _diagnosticoRepo;
+  final FibraRepository _fibraRepo;
+  final WifiRepository _wifiRepo;
 
   /// Cada paso es independiente — nunca lanza. Si un paso falla, los demás continúan.
   Future<RunDiagnosticoResult> execute(

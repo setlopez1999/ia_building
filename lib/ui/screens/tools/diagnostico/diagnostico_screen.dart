@@ -6,9 +6,9 @@ import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/ui/providers/tools/diagnostico_notifier.dart';
 
 class DiagnosticoScreen extends ConsumerStatefulWidget {
-  static const String name = 'Diagnostico';
 
   const DiagnosticoScreen({super.key});
+  static const String name = 'Diagnostico';
 
   @override
   ConsumerState<DiagnosticoScreen> createState() => _DiagnosticoScreenState();
@@ -26,14 +26,14 @@ class _DiagnosticoScreenState extends ConsumerState<DiagnosticoScreen> {
 
   double _stepProgress(DiagnosticoStep step) {
     switch (step) {
-      case DiagnosticoStep.idle:       return 0.0;
+      case DiagnosticoStep.idle:       return 0;
       case DiagnosticoStep.pingGoogle: return 0.1;
       case DiagnosticoStep.pingIsp:    return 0.25;
       case DiagnosticoStep.speedtest:  return 0.45;
       case DiagnosticoStep.wifiInfo:   return 0.65;
       case DiagnosticoStep.fibra:      return 0.8;
       case DiagnosticoStep.guardando:  return 0.92;
-      case DiagnosticoStep.completado: return 1.0;
+      case DiagnosticoStep.completado: return 1;
     }
   }
 
@@ -191,10 +191,10 @@ class _DiagnosticoScreenState extends ConsumerState<DiagnosticoScreen> {
 // ── Widgets privados ──────────────────────────────────────────────────────────
 
 class _DiagnosticoProgress extends StatelessWidget {
-  final double progress;
-  final String label;
 
   const _DiagnosticoProgress({required this.progress, required this.label});
+  final double progress;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
@@ -238,15 +238,15 @@ class _DiagnosticoProgress extends StatelessWidget {
 }
 
 class _DiagnosticoStatusItem extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final ItemCalidad calidad;
 
   const _DiagnosticoStatusItem({
     required this.title,
     required this.subtitle,
     required this.calidad,
   });
+  final String title;
+  final String subtitle;
+  final ItemCalidad calidad;
 
   Color get _color {
     switch (calidad) {
@@ -283,7 +283,7 @@ class _DiagnosticoStatusItem extends StatelessWidget {
         return Container(
           width: 10,
           height: 10,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.textBody),
+          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.textBody),
         );
     }
   }
@@ -323,8 +323,8 @@ class _DiagnosticoStatusItem extends StatelessWidget {
 }
 
 class _CancelButton extends StatelessWidget {
-  final VoidCallback onTap;
   const _CancelButton({required this.onTap});
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

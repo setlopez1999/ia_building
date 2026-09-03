@@ -1,21 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'notification_service.dart';
 import 'package:tvapp/config/environment/environment.dart';
 import 'package:tvapp/storage/tools/local_storage.dart';
 
+import 'notification_service.dart';
+
 class AlertConfig {
-  final bool enabled;
-  final int startHour;
-  final int startMinute;
-  final int endHour;
-  final int endMinute;
-  final List<int> days;
-  final int preAlertMinutes;
-  final String serial;
 
   const AlertConfig({
     required this.enabled,
@@ -28,17 +22,6 @@ class AlertConfig {
     required this.serial,
   });
 
-  Map<String, dynamic> toJson() => {
-    'enabled': enabled,
-    'startHour': startHour,
-    'startMinute': startMinute,
-    'endHour': endHour,
-    'endMinute': endMinute,
-    'days': days,
-    'preAlertMinutes': preAlertMinutes,
-    'serial': serial,
-  };
-
   factory AlertConfig.fromJson(Map<String, dynamic> json) => AlertConfig(
     enabled: json['enabled'] as bool? ?? false,
     startHour: json['startHour'] as int? ?? 0,
@@ -49,6 +32,25 @@ class AlertConfig {
     preAlertMinutes: json['preAlertMinutes'] as int? ?? 5,
     serial: json['serial'] as String? ?? '',
   );
+  final bool enabled;
+  final int startHour;
+  final int startMinute;
+  final int endHour;
+  final int endMinute;
+  final List<int> days;
+  final int preAlertMinutes;
+  final String serial;
+
+  Map<String, dynamic> toJson() => {
+    'enabled': enabled,
+    'startHour': startHour,
+    'startMinute': startMinute,
+    'endHour': endHour,
+    'endMinute': endMinute,
+    'days': days,
+    'preAlertMinutes': preAlertMinutes,
+    'serial': serial,
+  };
 
   bool isActiveForNow() {
     if (!enabled) return false;

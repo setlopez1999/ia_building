@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/core/domain/entities/tools/servidor_juego.dart';
-import 'package:tvapp/ui/providers/tools/gaming_server_providers.dart';
+import 'package:tvapp/core/theme/app_colors.dart';
 import 'package:tvapp/ui/providers/tools/gaming_monitor_service.dart';
+import 'package:tvapp/ui/providers/tools/gaming_server_providers.dart';
 
 class GamingDetailScreen extends ConsumerStatefulWidget {
+  const GamingDetailScreen({super.key, required this.gameId});
   static const String name = 'Gaming Detail';
 
   final String gameId;
-  const GamingDetailScreen({super.key, required this.gameId});
 
   @override
   ConsumerState<GamingDetailScreen> createState() => _GamingDetailScreenState();
@@ -261,11 +261,6 @@ class _GamingDetailScreenState extends ConsumerState<GamingDetailScreen>
 }
 
 class _MetricColumn extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool isDivider;
-  final Color valueColor;
-  final Color? dividerColor;
 
   const _MetricColumn({
     required this.label,
@@ -274,6 +269,11 @@ class _MetricColumn extends StatelessWidget {
     this.valueColor = Colors.white,
     this.dividerColor,
   });
+  final String label;
+  final String value;
+  final bool isDivider;
+  final Color valueColor;
+  final Color? dividerColor;
 
   @override
   Widget build(BuildContext context) {
@@ -312,10 +312,10 @@ class _MetricColumn extends StatelessWidget {
 }
 
 class _RadarPainter extends CustomPainter {
-  final double animationValue;
-  final Color color;
 
   _RadarPainter(this.animationValue, this.color);
+  final double animationValue;
+  final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {

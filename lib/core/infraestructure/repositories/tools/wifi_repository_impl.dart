@@ -1,12 +1,13 @@
-import 'wifi_repository.dart';
 import 'package:tvapp/core/domain/entities/tools/wifi_info.dart';
 import 'package:tvapp/core/infraestructure/datasource/tools/tools_api_client.dart';
 import 'package:tvapp/storage/tools/local_storage.dart';
 
+import 'wifi_repository.dart';
+
 class WifiRepositoryImpl implements WifiRepository {
-  final ToolsApiClient _api;
 
   WifiRepositoryImpl(this._api);
+  final ToolsApiClient _api;
 
   @override
   Future<void> cambiarNombre(String nuevoNombre) async {
