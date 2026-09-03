@@ -42,3 +42,22 @@ Contra `oneplay.iptvperu.tv` el monitor de Multicdn falla con
 El servidor devuelve un campo como entero donde la app espera booleano.
 No rompe la reproducción: hay fallback a la URL original (`multiCdnUrl` vacío).
 Revisar el DTO de Multicdn contra la respuesta real del servidor nuevo.
+
+## 4. Telefonia: migrar a la central VICIdial del cliente
+
+**Estado:** el modulo Mascotas funciona contra un Asterisk de pruebas levantado
+en el PC (`C:\Users\PC1\Desktop\asterisk-lab`). La central definitiva es el
+VICIdial del cliente.
+
+**Que hay que tocar:** solo `callRepositoryProvider`
+(`lib/ui/providers/call/call_provider.dart`). La pantalla y el boton dependen de
+la interfaz `CallRepository`, asi que no cambian.
+
+**Pendientes conocidos de la integracion actual:**
+- La API de llamadas responde `ok` cuando la central **acepta el pedido**, no
+  cuando la llamada se establece. Si el telefono esta apagado la app igual dice
+  "Te estamos llamando". Hay que escuchar el evento `OriginateResponse` de AMI.
+- `CALL_API_HOST` en el `.env` apunta a una IP privada: la app solo funciona
+  dentro de la red local. Con la central del cliente sera un host publico.
+- Los archivos de voz se copiaron a mano dentro del contenedor de Asterisk; si
+  se recrea, se pierden. No aplica al VICIdial.
