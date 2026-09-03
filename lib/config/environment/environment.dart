@@ -49,6 +49,13 @@ class Environment {
   static String callApiHost = dotenv.env['CALL_API_HOST'] ?? '10.0.2.2';
   static String callApiPort = dotenv.env['CALL_API_PORT'] ?? '8080';
 
+  /// Central SIP del modulo Mascotas. El telefono se registra aca.
+  static String sipWsUrl = dotenv.env['SIP_WS_URL'] ?? '';
+  static String sipHost = dotenv.env['SIP_HOST'] ?? '';
+  static String sipUser = dotenv.env['SIP_USER'] ?? '';
+  static String sipPassword = dotenv.env['SIP_PASSWORD'] ?? '';
+  static String sipDestino = dotenv.env['SIP_DESTINO'] ?? '';
+
   /// Modo demostración: las pantallas cuyo endpoint todavia no existe
   /// muestran datos de muestra. En false no queda ningun dato inventado.
   static bool demoMode = (dotenv.env['DEMO'] ?? 'false') == 'true';

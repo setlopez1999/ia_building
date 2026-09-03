@@ -1,16 +1,35 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:tvapp/core/domain/entities/call/call_session_state.dart';
 import 'package:tvapp/core/shared/exceptions/app_exception.dart';
 
-/// Origen de una llamada de asistencia.
+/// Teléfono del módulo Mascotas.
 ///
-/// El botón del módulo Mascotas depende solo de esta interfaz. Hoy hay una
-/// implementación que no hace nada; cuando el servicio de telefonía esté
-/// levantado se agrega la implementación real y no se toca la pantalla.
+/// La pantalla depende solo de esta interfaz. La implementación de hoy habla
+/// SIP contra el Asterisk de pruebas; la de mañana va a hablar contra el
+/// VICIdial del cliente. Los estados que emite son los mismos, así que la
+/// pantalla no cambia.
 abstract class CallRepository {
-  /// Solicita que se origine una llamada hacia el usuario.
-  ///
-  /// Devuelve `Right(null)` si el servicio acepto la solicitud. Aceptar no es
-  /// lo mismo que "el teléfono ya está sonando": el resultado final de la
-  /// llamada lo maneja la central.
-  Future<Either<AppException, void>> requestCall();
+  /// Estados de la llamada, en orden. La pantalla se dibuja con esto.
+  Stream<CallSessionState> get cambios;
+
+  CallSessionState get estadoActual;
+
+  /// Se registra en la central. Hay que llamarlo antes de [llamar].
+  Future<Either<AppException, void>> conectar();
+
+  /// Llama al destino configurado (el veterinario).
+  Future<Either<AppException, void>> llamar();
+
+  /// Atiende una llamada entrante.
+  Future<void> contestar();
+
+  /// Corta. Sirve tanto para cancelar una saliente como para terminar una
+  /// llamada en curso o rechazar una entrante.
+  Future<void> colgar();
+
+  /// Silencia o reactiva el micrófono.
+  void silenciar(bool valor);
+
+  /// Se da de baja de la central y libera los recursos.
+  Future<void> desconectar();
 }

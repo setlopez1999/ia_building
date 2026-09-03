@@ -1,55 +1,61 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tvapp/core/domain/entities/call/call_session_state.dart';
+import 'package:tvapp/core/domain/repositories/call_credentials_repository.dart';
 import 'package:tvapp/core/domain/repositories/call_repository.dart';
-import 'package:tvapp/core/infraestructure/repositories/call_asterisk_repository.dart';
-import 'package:tvapp/core/shared/exceptions/app_exception.dart';
+import 'package:tvapp/core/infraestructure/repositories/call_credentials_env_repository.dart';
+import 'package:tvapp/core/infraestructure/repositories/sip_call_repository.dart';
 
-/// Única decisión sobre quién origina la llamada.
+/// De dónde salen los datos de la central.
 ///
-/// Punto de cambio para conectar la central: se reemplaza esta instancia y la
-/// pantalla no se entera.
-final callRepositoryProvider =
-    Provider<CallRepository>((ref) => CallAsteriskRepository());
+/// PUNTO DE CAMBIO para el VICIdial: cuando el backend exponga el endpoint,
+/// se reemplaza por una implementación HTTP y queda la cadena
+/// celular → backend → central. Nada más se toca.
+final callCredentialsProvider = Provider<CallCredentialsRepository>(
+  (ref) => const CallCredentialsEnvRepository(),
+);
 
-/// Estado del pedido de llamada.
-sealed class CallState {
-  const CallState();
-}
+/// El teléfono. Vive mientras viva la app: una llamada no se puede cortar
+/// porque el usuario navegó a otra pantalla.
+final callRepositoryProvider = Provider<CallRepository>((ref) {
+  final repositorio = SipCallRepository(ref.watch(callCredentialsProvider));
+  ref.onDispose(repositorio.desconectar);
+  return repositorio;
+});
 
-class CallIdle extends CallState {
-  const CallIdle();
-}
+/// Estado de la llamada para la pantalla.
+class CallNotifier extends Notifier<CallSessionState> {
+  StreamSubscription<CallSessionState>? _suscripcion;
 
-class CallRequesting extends CallState {
-  const CallRequesting();
-}
-
-class CallRequested extends CallState {
-  const CallRequested();
-}
-
-class CallFailed extends CallState {
-  const CallFailed(this.error);
-  final AppException error;
-}
-
-class CallNotifier extends Notifier<CallState> {
   @override
-  CallState build() => const CallIdle();
+  CallSessionState build() {
+    final repositorio = ref.watch(callRepositoryProvider);
 
-  Future<void> requestCall() async {
-    if (state is CallRequesting) return;
+    _suscripcion = repositorio.cambios.listen((nuevo) => state = nuevo);
+    ref.onDispose(() => _suscripcion?.cancel());
 
-    state = const CallRequesting();
-    final result = await ref.read(callRepositoryProvider).requestCall();
-    result.fold(
-      (error) => state = CallFailed(error),
-      (_) => state = const CallRequested(),
-    );
+    return repositorio.estadoActual;
   }
 
-  void reset() => state = const CallIdle();
+  CallRepository get _repositorio => ref.read(callRepositoryProvider);
+
+  /// Se registra en la central. La pantalla lo llama al abrirse para que el
+  /// teléfono ya esté listo cuando el usuario toque el botón.
+  Future<void> conectar() => _repositorio.conectar();
+
+  Future<void> llamar() async {
+    if (state is CallSaliente || state is CallEnCurso) return;
+    await _repositorio.llamar();
+  }
+
+  Future<void> contestar() => _repositorio.contestar();
+
+  Future<void> colgar() => _repositorio.colgar();
+
+  void silenciar(bool valor) => _repositorio.silenciar(valor);
 }
 
-final callProvider = NotifierProvider<CallNotifier, CallState>(
+final callProvider = NotifierProvider<CallNotifier, CallSessionState>(
   CallNotifier.new,
 );

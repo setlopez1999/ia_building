@@ -61,3 +61,45 @@ la interfaz `CallRepository`, asi que no cambian.
   dentro de la red local. Con la central del cliente sera un host publico.
 - Los archivos de voz se copiaron a mano dentro del contenedor de Asterisk; si
   se recrea, se pierden. No aplica al VICIdial.
+
+## 5. Telefonia del modulo Mascotas: estado real
+
+El APK ya es un **telefono SIP de verdad**, no un boton que le pide a un
+servidor que llame. Se registra en la central y es un extremo de la llamada,
+por eso puede saber si atendieron, cortar de su lado y silenciar el microfono.
+
+**Verificado de punta a punta** contra la central de pruebas
+(`C:\Users\PC1\Desktop\asterisk-lab`, ver su README): llamada del APK a la
+pagina web, contestada, con audio en los dos sentidos y 0% de perdida en opus.
+
+### Lo que falta
+
+- **Video**: no esta. Se posterga a proposito. Con `flutter_webrtc` es
+  incremental, pero VICIdial es audio y nada mas, asi que solo tendria sentido
+  contra una central propia.
+- **Silenciar** esta implementado pero no se verifico que corte el microfono
+  de verdad.
+- **Servicio en primer plano**: si el usuario minimiza la app durante una
+  llamada, Android puede matarla. Los permisos ya estan declarados; falta el
+  servicio.
+- **Llamadas entrantes con la app cerrada**: hoy solo funciona con la pantalla
+  de Mascotas abierta, porque el registro arranca en su `initState`.
+
+### Migrar al VICIdial
+
+`CallCredentialsEnvRepository` lee el `.env`. Cuando el backend exponga el
+endpoint se reemplaza por una implementacion HTTP en
+`callCredentialsProvider` y queda la cadena celular -> backend -> central,
+con una extension por usuario en vez de una compartida. Es lo unico que se
+toca: la pantalla y el `SipCallRepository` no cambian.
+
+**Antes de escribir codigo hay que confirmar con el cliente que su VICIdial
+acepta registro por WebRTC.** Si no lo habilitan, el APK no puede ser un
+extremo y hay que volver al esquema de "boton remoto".
+
+### Costo que quedo en el proyecto
+
+`sip_ua` y `flutter_webrtc` son dependencias de todo el proyecto, no solo del
+modulo. Viajan en el APK aunque Mascotas este apagado por flags. El codigo si
+esta aislado: 6 archivos, y las librerias las importa un solo archivo
+(`sip_call_repository.dart`).
