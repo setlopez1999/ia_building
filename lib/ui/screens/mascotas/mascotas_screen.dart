@@ -73,39 +73,45 @@ class MascotasScreen extends ConsumerWidget {
           builder: (context, constraints) => SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(28, 32, 28, 28),
-                child: Column(
-                  children: [
-                    const _Encabezado(),
-                    // El botón vive en el espacio sobrante y queda centrado
-                    // en los dos ejes, sin depender de Spacers a mano.
-                    Expanded(
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _BotonLlamar(
-                              llamando: llamando,
-                              onPressed: () =>
-                                  ref.read(callProvider.notifier).requestCall(),
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              llamando
-                                  ? 'Solicitando la llamada...'
-                                  : 'La llamada es gratuita',
-                              style: const TextStyle(
-                                color: AppColors.textBody,
-                                fontSize: 12,
+              // Sin IntrinsicHeight el scroll le da altura infinita a la
+              // Column y el Expanded de abajo no tiene contra que expandirse:
+              // la pantalla sale en blanco.
+              child: IntrinsicHeight(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(28, 32, 28, 28),
+                  child: Column(
+                    children: [
+                      const _Encabezado(),
+                      // El botón vive en el espacio sobrante y queda centrado
+                      // en los dos ejes, sin depender de Spacers a mano.
+                      Expanded(
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _BotonLlamar(
+                                llamando: llamando,
+                                onPressed: () => ref
+                                    .read(callProvider.notifier)
+                                    .requestCall(),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 20),
+                              Text(
+                                llamando
+                                    ? 'Solicitando la llamada...'
+                                    : 'La llamada es gratuita',
+                                style: const TextStyle(
+                                  color: AppColors.textBody,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    const _AccionesSecundarias(_accionesSecundarias),
-                  ],
+                      const _AccionesSecundarias(_accionesSecundarias),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -202,7 +208,8 @@ class _Encabezado extends StatelessWidget {
           'Un veterinario te llama para orientarte.\n'
           'Toca el botón y te contactamos.',
           textAlign: TextAlign.center,
-          style: TextStyle(color: AppColors.textBody, fontSize: 14, height: 1.4),
+          style:
+              TextStyle(color: AppColors.textBody, fontSize: 14, height: 1.4),
         ),
       ],
     );
